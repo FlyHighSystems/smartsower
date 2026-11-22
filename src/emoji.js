@@ -1,7 +1,7 @@
 /* ===== Emojis no editor: botão 😊 na Formatação, na barra flutuante e Ctrl+Shift+E ===== */
 const EMOJI_CATS = [
   ['⛪', 'Fé e igreja', [
-    ['🙏', 'orar oração mãos rezar gratidão'], ['❤️‍🔥', 'coração em chamas paixão fogo avivamento'], ['☁️', 'nuvem glória presença'], ['🚀', 'foguete crescimento decolar'], ['✝️', 'cruz cristo jesus'], ['📖', 'bíblia livro palavra leitura'], ['🕊️', 'pomba espírito santo paz'],
+    ['🙏', 'orar oração mãos rezar gratidão'], ['❤️‍🔥', 'coração em chamas paixão fogo avivamento'], ['☁️', 'nuvem glória presença'], ['🚀', 'foguete crescimento decolar'], ['📣', 'megafone anunciar proclamar anúncio'], ['📢', 'megafone alto-falante aviso proclamar'], ['✝️', 'cruz cristo jesus'], ['📖', 'bíblia livro palavra leitura'], ['🕊️', 'pomba espírito santo paz'],
     ['🔥', 'fogo avivamento espírito'], ['🙌', 'louvor adoração aleluia glória'], ['✨', 'brilho glória especial'], ['👑', 'coroa rei reino'],
     ['🍞', 'pão ceia'], ['🍷', 'vinho cálice ceia sangue'], ['💧', 'água batismo'], ['🌿', 'ramo vida crescimento'], ['⛪', 'igreja templo'],
     ['🎵', 'música louvor nota'], ['🎶', 'músicas louvor cântico'], ['🎤', 'microfone pregar cantar'], ['🎹', 'teclado piano'], ['🎸', 'guitarra violão'],
@@ -39,7 +39,7 @@ const EMOJI_CATS = [
     ['📓', 'caderno'], ['📅', 'calendário data'], ['⏰', 'despertador hora'], ['🕐', 'relógio'], ['🎯', 'alvo objetivo foco'], ['🏆', 'troféu vitória'],
     ['🎁', 'presente dom'], ['🎉', 'festa celebração'], ['🎊', 'confete'], ['🎂', 'aniversário bolo'], ['💰', 'dinheiro oferta'], ['🪙', 'moeda'],
     ['💎', 'diamante tesouro'], ['🔑', 'chave'], ['🔒', 'cadeado'], ['🔍', 'lupa buscar'], ['💬', 'conversa fala'], ['🗣️', 'falar pregar'],
-    ['📣', 'anúncio megafone'], ['📢', 'aviso'], ['📱', 'celular'], ['💻', 'computador'], ['🎬', 'vídeo filme'], ['📷', 'foto câmera'], ['🧩', 'peça quebra-cabeça'],
+    ['📣', 'anúncio megafone'], ['📢', 'aviso megafone alto-falante'], ['📱', 'celular'], ['💻', 'computador'], ['🎬', 'vídeo filme'], ['📷', 'foto câmera'], ['🧩', 'peça quebra-cabeça'],
     ['⚖️', 'balança justiça'], ['🪞', 'espelho'], ['🧱', 'tijolo'], ['🏗️', 'construção'], ['🌍', 'mundo terra nações'], ['✈️', 'avião viagem missão'], ['🚀', 'foguete'],
   ]],
   ['🌸', 'Natureza e comida', [
