@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.8 — 22/11/2026
+- Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em "❓ Guia" no rodapé dos cadernos ou em ☁.
+
 ## 3.12.7 — 22/11/2026
 - Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.
 - Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.

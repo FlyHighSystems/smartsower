@@ -715,6 +715,15 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .tr-lang.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;font-weight:600}.tr-flag{font-size:22px}
 .tr-bibles{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:10px;border:1px solid var(--line);border-radius:10px}
 .tr-opt{display:flex;align-items:center;gap:8px;font-size:14px}.tr-opt.off span{opacity:.6}.tr-opt .btn{margin-left:auto}
+
+.app-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center}.app-foot .app-ver{margin-top:0}
+.tour-block{position:fixed;inset:0;z-index:9990;background:transparent}
+.tour-hole{position:fixed;z-index:9991;border-radius:10px;box-shadow:0 0 0 9999px rgba(10,6,20,.62);outline:2px solid #c98cff;pointer-events:none;transition:all .25s ease}
+.tour-card{position:fixed;z-index:9992;background:var(--panel,#fff);color:var(--text);border-radius:14px;padding:16px 18px 12px;box-shadow:0 18px 50px #0006;transition:top .25s,left .25s}
+.tour-card.center{left:50%!important;top:50%!important;transform:translate(-50%,-50%)}
+.tour-card h3{margin:2px 0 6px;font-size:18px}.tour-card p{margin:0 0 12px;line-height:1.5;font-size:14.5px}
+.tour-step{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tour-btns{display:flex;align-items:center;gap:6px}.tour-gap{flex:1}
 </style>
 </head>
 <body>
@@ -852,7 +861,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     </div>
     <div id="sec-list"></div>
     <button class="btn link" id="sec-add">＋ Adicionar seção</button>
-    <button class="app-ver" id="app-ver" title="Novidades desta versão"></button>
+    <div class="app-foot"><button class="app-ver" id="app-guide" title="Ver o guia de como usar o app">❓ Guia</button><button class="app-ver" id="app-ver" title="Novidades desta versão"></button></div>
   </nav>
   <nav id="pages-pane">
     <div class="pane-head">
@@ -912,7 +921,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.7", "code": "25b253", "at": "22/11 16:15", "notes": [{"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
+<script>window.SS_BUILD = {"version": "3.12.8", "code": "a23da1", "at": "22/11 16:18", "notes": [{"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1770,7 +1779,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -4025,7 +4034,7 @@ const Cloud = {
   /* Cadernos/seções/tipos: une por id; o mais recente vence nos itens em comum; exclusões viajam como lista */
   metaPayload() {
     const m = App.meta;
-    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
+    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
   },
   async syncMeta() {
     const r = await this.rest('/rest/v1/user_meta?select=data,updated_at,server_updated');
@@ -4057,6 +4066,7 @@ const Cloud = {
       if (remote.updated_at > m.metaUpdated) { if (rd.theme) m.theme = rd.theme; if (rd.readerTheme) m.readerTheme = rd.readerTheme; if (rd.readerSerif != null) m.readerSerif = rd.readerSerif; }
       try { AI.fromCloud(rd.ai); } catch (e) { }
       if (rd.groupNames && remote.updated_at > m.metaUpdated) m.groupNames = rd.groupNames;
+      if (rd.tourDone && !m.tourDone) m.tourDone = rd.tourDone;
       if (rd.follow) { // continuar de onde parei em outro aparelho
         const f = rd.follow; if ((f.onT || 0) > (m.followT || 0)) { m.follow = !!f.on; m.followT = f.onT; }
         if (m.follow && f.last) { const L = m.lastOpen ||= {}, norm = e => typeof e === 'string' ? { id: e, t: 0 } : (e || { t: 0 });
@@ -4265,7 +4275,7 @@ const CloudUI = {
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
-      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() })),
+      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() }), el('button', { class: 'btn link sm', text: '❓ Guia', onclick: () => { document.querySelectorAll('.modal-back').forEach(b => b.querySelector('.modal-head .icon-btn')?.click()); Tour.start(); } })),
         el('button', { class: 'btn sm', text: '⟳ Atualizar agora', title: 'Baixa a versão mais nova do app (seus textos não são afetados)', onclick: () => Updater.now() })),
       el('div', { class: 'row-btns' }, btn,
         el('button', { class: 'btn', text: 'Sair desta conta', onclick: async () => { Cloud.listeners.delete(paint); App.flush(); await Cloud.signOut(); location.reload(); } }),
@@ -4299,7 +4309,7 @@ const Gate = {
     if (!await Team.enforce()) return;
     this.active = false; this.box?.remove(); document.body.classList.remove('gated'); CloudUI.body = this._prev;
     Cloud.setStatus('pending'); Cloud.schedule(100); UI.toast('Bem-vindo! Sincronizando seus cadernos…');
-    this._res?.();
+    this._res?.(); setTimeout(() => Tour.maybeStart(), 2500);
   },
   async wipe() {
     if (!await UI.confirm('Sair e apagar deste aparelho', 'Os cadernos, livros e imagens serão apagados SÓ deste aparelho (continuam na nuvem e nos seus outros aparelhos). Use em computador emprestado ou da igreja.', 'Apagar e sair')) return;
@@ -7367,6 +7377,82 @@ Answer ONLY with JSON: {"items":[{"k":"<same key>","t":"<translation>"}]}`;
     }
     App.sermons.set(s.id, s); App.touch(s); App.flush(); modal.close(); App.renderNav(); App.open(s.id);
     UI.toast(`${L.flag} Página traduzida para ${L.label.toLowerCase()}` + (missing ? ` — ${missing} trecho(s) ficaram em português, confira` : ''));
+  }
+};
+
+/* ===== Guia de primeiro acesso: destaca cada função e explica em poucas palavras =====
+   Aparece uma vez por conta (sincroniza). Reabrir: "❓ Guia" no rodapé dos cadernos ou em ☁. */
+const Tour = {
+  STEPS: [
+    { t: '👋 Bem-vindo ao SmartSower', d: 'Aqui você prepara sermões, devocionais e estudos, e escreve seus livros — tudo organizado, sincronizado entre seus aparelhos e pronto para ministrar. Em 1 minuto eu te mostro o principal.' },
+    { sel: '#nb-col:not(.fly), #nb-btn, #nb-select', nav: true, t: '📚 Cadernos', d: 'Cada caderno é uma área: "Ministrações", "Livro: …", "Estudos da célula". Toque aqui para trocar ou criar cadernos — um caderno pode virar livro, com capítulos e roteiro. Dá para deixar a lista de cadernos fixa como uma coluna.' },
+    { sel: '#sec-list', nav: true, t: '🗂 Seções', d: 'Dentro do caderno, separe por seções: Sermões, Devocionais, Insights… Toque e segure (ou clique com o direito) para renomear, mover ou mudar a cor.' },
+    { sel: '#page-add', nav: true, t: '＋ Nova página', d: 'Crie a página já dizendo o que ela é: 🎤 Sermão, 🌅 Devocional, 📖 Estudo, 👥 Célula ou 💡 Insight. O tipo ajusta o tempo e a revisão, e depois você filtra tudo que é do mesmo tipo.' },
+    { sel: '#kind-bar:not([hidden]), #page-search', nav: true, t: '🏷 Filtro e busca rápida', d: 'Os chips juntam as páginas do mesmo tipo de todas as seções do caderno. A busca procura palavras nesta seção, no caderno ou em tudo.' },
+    { sel: '#s-title', t: '✍️ Título e informações', d: 'Título, data, texto-base, tipo e tempo. Para uma devocional o app mede tempo de leitura; para um sermão, tempo falado.' },
+    { sel: '.rtab[data-tab="insert"]', t: '➕ Inserir blocos', d: 'A página é feita de blocos: 📖 versículo (digite "Jo 3:16" ou uma frase para procurar), ponto, ilustração, aplicação, imagem e desenho. Use ↑ ↓ para reorganizar.' },
+    { sel: '.rtab[data-tab="home"]', t: '🎨 Formatação e emojis', d: 'Negrito, realce, cores, listas, notas de rodapé, correção ortográfica (Abc ✓) e 😊 emojis. Ao selecionar um trecho — ou tocar no texto — a barra aparece ali mesmo. Clique direito também abre o menu.' },
+    { sel: '#s-review', t: '✦ Revisar com IA', d: 'A IA lê a página como um revisor exigente: clareza, fidelidade ao texto, estrutura, tempo. Você pode responder a cada ponto. Também dá para 🌐 traduzir para inglês ou espanhol.' },
+    { sel: '#btn-preach', t: '▶ Pregar', d: 'Modo de ministrar: letra grande, rolagem automática, cronômetro e só o essencial na tela. Toque para sair.' },
+    { sel: '.rtab[data-tab="find"]', t: '🔎 Pesquisar', d: 'Procura no app inteiro: palavras, "frase exata", tipo de página, caderno e período.' },
+    { sel: '#btn-cloud', t: '☁ Nuvem e atualizações', d: 'Seus textos sincronizam entre o computador, o tablet e o celular. Quando houver versão nova do app, o ⟳ ao lado fica verde — é só tocar.' },
+    { t: '🙌 Pronto para semear!', d: 'Comece criando sua primeira página em ＋ Página. Para ver este guia de novo, toque em "❓ Guia" no rodapé da lista de cadernos.' },
+  ],
+  done() { return !!App.meta?.tourDone || (() => { try { return !!localStorage.getItem('ss-tour-done'); } catch (e) { return false; } })(); },
+  markDone() { App.meta.tourDone = Date.now(); App.saveMeta(); try { localStorage.setItem('ss-tour-done', '1'); } catch (e) { } },
+  maybeStart() { if (!this.done()) setTimeout(() => { if (!this.done() && !$('.modal') && !document.body.classList.contains('gated')) this.start(); }, 900); },
+  start() {
+    this.stop(); this.i = 0; this.wasCollapsed = document.body.classList.contains('nav-collapsed');
+    this.shade = el('div', { class: 'tour-hole' }); this.card = el('div', { class: 'tour-card', role: 'dialog', 'aria-live': 'polite' });
+    this.block = el('div', { class: 'tour-block', onclick: () => this.next() });
+    document.body.append(this.block, this.shade, this.card);
+    this.onKey = e => { if (e.key === 'Escape') this.finish(); else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); this.next(); } else if (e.key === 'ArrowLeft') this.go(this.i - 1); };
+    this.onResize = debounce(() => this.paint(), 120);
+    document.addEventListener('keydown', this.onKey, true); window.addEventListener('resize', this.onResize);
+    this.go(0);
+  },
+  target(st) {
+    if (!st.sel) return null;
+    for (const s of st.sel.split(/,\s*/)) { const e = $(s); if (e) { const r = e.getBoundingClientRect(); if (r.width && r.height) return e; } }
+    return null;
+  },
+  go(i) {
+    if (i < 0) return; if (i >= this.STEPS.length) return this.finish();
+    this.i = i; const st = this.STEPS[i];
+    if (window.innerWidth < 980) document.body.classList.toggle('nav-collapsed', !st.nav);
+    setTimeout(() => { const t = this.target(st); if (st.sel && !t && i < this.STEPS.length - 1) return this.go(i + (this.dir || 1)); t?.scrollIntoView?.({ block: 'nearest' }); this.paint(); }, st.nav !== this.lastNav ? 260 : 30);
+    this.lastNav = st.nav;
+  },
+  next() { this.dir = 1; this.go(this.i + 1); },
+  paint() {
+    const st = this.STEPS[this.i], t = this.target(st), C = this.card;
+    const n = this.STEPS.length, last = this.i === n - 1;
+    C.innerHTML = '';
+    C.append(el('div', { class: 'tour-step', text: `${this.i + 1} de ${n}` }), el('h3', { text: st.t }), el('p', { text: st.d }),
+      el('div', { class: 'tour-btns' },
+        !last ? el('button', { class: 'btn link sm', text: 'Pular guia', onclick: () => this.finish() }) : el('span'),
+        el('span', { class: 'tour-gap' }),
+        this.i > 0 ? el('button', { class: 'btn sm', text: '← Voltar', onclick: () => { this.dir = -1; this.go(this.i - 1); } }) : null,
+        el('button', { class: 'btn primary sm', text: last ? 'Começar' : 'Próximo →', onclick: () => this.next() })));
+    const pad = 6;
+    if (t) {
+      const r = t.getBoundingClientRect();
+      Object.assign(this.shade.style, { display: 'block', left: r.left - pad + 'px', top: r.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+      this.card.classList.remove('center');
+      const cw = Math.min(360, innerWidth - 24), ch = C.offsetHeight || 180, vh = window.visualViewport?.height || innerHeight;
+      let top = r.bottom + 14; if (top + ch > vh - 10) top = r.top - ch - 14; if (top < 10) top = Math.min(vh - ch - 10, Math.max(10, r.top + 20));
+      const left = Math.max(12, Math.min(innerWidth - cw - 12, r.left + r.width / 2 - cw / 2));
+      Object.assign(C.style, { width: cw + 'px', left: left + 'px', top: top + 'px' });
+    } else {
+      Object.assign(this.shade.style, { display: 'block', left: '50%', top: '50%', width: '0px', height: '0px' });
+      this.card.classList.add('center'); Object.assign(C.style, { width: Math.min(420, innerWidth - 24) + 'px', left: '', top: '' });
+    }
+    C.querySelector('.btn.primary')?.focus({ preventScroll: true });
+  },
+  finish() { this.markDone(); this.stop(); if (window.innerWidth < 980) document.body.classList.toggle('nav-collapsed', this.wasCollapsed ?? true); },
+  stop() {
+    this.shade?.remove(); this.card?.remove(); this.block?.remove(); this.shade = this.card = this.block = null;
+    if (this.onKey) document.removeEventListener('keydown', this.onKey, true); if (this.onResize) window.removeEventListener('resize', this.onResize);
   }
 };
 

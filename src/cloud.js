@@ -171,7 +171,7 @@ const Cloud = {
   /* Cadernos/seções/tipos: une por id; o mais recente vence nos itens em comum; exclusões viajam como lista */
   metaPayload() {
     const m = App.meta;
-    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
+    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
   },
   async syncMeta() {
     const r = await this.rest('/rest/v1/user_meta?select=data,updated_at,server_updated');
@@ -203,6 +203,7 @@ const Cloud = {
       if (remote.updated_at > m.metaUpdated) { if (rd.theme) m.theme = rd.theme; if (rd.readerTheme) m.readerTheme = rd.readerTheme; if (rd.readerSerif != null) m.readerSerif = rd.readerSerif; }
       try { AI.fromCloud(rd.ai); } catch (e) { }
       if (rd.groupNames && remote.updated_at > m.metaUpdated) m.groupNames = rd.groupNames;
+      if (rd.tourDone && !m.tourDone) m.tourDone = rd.tourDone;
       if (rd.follow) { // continuar de onde parei em outro aparelho
         const f = rd.follow; if ((f.onT || 0) > (m.followT || 0)) { m.follow = !!f.on; m.followT = f.onT; }
         if (m.follow && f.last) { const L = m.lastOpen ||= {}, norm = e => typeof e === 'string' ? { id: e, t: 0 } : (e || { t: 0 });
@@ -411,7 +412,7 @@ const CloudUI = {
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
-      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() })),
+      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() }), el('button', { class: 'btn link sm', text: '❓ Guia', onclick: () => { document.querySelectorAll('.modal-back').forEach(b => b.querySelector('.modal-head .icon-btn')?.click()); Tour.start(); } })),
         el('button', { class: 'btn sm', text: '⟳ Atualizar agora', title: 'Baixa a versão mais nova do app (seus textos não são afetados)', onclick: () => Updater.now() })),
       el('div', { class: 'row-btns' }, btn,
         el('button', { class: 'btn', text: 'Sair desta conta', onclick: async () => { Cloud.listeners.delete(paint); App.flush(); await Cloud.signOut(); location.reload(); } }),
@@ -445,7 +446,7 @@ const Gate = {
     if (!await Team.enforce()) return;
     this.active = false; this.box?.remove(); document.body.classList.remove('gated'); CloudUI.body = this._prev;
     Cloud.setStatus('pending'); Cloud.schedule(100); UI.toast('Bem-vindo! Sincronizando seus cadernos…');
-    this._res?.();
+    this._res?.(); setTimeout(() => Tour.maybeStart(), 2500);
   },
   async wipe() {
     if (!await UI.confirm('Sair e apagar deste aparelho', 'Os cadernos, livros e imagens serão apagados SÓ deste aparelho (continuam na nuvem e nos seus outros aparelhos). Use em computador emprestado ou da igreja.', 'Apagar e sair')) return;
