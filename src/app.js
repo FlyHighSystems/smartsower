@@ -428,7 +428,7 @@ const App = {
           <span class="s-actions">
             <button class="btn sm ai-btn" id="s-review" title="Revisar com IA (Claude e Gemini) e conferir referências">✦ Revisar</button>
             <button class="btn sm" id="s-report" title="Pregações registradas e relatório pós-culto">📊 Pregações${(s.preached || []).length ? ' (' + s.preached.length + ')' : ''}</button>
-            <button class="btn sm" id="s-share" title="Copiar para WhatsApp ou criar link de leitura">↗ Compartilhar</button>
+            <button class="btn sm" id="s-share" title="Copiar para WhatsApp ou criar um link de leitura (sem conta)">↗ Enviar</button>
             <button class="btn sm" id="s-slide" title="Gerar imagem com o título para o telão ou redes sociais">🖼 Telão</button>
             <button class="btn sm" id="s-hist" title="Versões anteriores desta página">🕘 Versões</button>
             <button class="btn sm" id="s-move" title="Mover ou copiar para outra seção">⇢ Mover/Copiar</button>

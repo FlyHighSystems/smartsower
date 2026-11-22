@@ -731,3 +731,4 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 @media print{span.by{background:none!important;text-decoration:none!important}}
 .by-tag{--by:#7719aa;margin-left:8px;font-size:11px;color:var(--by);font-weight:600}
 .b-conflict{outline:2px dashed #e8a33c;outline-offset:3px}.conf-tag{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;background:#fff4ce;color:#5c4400;padding:6px 10px;border-radius:8px;margin-bottom:6px}
+.shr-btn{align-self:center}.shr-btn.on{border-color:var(--accent);color:var(--accent);font-weight:600}

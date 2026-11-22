@@ -234,7 +234,16 @@ const Shared = {
     }
     return box;
   },
+  // botão "👥 Compartilhar" ao lado do tipo da página
+  shareButton(s) {
+    const nb = this.nbOfPage(s); if (!nb) return null;
+    const on = this.isSharedNb(nb), n = nb.shared?.members?.length || 0;
+    const label = nb.foreign ? '👥 Compartilhado' : on ? `👥 Compartilhado${n ? ' · ' + n : ''}` : '👥 Compartilhar';
+    return el('button', { class: 'btn sm shr-btn' + (on ? ' on' : ''), id: 's-shr', title: nb.foreign ? `Caderno de ${nb.foreign.ownerName || ''} — compartilhado com você` : on ? 'Pessoas e permissões deste caderno' : `Compartilhar o caderno “${nb.name}” com pessoas da equipe`,
+      text: label, onclick: () => nb.foreign ? App.notebookMenu() : this.open(nb) });
+  },
   decorate(s) {
+    $('#s-shr')?.remove(); { const b = this.shareButton(s), anchor = $('#s-kind')?.closest('label') || $('#bk-kind')?.closest('label'); if (b && anchor) anchor.after(b); }
     if (!s || Book.is(s) && !this.inShared(s)) { document.body.classList.remove('page-ro'); return; }
     $('#editor-inner .shr-head')?.remove(); $('#editor-inner .ro-banner')?.remove();
     const h = this.headControls(s); if (h) { const meta = $('#editor-inner .s-meta') || $('#editor-inner .bk-head'); meta ? meta.after(h) : $('#editor-inner').prepend(h); }
