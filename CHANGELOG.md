@@ -2,6 +2,12 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.9 — 22/11/2026
+- **Cadernos compartilhados**: no menu do caderno, "👥 Compartilhar…" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em "Compartilhados comigo".
+- Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.
+- O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.
+- Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠.
+
 ## 3.12.8 — 22/11/2026
 - Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em "❓ Guia" no rodapé dos cadernos ou em ☁.
 

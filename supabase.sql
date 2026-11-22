@@ -204,3 +204,99 @@ create policy "images_own_delete" on storage.objects for delete to authenticated
 
 -- Conferência: deve listar o seu e-mail como admin
 select email, role from public.team_members;
+
+-- ============================================================
+-- Cadernos compartilhados (dono escolhe as pessoas da equipe;
+-- cada página define "só leitura" ou "colaboração")
+-- ============================================================
+create table if not exists public.shared_nbs (
+  id             text   primary key,
+  owner          uuid   not null default auth.uid() references auth.users(id) on delete cascade,
+  data           jsonb  not null default '{}'::jsonb,   -- nome, cor, seções, padrão das páginas
+  updated_at     bigint not null default public.ss_now_ms(),
+  deleted        boolean not null default false,
+  server_updated bigint not null default public.ss_now_ms()
+);
+drop trigger if exists shared_nbs_touch on public.shared_nbs;
+create trigger shared_nbs_touch before insert or update on public.shared_nbs
+  for each row execute function public.ss_touch();
+
+create table if not exists public.shared_members (
+  nb_id  text not null references public.shared_nbs(id) on delete cascade,
+  email  text not null check (email = lower(email)),
+  primary key (nb_id, email)
+);
+
+alter table public.sermons add column if not exists shared_nb text;
+create index if not exists sermons_shared_idx on public.sermons (shared_nb, server_updated);
+
+create or replace function public.nb_owner(nb text) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.shared_nbs n where n.id = nb and n.owner = auth.uid() and not n.deleted)
+$$;
+create or replace function public.nb_can_read(nb text) returns boolean
+language sql stable security definer set search_path = public as $$
+  select public.is_member() and exists (
+    select 1 from public.shared_nbs n where n.id = nb and not n.deleted and (
+      n.owner = auth.uid() or exists (select 1 from public.shared_members m where m.nb_id = n.id and m.email = lower(auth.jwt()->>'email'))))
+$$;
+
+alter table public.shared_nbs enable row level security;
+drop policy if exists "snb_read" on public.shared_nbs;
+create policy "snb_read" on public.shared_nbs for select to authenticated
+  using (owner = auth.uid() or public.nb_can_read(id));
+drop policy if exists "snb_owner_ins" on public.shared_nbs;
+create policy "snb_owner_ins" on public.shared_nbs for insert to authenticated
+  with check (owner = auth.uid() and public.is_member());
+drop policy if exists "snb_owner_upd" on public.shared_nbs;
+create policy "snb_owner_upd" on public.shared_nbs for update to authenticated
+  using (owner = auth.uid()) with check (owner = auth.uid());
+drop policy if exists "snb_owner_del" on public.shared_nbs;
+create policy "snb_owner_del" on public.shared_nbs for delete to authenticated using (owner = auth.uid());
+
+alter table public.shared_members enable row level security;
+drop policy if exists "smem_read" on public.shared_members;
+create policy "smem_read" on public.shared_members for select to authenticated
+  using (public.nb_owner(nb_id) or email = lower(auth.jwt()->>'email'));
+drop policy if exists "smem_owner_write" on public.shared_members;
+create policy "smem_owner_write" on public.shared_members for all to authenticated
+  using (public.nb_owner(nb_id)) with check (public.nb_owner(nb_id));
+drop policy if exists "smem_self_leave" on public.shared_members;
+create policy "smem_self_leave" on public.shared_members for delete to authenticated
+  using (email = lower(auth.jwt()->>'email'));
+
+-- Páginas: o autor faz tudo; quem participa do caderno lê; edita só páginas abertas para colaboração
+-- (e não pode excluir nem fechar a página de outra pessoa); o dono do caderno pode tudo nas páginas dele.
+drop policy if exists "sermons_own" on public.sermons;
+drop policy if exists "sermons_read" on public.sermons;
+create policy "sermons_read" on public.sermons for select to authenticated
+  using ((user_id = auth.uid() and public.is_member()) or (shared_nb is not null and public.nb_can_read(shared_nb)));
+drop policy if exists "sermons_ins" on public.sermons;
+create policy "sermons_ins" on public.sermons for insert to authenticated
+  with check (user_id = auth.uid() and public.is_member() and (shared_nb is null or public.nb_can_read(shared_nb)));
+drop policy if exists "sermons_upd" on public.sermons;
+create policy "sermons_upd" on public.sermons for update to authenticated
+  using ((user_id = auth.uid() and public.is_member())
+      or (shared_nb is not null and public.nb_owner(shared_nb))
+      or (shared_nb is not null and public.nb_can_read(shared_nb) and data->>'shareMode' = 'edit'))
+  with check ((user_id = auth.uid() and public.is_member() and (shared_nb is null or public.nb_can_read(shared_nb)))
+      or (shared_nb is not null and public.nb_owner(shared_nb))
+      or (shared_nb is not null and public.nb_can_read(shared_nb) and data->>'shareMode' = 'edit' and not deleted));
+drop policy if exists "sermons_del" on public.sermons;
+create policy "sermons_del" on public.sermons for delete to authenticated using (user_id = auth.uid());
+
+-- Diretório da equipe (nome e e-mail) para escolher com quem compartilhar
+create or replace function public.team_people() returns table (email text, name text)
+language plpgsql stable security definer set search_path = public as $$
+begin
+  if not public.is_member() then raise exception 'Apenas membros da equipe.'; end if;
+  return query select t.email, t.name from public.team_members t order by t.name, t.email;
+end $$;
+revoke all on function public.team_people() from public;
+grant execute on function public.team_people() to authenticated;
+
+-- Imagens: quem é da equipe consegue abrir as imagens das páginas compartilhadas
+-- (os nomes dos arquivos são códigos impossíveis de adivinhar)
+drop policy if exists "images_own_select" on storage.objects;
+create policy "images_own_select" on storage.objects for select to authenticated
+  using (bucket_id = 'images' and public.is_member());

@@ -774,7 +774,7 @@ Seja específico e honesto; não elogie à toa; notas de 0 a 10.`;
    Fixada: vira uma coluna à esquerda. Solta: abre como menu flutuante. */
 const NbPanel = {
   /* nomes dos dois grupos de cadernos (o usuário pode renomear; vai junto com a conta) */
-  gname(k) { return App.meta.groupNames?.[k] || (k === 'book' ? 'Livros' : 'Sermões'); },
+  gname(k) { return App.meta.groupNames?.[k] || (k === 'book' ? 'Livros' : k === 'shared' ? 'Compartilhados comigo' : 'Sermões'); },
   async renameGroup(k) {
     const n = await UI.ask('Renomear grupo', this.gname(k), k === 'book' ? 'Ex.: Livros, Escrita' : 'Ex.: Ministério, Pregações e devocionais'); if (!n?.trim()) return;
     (App.meta.groupNames ||= {})[k] = n.trim(); App.saveMeta(); App.renderNav();
@@ -819,7 +819,7 @@ const NbPanel = {
       g.ondblclick = () => this.renameGroup(k); this.col.append(g);
       for (const nb of list) {
         const row = el('div', { class: 'nbc-row' + (nb.id === m.currentNb ? ' on' : ''), draggable: 'true', 'data-id': nb.id, title: nb.name, onclick: () => this.switchTo(nb.id) },
-          el('span', { class: 'nb-ic', text: Book.isNb(nb) ? '📖' : '🎤' }), el('span', { class: 'nbc-name', text: nb.name }), el('span', { class: 'nbc-n', text: count(nb) }),
+          el('span', { class: 'nb-ic', text: nb.foreign || nb.shared ? '👥' : Book.isNb(nb) ? '📖' : '🎤' }), el('span', { class: 'nbc-name', text: nb.name, title: nb.foreign ? `Caderno de ${nb.foreign.ownerName || ''}` : nb.name }), el('span', { class: 'nbc-n', text: count(nb) }),
           el('button', { class: 'icon-btn sm', title: 'Opções do caderno', text: '⋯', onclick: e => { e.stopPropagation(); if (nb.id !== m.currentNb) this.switchTo(nb.id); this.close(); App.notebookMenu(); } }));
         row.addEventListener('dragstart', e => { this.drag = nb.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', nb.id); });
         row.addEventListener('dragover', e => { if (!this.drag || this.drag === nb.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); row.classList.toggle('d-after', e.clientY > r.top + r.height / 2); row.classList.toggle('d-before', e.clientY <= r.top + r.height / 2); });
@@ -831,6 +831,6 @@ const NbPanel = {
         this.col.append(row);
       }
     };
-    group('ser', m.notebooks.filter(n => !Book.isNb(n))); group('book', m.notebooks.filter(n => Book.isNb(n)));
+    group('ser', m.notebooks.filter(n => !n.foreign && !Book.isNb(n))); group('book', m.notebooks.filter(n => !n.foreign && Book.isNb(n))); group('shared', m.notebooks.filter(n => n.foreign));
   }
 };

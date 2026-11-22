@@ -130,7 +130,9 @@ const Cloud = {
     clearTimeout(this._t); this._t = setTimeout(() => this.sync(), ms);
     if (this.status === 'ok') this.setStatus('pending');
   },
-  tomb(id) { this.st.tombs[id] = Date.now(); delete this.st.synced[id]; this.saveState(); this.schedule(); },
+  tomb(id) {
+    const o = this.st.owners?.[id]; if (o && o !== this.uid()) { (this.st.otherTombs ||= {})[id] = { owner: o, ts: Date.now() }; this.saveState(); this.schedule(); return; }
+    this.st.tombs[id] = Date.now(); delete this.st.synced[id]; this.saveState(); this.schedule(); },
 
   /* ---------- sincronização ---------- */
   /* devolve uma promessa que só termina quando a sincronização (inclusive a que estava em andamento) acabar */
@@ -147,9 +149,11 @@ const Cloud = {
       App.flush();
       if (!await Team.enforce()) return;
       this.setProg({ label: 'Cadernos e seções…' }); await this.syncMeta();
+      Shared.conflicts = 0; this.setProg({ label: 'Cadernos compartilhados…' }); try { await Shared.sync(); } catch (e) { console.warn('compartilhados', e); }
       this.setProg({ label: 'Procurando novidades…' }); await this.pull();
       this.applyJump();
-      this.setProg({ label: 'Enviando…' }); await this.push();
+      this.setProg({ label: 'Enviando…' }); await this.push(); try { await Shared.pushOthers(); } catch (e) { console.warn('compartilhados', e); }
+      if (Shared.conflicts) UI.toast(`${Shared.conflicts} trecho(s) editado(s) ao mesmo tempo por outra pessoa — guardei as duas versões, marcadas com ⚠.`);
       this.st.at = Date.now(); this.saveState(); this.lastError = ''; this.last = { ...this.res, at: this.st.at };
       this.prog = null; this.setStatus('ok');
     } catch (e) {
@@ -171,7 +175,7 @@ const Cloud = {
   /* Cadernos/seções/tipos: une por id; o mais recente vence nos itens em comum; exclusões viajam como lista */
   metaPayload() {
     const m = App.meta;
-    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
+    return { notebooks: m.notebooks.filter(n => !n.foreign), sections: m.sections.filter(x => !x.foreign), customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
   },
   async syncMeta() {
     const r = await this.rest('/rest/v1/user_meta?select=data,updated_at,server_updated');
@@ -236,7 +240,7 @@ const Cloud = {
     let n = 0, conflicts = 0, cursor = this.st.lastPull || 0, more = true; const conflictIds = new Set();
     while (more) {
       // 1) lista leve (sem conteúdo) do que mudou desde a última vez
-      const r = await this.rest(`/rest/v1/sermons?select=id,updated_at,deleted,server_updated&server_updated=gt.${cursor}&order=server_updated.asc&limit=500`);
+      const r = await this.rest(`/rest/v1/sermons?select=id,updated_at,deleted,server_updated&user_id=eq.${this.uid()}&server_updated=gt.${cursor}&order=server_updated.asc&limit=500`);
       const rows = await r.json(); more = rows.length === 500;
       const need = [];
       for (const row of rows) {
@@ -260,9 +264,10 @@ const Cloud = {
       const base = n; if (need.length) this.setProg({ label: 'Baixando', done: 0, total: need.length });
       for (let i = 0; i < need.length; i += 40) {
         const ids = need.slice(i, i + 40).map(x => `"${x}"`).join(',');
-        const r2 = await this.rest(`/rest/v1/sermons?select=id,data,updated_at&id=in.(${encodeURIComponent(ids)})`);
+        const r2 = await this.rest(`/rest/v1/sermons?select=id,data,updated_at&user_id=eq.${this.uid()}&id=in.(${encodeURIComponent(ids)})`);
         for (const row of await r2.json()) {
           const local = App.sermons.get(row.id);
+          if (Shared.inShared(row.data) || (local && Shared.inShared(local))) { await Shared.receive(row); n++; continue; } // caderno compartilhado: junta bloco a bloco
           if (local && conflictIds.has(row.id)) { // os dois lados mudaram: a versão da nuvem fica, a deste aparelho vira cópia
             const copy = structuredClone(local); copy.id = uid(); copy.title = `${local.title} (conflito — outra versão, ${new Date(local.updated).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`; copy.updated = Date.now();
             App.sermons.set(copy.id, copy); await DB.put('sermons', copy.id, copy); conflicts++;
@@ -294,11 +299,12 @@ const Cloud = {
     const uidv = this.uid();
     const rows = [];
     for (const [id, ts] of Object.entries(this.st.tombs)) rows.push({ user_id: uidv, id, data: {}, updated_at: ts, deleted: true, _tomb: true });
-    const todo = [...App.sermons.values()].filter(s => !s.welcome && (this.st.synced[s.id] || 0) < s.updated); let k = 0;
+    const todo = [...App.sermons.values()].filter(s => !s.welcome && Shared.isAuthor(s) && (this.st.synced[s.id] || 0) < s.updated); let k = 0;
     for (const s of todo) {
       this.setProg({ label: 'Preparando envio', done: ++k, total: todo.length });
       if (await this.uploadImages(s)) await DB.put('sermons', s.id, s);
-      rows.push({ user_id: uidv, id: s.id, data: this.outbound(s), updated_at: s.updated, deleted: false });
+      const snb = Shared.sharedNbId(s); if (snb) { s.author ||= { email: Shared.myEmail() }; s.lastBy = Shared.myEmail(); }
+      rows.push({ user_id: uidv, id: s.id, data: this.outbound(s), updated_at: s.updated, deleted: false, ...(Shared.ready ? { shared_nb: snb } : {}), _base: !!snb });
     }
     if (!rows.length) return;
     this.res.up = rows.length; let sent = 0; this.setProg({ label: 'Enviando', done: 0, total: rows.length });
@@ -306,9 +312,9 @@ const Cloud = {
     let batch = [], size = 0;
     const send = async () => {
       if (!batch.length) return;
-      const body = JSON.stringify(batch.map(({ _tomb, ...r }) => r));
+      const body = JSON.stringify(batch.map(({ _tomb, _base, ...r }) => r));
       await this.rest('/rest/v1/sermons?on_conflict=user_id,id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body });
-      for (const r of batch) { this.st.synced[r.id] = r.updated_at; if (r._tomb) delete this.st.tombs[r.id]; }
+      for (const r of batch) { this.st.synced[r.id] = r.updated_at; if (r._tomb) delete this.st.tombs[r.id]; if (r._base) await Shared.saveBase(r, r.id); }
       sent += batch.length; this.setProg({ label: 'Enviando', done: sent, total: rows.length });
       this.saveState(); batch = []; size = 0;
     };

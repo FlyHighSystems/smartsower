@@ -127,7 +127,7 @@ const App = {
 
   /* ---- persistência ---- */
   pending: new Set(),
-  touch(s = this.cur) { if (!s) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
+  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
   _est: debounce(() => App.updateEstimate(), 400),
   updateEstimate() {
     const E = $('#s-est'); if (!E || !this.cur) return; const e = Estimate.sermon(this.cur);
@@ -152,13 +152,13 @@ const App = {
     };
     const newEmpty = async () => { const n = await UI.ask('Novo caderno', '', 'Ex.: Conferência 2027'); if (!n) return; const nb = { id: uid(), name: n, color: SECTION_COLORS[this.meta.notebooks.length % 10] }; this.meta.notebooks.push(nb); const sec = { id: uid(), nb: nb.id, name: 'Geral', color: SECTION_COLORS[0] }; this.meta.sections.push(sec); this.meta.currentNb = nb.id; this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
     $('#nb-menu').onclick = () => this.notebookMenu();
-    $('#sec-add').onclick = $('#sec-add')._orig = async () => { const n = await UI.ask('Nova seção (série, tema, evento…)', ''); if (!n) return; const sec = { id: uid(), nb: this.meta.currentNb, name: n, color: SECTION_COLORS[this.meta.sections.length % 10] }; this.meta.sections.push(sec); this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
+    $('#sec-add').onclick = $('#sec-add')._orig = async () => { if (App.meta.notebooks.find(n => n.id === this.meta.currentNb)?.foreign) return UI.toast('As seções deste caderno são do dono dele.'); const n = await UI.ask('Nova seção (série, tema, evento…)', ''); if (!n) return; const sec = { id: uid(), nb: this.meta.currentNb, name: n, color: SECTION_COLORS[this.meta.sections.length % 10] }; this.meta.sections.push(sec); this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
     $('#page-add').onclick = e => PageKinds.addMenu(e.currentTarget);
     $('#page-import').onclick = () => Porter.importDialog();
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -172,7 +172,9 @@ const App = {
   },
   async notebookMenu() {
     const nb = this.meta.notebooks.find(n => n.id === this.meta.currentNb); if (!nb) return;
+    if (nb.foreign) { const m2 = UI.modal({ title: '👥 ' + nb.name, body: el('p', { class: 'muted', text: `Caderno de ${nb.foreign.ownerName || Shared.nameOf(nb.foreign.ownerEmail)}, compartilhado com você. Seções e pessoas são definidas pelo dono.` }), actions: [{ label: 'Sair deste caderno', danger: true, onClick: () => Shared.leave(nb) }] }); return; }
     const m = UI.modal({ title: 'Caderno: ' + nb.name, body: '', actions: [
+      { label: nb.shared ? '👥 Pessoas e permissões' : '👥 Compartilhar…', onClick: () => Shared.open(nb) },
       { label: 'Renomear', onClick: async () => { const n = await UI.ask('Renomear caderno', nb.name); if (n) { nb.name = n; this.saveMeta(); this.renderNav(); } } },
       { label: Book.isNb(nb) ? 'Voltar a caderno comum' : '📖 Transformar em livro', onClick: async () => {
         if (Book.isNb(nb)) { if (!await UI.confirm('Voltar a caderno comum', 'As páginas continuam iguais; só some o modo livro (metas, quadro, exportação). Os dados do livro ficam guardados.', 'Voltar a caderno comum')) return; nb.kind = ''; }
@@ -192,9 +194,9 @@ const App = {
   renderNav() {
     const m = this.meta;
     { /* cadernos agrupados por tipo: sermões e livros */
-      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${Book.isNb(n) ? '📖' : '🎤'} ${esc(n.name)}</option>`;
-      const ser = m.notebooks.filter(n => !Book.isNb(n)), bks = m.notebooks.filter(n => Book.isNb(n));
-      $('#nb-select').innerHTML = bks.length ? `<optgroup label="${esc(NbPanel.gname('ser'))}">${ser.map(opt).join('')}</optgroup><optgroup label="${esc(NbPanel.gname('book'))}">${bks.map(opt).join('')}</optgroup>` : ser.map(opt).join('');
+      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${n.foreign || n.shared ? '👥' : Book.isNb(n) ? '📖' : '🎤'} ${esc(n.name)}</option>`;
+      const ser = m.notebooks.filter(n => !n.foreign && !Book.isNb(n)), bks = m.notebooks.filter(n => !n.foreign && Book.isNb(n)), shr = m.notebooks.filter(n => n.foreign);
+      $('#nb-select').innerHTML = (bks.length || shr.length) ? `<optgroup label="${esc(NbPanel.gname('ser'))}">${ser.map(opt).join('')}</optgroup>` + (bks.length ? `<optgroup label="${esc(NbPanel.gname('book'))}">${bks.map(opt).join('')}</optgroup>` : '') + (shr.length ? `<optgroup label="Compartilhados comigo">${shr.map(opt).join('')}</optgroup>` : '') : ser.map(opt).join('');
       $('#nb-select').title = NbPanel.gname(Book.cur() ? 'book' : 'ser');
       document.body.classList.toggle('in-book', !!Book.cur());
     }
@@ -318,7 +320,7 @@ const App = {
     const cp = el('button', { class: 'btn sm', text: 'Copiar para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Copiar ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, true); } });
     const del = el('button', { class: 'btn sm danger-text', text: 'Excluir', disabled: !n, onclick: async () => {
       if (!await UI.confirm('Excluir páginas', `Excluir ${n} ministração(ões)?`)) return;
-      for (const id of this.sel) { this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
+      for (const id of this.sel) { const x = this.sermons.get(id); if (x && !Shared.canDelete(x)) continue; this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
       if (this.cur && !this.sermons.has(this.cur.id)) { this.cur = null; this.renderEditor(); }
       this.sel = new Set(); this.renderNav();
     } });
@@ -330,6 +332,7 @@ const App = {
     let last = null;
     for (const id of ids) {
       const s = this.sermons.get(id); if (!s) continue;
+      if (!copy && !Shared.isAuthor(s) && !Shared.isNbOwner(s)) { UI.toast(`“${s.title}” é de outra pessoa — use Copiar.`); continue; }
       if (copy) {
         const c = structuredClone(s); c.id = uid(); c.sec = secId; c.created = Date.now(); c.blocks.forEach(b => b.id = uid()); c.level = 0; delete c.collapsed; if (c.order != null) c.order = s.order + 0.5;
         delete c.preached; delete c.reviews; delete c.source; delete c.welcome;
@@ -346,6 +349,7 @@ const App = {
     const inBook = Book.isNb(Book.nbOf(this.meta.currentSec));
     if (inBook) { data = { ...Book.blankChapter(), ...data }; Book.ensureOrder(this.meta.currentSec); }
     const s = Object.assign(blankSermon(this.meta.currentSec), data);
+    if (Shared.inShared(s)) { s.shareMode ||= Shared.mode(s); s.author = { email: Shared.myEmail() }; }
     this.sermons.set(s.id, s);
     const l = this.sectionSermons(this.meta.currentSec);
     if (l.some(x => x.order != null)) { // ordem manual: entra logo abaixo da página aberta (e das subpáginas dela)
@@ -390,6 +394,7 @@ const App = {
   },
   async deleteSermon() {
     const s = this.cur; if (!s) return;
+    if (!Shared.canDelete(s)) return UI.toast('Só o autor da página ou o dono do caderno podem excluir.');
     if (!await UI.confirm('Excluir ministração', `Excluir “${s.title}”?`)) return;
     this.sermons.delete(s.id); await DB.del('sermons', s.id); Cloud.tomb(s.id); this.cur = null;
     this.renderNav(); const n = this.sectionSermons(this.meta.currentSec)[0]; n ? this.open(n.id, false, true) : this.renderEditor();
@@ -464,12 +469,13 @@ const App = {
     ed.append(add);
     this.renderBlocks();
     if (Book.is(s)) Footnotes.renderList();
+    Shared.decorate(s);
   },
   renderBlocks() {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints();
+    this.numberPoints(); Shared.afterBlocks(this.cur);
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },
@@ -578,7 +584,7 @@ const App = {
   bindEditable(body, b) {
     body.spellcheck = Spell.live(); body.lang = LANGS[App.cur?.lang]?.lt || 'pt-BR';
     const fixC = debounce(() => { if (ensureContrast(body)) { b.html = body.innerHTML; this.touch(); } }, 250);
-    body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; this.touch(); fixC(); });
+    body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; if (b.by && this.cur && Shared.isAuthor(this.cur) && b.by !== Shared.myEmail()) { delete b.by; body.closest('.block')?.querySelector('.by-tag')?.remove(); } this.touch(); fixC(); });
     requestAnimationFrame(() => { if (body.isConnected && ensureContrast(body)) { b.html = body.innerHTML; this.touch(b === this.cur?.blocks.find(x => x.id === b.id) ? this.cur : undefined); } });
     body.addEventListener('paste', e => {
       const html = e.clipboardData.getData('text/html');

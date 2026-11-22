@@ -724,6 +724,24 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .tour-card h3{margin:2px 0 6px;font-size:18px}.tour-card p{margin:0 0 12px;line-height:1.5;font-size:14.5px}
 .tour-step{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .tour-btns{display:flex;align-items:center;gap:6px}.tour-gap{flex:1}
+
+/* cadernos compartilhados */
+.shr-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;max-height:320px;overflow:auto;margin:8px 0}
+.shr-p{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line);cursor:pointer}.shr-p:first-child{border-top:0}.shr-p .muted{margin-left:auto}
+.shr-dot{width:10px;height:10px;border-radius:50%}
+.shr-mode{display:flex;flex-direction:column;gap:6px;margin:12px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+.shr-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 4px;padding:6px 10px;border-radius:10px;background:var(--hover,#7719aa10);font-size:13px}
+.shr-tag{font-weight:600}.shr-tag.ok{color:#107c10}.shr-tag.ro{color:#a4262c}.shr-head select{font:inherit;padding:2px 6px}
+.shr-who{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.shr-c{--by:#7719aa;border-bottom:2px solid var(--by);padding:0 3px}
+.ro-banner{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:#fde7e9;color:#7a1d22;font-size:13.5px}
+[data-theme=dark] .ro-banner{background:#3b1d21;color:#ffb3ba}
+body.page-ro .ribbon-body .rpanel[data-panel=home], body.page-ro .ribbon-body .rpanel[data-panel=insert], body.page-ro .ribbon-body .rpanel[data-panel=draw]{opacity:.4;pointer-events:none}
+body.page-ro .add-bar, body.page-ro .b-actions, body.page-ro .b-tools{display:none!important}
+span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);text-decoration-thickness:2px;text-underline-offset:3px;background:color-mix(in srgb,var(--by) 9%,transparent);border-radius:2px;cursor:help}
+#reader span.by,.reader span.by{background:none;text-decoration:none}
+@media print{span.by{background:none!important;text-decoration:none!important}}
+.by-tag{--by:#7719aa;margin-left:8px;font-size:11px;color:var(--by);font-weight:600}
+.b-conflict{outline:2px dashed #e8a33c;outline-offset:3px}.conf-tag{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;background:#fff4ce;color:#5c4400;padding:6px 10px;border-radius:8px;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -921,7 +939,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.8", "code": "a23da1", "at": "22/11 16:18", "notes": [{"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
+<script>window.SS_BUILD = {"version": "3.12.9", "code": "5ca3ad", "at": "22/11 16:37", "notes": [{"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1748,7 +1766,7 @@ const App = {
 
   /* ---- persistência ---- */
   pending: new Set(),
-  touch(s = this.cur) { if (!s) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
+  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
   _est: debounce(() => App.updateEstimate(), 400),
   updateEstimate() {
     const E = $('#s-est'); if (!E || !this.cur) return; const e = Estimate.sermon(this.cur);
@@ -1773,13 +1791,13 @@ const App = {
     };
     const newEmpty = async () => { const n = await UI.ask('Novo caderno', '', 'Ex.: Conferência 2027'); if (!n) return; const nb = { id: uid(), name: n, color: SECTION_COLORS[this.meta.notebooks.length % 10] }; this.meta.notebooks.push(nb); const sec = { id: uid(), nb: nb.id, name: 'Geral', color: SECTION_COLORS[0] }; this.meta.sections.push(sec); this.meta.currentNb = nb.id; this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
     $('#nb-menu').onclick = () => this.notebookMenu();
-    $('#sec-add').onclick = $('#sec-add')._orig = async () => { const n = await UI.ask('Nova seção (série, tema, evento…)', ''); if (!n) return; const sec = { id: uid(), nb: this.meta.currentNb, name: n, color: SECTION_COLORS[this.meta.sections.length % 10] }; this.meta.sections.push(sec); this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
+    $('#sec-add').onclick = $('#sec-add')._orig = async () => { if (App.meta.notebooks.find(n => n.id === this.meta.currentNb)?.foreign) return UI.toast('As seções deste caderno são do dono dele.'); const n = await UI.ask('Nova seção (série, tema, evento…)', ''); if (!n) return; const sec = { id: uid(), nb: this.meta.currentNb, name: n, color: SECTION_COLORS[this.meta.sections.length % 10] }; this.meta.sections.push(sec); this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
     $('#page-add').onclick = e => PageKinds.addMenu(e.currentTarget);
     $('#page-import').onclick = () => Porter.importDialog();
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -1793,7 +1811,9 @@ const App = {
   },
   async notebookMenu() {
     const nb = this.meta.notebooks.find(n => n.id === this.meta.currentNb); if (!nb) return;
+    if (nb.foreign) { const m2 = UI.modal({ title: '👥 ' + nb.name, body: el('p', { class: 'muted', text: `Caderno de ${nb.foreign.ownerName || Shared.nameOf(nb.foreign.ownerEmail)}, compartilhado com você. Seções e pessoas são definidas pelo dono.` }), actions: [{ label: 'Sair deste caderno', danger: true, onClick: () => Shared.leave(nb) }] }); return; }
     const m = UI.modal({ title: 'Caderno: ' + nb.name, body: '', actions: [
+      { label: nb.shared ? '👥 Pessoas e permissões' : '👥 Compartilhar…', onClick: () => Shared.open(nb) },
       { label: 'Renomear', onClick: async () => { const n = await UI.ask('Renomear caderno', nb.name); if (n) { nb.name = n; this.saveMeta(); this.renderNav(); } } },
       { label: Book.isNb(nb) ? 'Voltar a caderno comum' : '📖 Transformar em livro', onClick: async () => {
         if (Book.isNb(nb)) { if (!await UI.confirm('Voltar a caderno comum', 'As páginas continuam iguais; só some o modo livro (metas, quadro, exportação). Os dados do livro ficam guardados.', 'Voltar a caderno comum')) return; nb.kind = ''; }
@@ -1813,9 +1833,9 @@ const App = {
   renderNav() {
     const m = this.meta;
     { /* cadernos agrupados por tipo: sermões e livros */
-      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${Book.isNb(n) ? '📖' : '🎤'} ${esc(n.name)}</option>`;
-      const ser = m.notebooks.filter(n => !Book.isNb(n)), bks = m.notebooks.filter(n => Book.isNb(n));
-      $('#nb-select').innerHTML = bks.length ? `<optgroup label="${esc(NbPanel.gname('ser'))}">${ser.map(opt).join('')}</optgroup><optgroup label="${esc(NbPanel.gname('book'))}">${bks.map(opt).join('')}</optgroup>` : ser.map(opt).join('');
+      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${n.foreign || n.shared ? '👥' : Book.isNb(n) ? '📖' : '🎤'} ${esc(n.name)}</option>`;
+      const ser = m.notebooks.filter(n => !n.foreign && !Book.isNb(n)), bks = m.notebooks.filter(n => !n.foreign && Book.isNb(n)), shr = m.notebooks.filter(n => n.foreign);
+      $('#nb-select').innerHTML = (bks.length || shr.length) ? `<optgroup label="${esc(NbPanel.gname('ser'))}">${ser.map(opt).join('')}</optgroup>` + (bks.length ? `<optgroup label="${esc(NbPanel.gname('book'))}">${bks.map(opt).join('')}</optgroup>` : '') + (shr.length ? `<optgroup label="Compartilhados comigo">${shr.map(opt).join('')}</optgroup>` : '') : ser.map(opt).join('');
       $('#nb-select').title = NbPanel.gname(Book.cur() ? 'book' : 'ser');
       document.body.classList.toggle('in-book', !!Book.cur());
     }
@@ -1939,7 +1959,7 @@ const App = {
     const cp = el('button', { class: 'btn sm', text: 'Copiar para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Copiar ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, true); } });
     const del = el('button', { class: 'btn sm danger-text', text: 'Excluir', disabled: !n, onclick: async () => {
       if (!await UI.confirm('Excluir páginas', `Excluir ${n} ministração(ões)?`)) return;
-      for (const id of this.sel) { this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
+      for (const id of this.sel) { const x = this.sermons.get(id); if (x && !Shared.canDelete(x)) continue; this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
       if (this.cur && !this.sermons.has(this.cur.id)) { this.cur = null; this.renderEditor(); }
       this.sel = new Set(); this.renderNav();
     } });
@@ -1951,6 +1971,7 @@ const App = {
     let last = null;
     for (const id of ids) {
       const s = this.sermons.get(id); if (!s) continue;
+      if (!copy && !Shared.isAuthor(s) && !Shared.isNbOwner(s)) { UI.toast(`“${s.title}” é de outra pessoa — use Copiar.`); continue; }
       if (copy) {
         const c = structuredClone(s); c.id = uid(); c.sec = secId; c.created = Date.now(); c.blocks.forEach(b => b.id = uid()); c.level = 0; delete c.collapsed; if (c.order != null) c.order = s.order + 0.5;
         delete c.preached; delete c.reviews; delete c.source; delete c.welcome;
@@ -1967,6 +1988,7 @@ const App = {
     const inBook = Book.isNb(Book.nbOf(this.meta.currentSec));
     if (inBook) { data = { ...Book.blankChapter(), ...data }; Book.ensureOrder(this.meta.currentSec); }
     const s = Object.assign(blankSermon(this.meta.currentSec), data);
+    if (Shared.inShared(s)) { s.shareMode ||= Shared.mode(s); s.author = { email: Shared.myEmail() }; }
     this.sermons.set(s.id, s);
     const l = this.sectionSermons(this.meta.currentSec);
     if (l.some(x => x.order != null)) { // ordem manual: entra logo abaixo da página aberta (e das subpáginas dela)
@@ -2011,6 +2033,7 @@ const App = {
   },
   async deleteSermon() {
     const s = this.cur; if (!s) return;
+    if (!Shared.canDelete(s)) return UI.toast('Só o autor da página ou o dono do caderno podem excluir.');
     if (!await UI.confirm('Excluir ministração', `Excluir “${s.title}”?`)) return;
     this.sermons.delete(s.id); await DB.del('sermons', s.id); Cloud.tomb(s.id); this.cur = null;
     this.renderNav(); const n = this.sectionSermons(this.meta.currentSec)[0]; n ? this.open(n.id, false, true) : this.renderEditor();
@@ -2085,12 +2108,13 @@ const App = {
     ed.append(add);
     this.renderBlocks();
     if (Book.is(s)) Footnotes.renderList();
+    Shared.decorate(s);
   },
   renderBlocks() {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints();
+    this.numberPoints(); Shared.afterBlocks(this.cur);
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },
@@ -2199,7 +2223,7 @@ const App = {
   bindEditable(body, b) {
     body.spellcheck = Spell.live(); body.lang = LANGS[App.cur?.lang]?.lt || 'pt-BR';
     const fixC = debounce(() => { if (ensureContrast(body)) { b.html = body.innerHTML; this.touch(); } }, 250);
-    body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; this.touch(); fixC(); });
+    body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; if (b.by && this.cur && Shared.isAuthor(this.cur) && b.by !== Shared.myEmail()) { delete b.by; body.closest('.block')?.querySelector('.by-tag')?.remove(); } this.touch(); fixC(); });
     requestAnimationFrame(() => { if (body.isConnected && ensureContrast(body)) { b.html = body.innerHTML; this.touch(b === this.cur?.blocks.find(x => x.id === b.id) ? this.cur : undefined); } });
     body.addEventListener('paste', e => {
       const html = e.clipboardData.getData('text/html');
@@ -3993,7 +4017,9 @@ const Cloud = {
     clearTimeout(this._t); this._t = setTimeout(() => this.sync(), ms);
     if (this.status === 'ok') this.setStatus('pending');
   },
-  tomb(id) { this.st.tombs[id] = Date.now(); delete this.st.synced[id]; this.saveState(); this.schedule(); },
+  tomb(id) {
+    const o = this.st.owners?.[id]; if (o && o !== this.uid()) { (this.st.otherTombs ||= {})[id] = { owner: o, ts: Date.now() }; this.saveState(); this.schedule(); return; }
+    this.st.tombs[id] = Date.now(); delete this.st.synced[id]; this.saveState(); this.schedule(); },
 
   /* ---------- sincronização ---------- */
   /* devolve uma promessa que só termina quando a sincronização (inclusive a que estava em andamento) acabar */
@@ -4010,9 +4036,11 @@ const Cloud = {
       App.flush();
       if (!await Team.enforce()) return;
       this.setProg({ label: 'Cadernos e seções…' }); await this.syncMeta();
+      Shared.conflicts = 0; this.setProg({ label: 'Cadernos compartilhados…' }); try { await Shared.sync(); } catch (e) { console.warn('compartilhados', e); }
       this.setProg({ label: 'Procurando novidades…' }); await this.pull();
       this.applyJump();
-      this.setProg({ label: 'Enviando…' }); await this.push();
+      this.setProg({ label: 'Enviando…' }); await this.push(); try { await Shared.pushOthers(); } catch (e) { console.warn('compartilhados', e); }
+      if (Shared.conflicts) UI.toast(`${Shared.conflicts} trecho(s) editado(s) ao mesmo tempo por outra pessoa — guardei as duas versões, marcadas com ⚠.`);
       this.st.at = Date.now(); this.saveState(); this.lastError = ''; this.last = { ...this.res, at: this.st.at };
       this.prog = null; this.setStatus('ok');
     } catch (e) {
@@ -4034,7 +4062,7 @@ const Cloud = {
   /* Cadernos/seções/tipos: une por id; o mais recente vence nos itens em comum; exclusões viajam como lista */
   metaPayload() {
     const m = App.meta;
-    return { notebooks: m.notebooks, sections: m.sections, customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
+    return { notebooks: m.notebooks.filter(n => !n.foreign), sections: m.sections.filter(x => !x.foreign), customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
   },
   async syncMeta() {
     const r = await this.rest('/rest/v1/user_meta?select=data,updated_at,server_updated');
@@ -4099,7 +4127,7 @@ const Cloud = {
     let n = 0, conflicts = 0, cursor = this.st.lastPull || 0, more = true; const conflictIds = new Set();
     while (more) {
       // 1) lista leve (sem conteúdo) do que mudou desde a última vez
-      const r = await this.rest(`/rest/v1/sermons?select=id,updated_at,deleted,server_updated&server_updated=gt.${cursor}&order=server_updated.asc&limit=500`);
+      const r = await this.rest(`/rest/v1/sermons?select=id,updated_at,deleted,server_updated&user_id=eq.${this.uid()}&server_updated=gt.${cursor}&order=server_updated.asc&limit=500`);
       const rows = await r.json(); more = rows.length === 500;
       const need = [];
       for (const row of rows) {
@@ -4123,9 +4151,10 @@ const Cloud = {
       const base = n; if (need.length) this.setProg({ label: 'Baixando', done: 0, total: need.length });
       for (let i = 0; i < need.length; i += 40) {
         const ids = need.slice(i, i + 40).map(x => `"${x}"`).join(',');
-        const r2 = await this.rest(`/rest/v1/sermons?select=id,data,updated_at&id=in.(${encodeURIComponent(ids)})`);
+        const r2 = await this.rest(`/rest/v1/sermons?select=id,data,updated_at&user_id=eq.${this.uid()}&id=in.(${encodeURIComponent(ids)})`);
         for (const row of await r2.json()) {
           const local = App.sermons.get(row.id);
+          if (Shared.inShared(row.data) || (local && Shared.inShared(local))) { await Shared.receive(row); n++; continue; } // caderno compartilhado: junta bloco a bloco
           if (local && conflictIds.has(row.id)) { // os dois lados mudaram: a versão da nuvem fica, a deste aparelho vira cópia
             const copy = structuredClone(local); copy.id = uid(); copy.title = `${local.title} (conflito — outra versão, ${new Date(local.updated).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`; copy.updated = Date.now();
             App.sermons.set(copy.id, copy); await DB.put('sermons', copy.id, copy); conflicts++;
@@ -4157,11 +4186,12 @@ const Cloud = {
     const uidv = this.uid();
     const rows = [];
     for (const [id, ts] of Object.entries(this.st.tombs)) rows.push({ user_id: uidv, id, data: {}, updated_at: ts, deleted: true, _tomb: true });
-    const todo = [...App.sermons.values()].filter(s => !s.welcome && (this.st.synced[s.id] || 0) < s.updated); let k = 0;
+    const todo = [...App.sermons.values()].filter(s => !s.welcome && Shared.isAuthor(s) && (this.st.synced[s.id] || 0) < s.updated); let k = 0;
     for (const s of todo) {
       this.setProg({ label: 'Preparando envio', done: ++k, total: todo.length });
       if (await this.uploadImages(s)) await DB.put('sermons', s.id, s);
-      rows.push({ user_id: uidv, id: s.id, data: this.outbound(s), updated_at: s.updated, deleted: false });
+      const snb = Shared.sharedNbId(s); if (snb) { s.author ||= { email: Shared.myEmail() }; s.lastBy = Shared.myEmail(); }
+      rows.push({ user_id: uidv, id: s.id, data: this.outbound(s), updated_at: s.updated, deleted: false, ...(Shared.ready ? { shared_nb: snb } : {}), _base: !!snb });
     }
     if (!rows.length) return;
     this.res.up = rows.length; let sent = 0; this.setProg({ label: 'Enviando', done: 0, total: rows.length });
@@ -4169,9 +4199,9 @@ const Cloud = {
     let batch = [], size = 0;
     const send = async () => {
       if (!batch.length) return;
-      const body = JSON.stringify(batch.map(({ _tomb, ...r }) => r));
+      const body = JSON.stringify(batch.map(({ _tomb, _base, ...r }) => r));
       await this.rest('/rest/v1/sermons?on_conflict=user_id,id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body });
-      for (const r of batch) { this.st.synced[r.id] = r.updated_at; if (r._tomb) delete this.st.tombs[r.id]; }
+      for (const r of batch) { this.st.synced[r.id] = r.updated_at; if (r._tomb) delete this.st.tombs[r.id]; if (r._base) await Shared.saveBase(r, r.id); }
       sent += batch.length; this.setProg({ label: 'Enviando', done: sent, total: rows.length });
       this.saveState(); batch = []; size = 0;
     };
@@ -4485,6 +4515,339 @@ const Team = {
       el('ol', { class: 'steps', html: '<li>No Supabase, abra <b>SQL Editor</b>, cole o conteúdo atualizado do arquivo <code>supabase.sql</code> e clique em <b>Run</b>. Quem já tem conta hoje (você) vira <b>administrador</b> automaticamente.</li><li>Em <b>Authentication › Sign In / Providers</b>, ligue <b>“Allow new users to sign up”</b>. Pode ligar sem medo: o banco recusa qualquer e-mail que não esteja na lista.</li>' }),
       el('p', { class: 'muted small', text: 'Detalhe técnico: ' + (this.lastErr || '') }),
       el('div', { class: 'row-btns' }, el('button', { class: 'btn primary', text: 'Já fiz — verificar', onclick: () => this.render() })));
+  }
+};
+
+/* ===== Cadernos compartilhados =====
+   • O dono compartilha o caderno (com as seções) com pessoas da equipe.
+   • Cada página é "✍️ Colaboração" ou "🔒 Só leitura" — quem define é o autor da página (ou o dono do caderno).
+   • Quando duas pessoas mexem na mesma página, junta bloco a bloco; se mexeram no MESMO bloco, guarda as duas versões.
+   • O texto escrito por outra pessoa fica marcado na cor dela (ver Authorship). */
+const Shared = {
+  people: new Map(), // e-mail -> nome
+  me() { return Cloud.uid?.() || null; },
+  myEmail() { return Team.email(); },
+  myName() { const e = this.myEmail(); return this.people.get(e) || e.split('@')[0]; },
+  nameOf(email) { return email ? (this.people.get(email) || email.split('@')[0]) : 'alguém'; },
+  color(email) { let h = 0; for (const c of String(email)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return `hsl(${h % 360} 70% 42%)`; },
+  nbOfPage(s) { const sec = App.meta.sections.find(x => x.id === s?.sec); return sec && App.meta.notebooks.find(n => n.id === sec.nb); },
+  isSharedNb(nb) { return !!(nb && (nb.shared || nb.foreign)); },
+  inShared(s) { return this.isSharedNb(this.nbOfPage(s)); },
+  sharedNbId(s) { const nb = this.nbOfPage(s); return this.isSharedNb(nb) ? nb.id : null; },
+  isAuthor(s) { return !s.owner || s.owner === this.me(); },
+  isNbOwner(s) { const nb = this.nbOfPage(s); return !!nb && !nb.foreign; },
+  mode(s) { const nb = this.nbOfPage(s); return s.shareMode || nb?.shared?.mode || nb?.foreign?.mode || 'edit'; },
+  canEdit(s) { if (!s || !this.inShared(s)) return true; return this.isAuthor(s) || this.isNbOwner(s) || this.mode(s) === 'edit'; },
+  canDelete(s) { if (!s || !this.inShared(s)) return true; return this.isAuthor(s) || this.isNbOwner(s); },
+  authorName(s) { return this.isAuthor(s) ? 'você' : this.nameOf(s.author?.email); },
+
+  async loadPeople() {
+    try { const c = JSON.parse(localStorage.getItem('ss-people') || '[]'); c.forEach(p => this.people.set(p.email, p.name || '')); } catch (e) { }
+    if (!Cloud.session || !navigator.onLine) return;
+    try { const list = await (await Cloud.rest('/rest/v1/rpc/team_people', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).json(); if (Array.isArray(list)) { this.people.clear(); list.forEach(p => this.people.set(p.email, p.name || '')); localStorage.setItem('ss-people', JSON.stringify(list)); } } catch (e) { }
+  },
+
+  /* ── tela "Compartilhar caderno" (só o dono) ── */
+  async open(nb) {
+    if (!Cloud.session) return UI.toast('Entre na sua conta (☁) para compartilhar cadernos.');
+    if (nb.foreign) return UI.toast('Só o dono pode mudar com quem este caderno é compartilhado.');
+    if (this.ready === false) return UI.modal({ title: '👥 Compartilhar cadernos', body: el('p', { html: 'Falta preparar o banco: no Supabase, abra <b>SQL Editor</b>, cole o arquivo <b>supabase-compartilhados.sql</b> e clique em <b>Run</b>. Depois toque em ⟳ e tente de novo.' }) });
+    await this.loadPeople();
+    const me = this.myEmail(), sel = new Set(nb.shared?.members || []); let mode = nb.shared?.mode || 'edit';
+    const body = el('div', { class: 'shr' });
+    const m = UI.modal({ title: '👥 Compartilhar “' + nb.name + '”', body, wide: true });
+    const draw = () => {
+      body.innerHTML = '';
+      const others = [...this.people.entries()].filter(([e]) => e !== me);
+      body.append(el('p', { class: 'muted small', text: 'As pessoas escolhidas veem este caderno em “Compartilhados comigo”, com todas as seções. Tudo que você criar, copiar ou mover para cá aparece para elas.' }));
+      if (!others.length) body.append(el('p', { class: 'on-log', text: 'Ainda não há outras pessoas na equipe. Um administrador cadastra em Equipe › ＋ Adicionar pessoa.' }));
+      const list = el('div', { class: 'shr-list' });
+      for (const [email, name] of others) list.append(el('label', { class: 'shr-p' }, el('input', { type: 'checkbox', checked: sel.has(email), onchange: e => { e.target.checked ? sel.add(email) : sel.delete(email); } }), el('span', { class: 'shr-dot', style: { background: this.color(email) } }), el('b', { text: name || email.split('@')[0] }), el('span', { class: 'muted small', text: email })));
+      body.append(list,
+        el('div', { class: 'shr-mode' }, el('b', { text: 'Páginas novas neste caderno começam como:' }),
+          el('label', {}, el('input', { type: 'radio', name: 'shm', checked: mode === 'edit', onchange: () => mode = 'edit' }), ' ✍️ Colaboração — todos podem escrever'),
+          el('label', {}, el('input', { type: 'radio', name: 'shm', checked: mode === 'read', onchange: () => mode = 'read' }), ' 🔒 Só leitura — só o autor escreve'),
+          el('p', { class: 'muted small', text: 'Cada página pode ser trocada depois, no topo dela, pelo autor ou por você.' })),
+        el('div', { class: 'row-btns' },
+          el('button', { class: 'btn primary', text: nb.shared ? 'Salvar' : 'Compartilhar', onclick: async e => { e.target.disabled = true; try { await this.share(nb, [...sel], mode); m.close(); } catch (x) { UI.toast(x.message); e.target.disabled = false; } } }),
+          nb.shared ? el('button', { class: 'btn danger', text: 'Parar de compartilhar', onclick: async () => { if (!await UI.confirm('Parar de compartilhar', `As pessoas deixam de ver “${nb.name}”. As páginas que elas escreveram aqui continuam com elas.`, 'Parar')) return; try { await this.unshare(nb); m.close(); } catch (x) { UI.toast(x.message); } } }) : null));
+    };
+    draw();
+  },
+  nbData(nb) {
+    return { name: nb.name, color: nb.color, kind: nb.kind || '', mode: nb.shared?.mode || 'edit', ownerEmail: this.myEmail(), ownerName: this.myName(),
+      sections: App.meta.sections.filter(x => x.nb === nb.id).map(({ id, name, color, kind, level, order }) => ({ id, name, color, kind, level, order })) };
+  },
+  async share(nb, emails, mode) {
+    nb.shared = { members: emails, mode, at: Date.now() };
+    await this.pushNb(nb);
+    // páginas do caderno passam a subir marcadas como compartilhadas
+    for (const s of App.sermons.values()) if (this.nbOfPage(s) === nb) { s.shareMode ||= mode; s.author ||= { email: this.myEmail() }; delete Cloud.st.synced[s.id]; App.pending.add(s.id); }
+    App.saveMeta(); App.renderNav(); if (App.cur) App.renderEditor(); Cloud.saveState(); Cloud.schedule(200);
+    UI.toast(emails.length ? `Compartilhado com ${emails.length} pessoa(s)` : 'Caderno pronto para compartilhar — escolha as pessoas');
+  },
+  async pushNb(nb) {
+    await Cloud.rest('/rest/v1/shared_nbs?on_conflict=id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ id: nb.id, owner: this.me(), data: this.nbData(nb), updated_at: Date.now(), deleted: false }) });
+    const cur = await (await Cloud.rest(`/rest/v1/shared_members?select=email&nb_id=eq.${encodeURIComponent(nb.id)}`)).json();
+    const want = new Set(nb.shared.members), have = new Set(cur.map(x => x.email));
+    const del = [...have].filter(e => !want.has(e)), add = [...want].filter(e => !have.has(e));
+    if (del.length) await Cloud.rest(`/rest/v1/shared_members?nb_id=eq.${encodeURIComponent(nb.id)}&email=in.(${del.map(e => `"${e}"`).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });
+    if (add.length) await Cloud.rest('/rest/v1/shared_members', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(add.map(email => ({ nb_id: nb.id, email }))) });
+    nb.shared.sig = JSON.stringify(this.nbData(nb));
+  },
+  async unshare(nb) {
+    await Cloud.rest(`/rest/v1/shared_nbs?id=eq.${encodeURIComponent(nb.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ deleted: true, updated_at: Date.now() }) });
+    delete nb.shared;
+    for (const s of App.sermons.values()) if (this.nbOfPage(s) === nb && this.isAuthor(s)) { delete Cloud.st.synced[s.id]; App.pending.add(s.id); }
+    App.saveMeta(); App.renderNav(); if (App.cur) App.renderEditor(); Cloud.saveState(); Cloud.schedule(200); UI.toast('Caderno não é mais compartilhado');
+  },
+  async leave(nb) {
+    if (!await UI.confirm('Sair do caderno', `Você deixa de ver “${nb.name}”. Só o dono consegue te incluir de novo.`, 'Sair')) return;
+    try { await Cloud.rest(`/rest/v1/shared_members?nb_id=eq.${encodeURIComponent(nb.id)}&email=eq.${encodeURIComponent(this.myEmail())}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }); } catch (e) { return UI.toast(e.message); }
+    this.dropForeign(nb.id); App.saveMeta(); App.renderNav();
+  },
+
+  /* ── sincronização ── */
+  async sync() {
+    if (!Cloud.session) return;
+    await this.loadPeople();
+    // 1) meus cadernos compartilhados que mudaram (nome, seções)
+    if (this.ready !== false) for (const nb of App.meta.notebooks) if (nb.shared && nb.shared.sig !== JSON.stringify(this.nbData(nb))) await this.pushNb(nb);
+    // 2) cadernos compartilhados comigo
+    let rows; try { rows = await (await Cloud.rest('/rest/v1/shared_nbs?select=id,owner,data,deleted')).json(); this.ready = true; } catch (e) { if (/does not exist|Could not find|não existem|schema cache/i.test(e.message)) { this.ready = false; return; } throw e; }
+    const me = this.me(), seen = new Set();
+    for (const r of rows) {
+      if (r.owner === me) continue; if (r.deleted) continue; seen.add(r.id);
+      const d = r.data || {}; let nb = App.meta.notebooks.find(n => n.id === r.id);
+      if (!nb) { nb = { id: r.id }; App.meta.notebooks.push(nb); }
+      Object.assign(nb, { name: d.name || 'Caderno', color: d.color, kind: d.kind || '', foreign: { owner: r.owner, ownerEmail: d.ownerEmail, ownerName: d.ownerName, mode: d.mode || 'edit' } });
+      const secIds = new Set((d.sections || []).map(x => x.id));
+      App.meta.sections = App.meta.sections.filter(x => x.nb !== r.id || secIds.has(x.id));
+      for (const sx of d.sections || []) { const ex = App.meta.sections.find(x => x.id === sx.id); if (ex) Object.assign(ex, sx, { nb: r.id, foreign: true }); else App.meta.sections.push({ ...sx, nb: r.id, foreign: true }); }
+    }
+    for (const nb of [...App.meta.notebooks]) if (nb.foreign && !seen.has(nb.id)) this.dropForeign(nb.id);
+    // 3) páginas de cada caderno compartilhado (meus e dos outros)
+    for (const nb of App.meta.notebooks.filter(n => this.isSharedNb(n))) await this.pullPages(nb);
+    App.renderNav();
+  },
+  dropForeign(nbId) {
+    const secIds = new Set(App.meta.sections.filter(x => x.nb === nbId).map(x => x.id)), me = this.me();
+    const keep = App.meta.sections.find(x => !secIds.has(x.id) && !x.foreign);
+    let moved = 0;
+    for (const s of [...App.sermons.values()]) if (secIds.has(s.sec)) {
+      if (s.owner && s.owner !== me) { App.sermons.delete(s.id); DB.del('sermons', s.id); delete Cloud.st.synced[s.id]; }
+      else if (keep) { s.sec = keep.id; s.updated = Date.now(); App.pending.add(s.id); moved++; }
+    }
+    App.meta.sections = App.meta.sections.filter(x => !secIds.has(x.id)); App.meta.notebooks = App.meta.notebooks.filter(n => n.id !== nbId);
+    if (App.meta.currentNb === nbId) { App.meta.currentNb = App.meta.notebooks[0]?.id; App.meta.currentSec = App.meta.sections.find(x => x.nb === App.meta.currentNb)?.id; }
+    if (App.cur && !App.sermons.has(App.cur.id)) { App.cur = null; App.renderEditor(); }
+    if (moved) UI.toast(`${moved} página(s) sua(s) de um caderno que deixou de ser compartilhado foram para “${keep.name}”.`);
+    App._save?.();
+  },
+  async pullPages(nb) {
+    const me = this.me(), st = Cloud.st; st.sharedCur ||= {}; st.owners ||= {};
+    let cur = st.sharedCur[nb.id] || 0, more = true, got = 0;
+    while (more) {
+      const rows = await (await Cloud.rest(`/rest/v1/sermons?select=user_id,id,updated_at,deleted,server_updated&shared_nb=eq.${encodeURIComponent(nb.id)}&server_updated=gt.${cur}&order=server_updated.asc&limit=500`)).json();
+      more = rows.length === 500; const need = [];
+      for (const row of rows) {
+        cur = Math.max(cur, row.server_updated);
+        if (row.user_id === me) continue;                 // as minhas vêm pela sincronização normal
+        st.owners[row.id] = row.user_id;
+        const local = App.sermons.get(row.id);
+        if (row.deleted) { if (local) { App.sermons.delete(row.id); DB.del('sermons', row.id); got++; } delete st.synced[row.id]; continue; }
+        if (local && (st.synced[row.id] || 0) === row.updated_at) continue;
+        need.push(row);
+      }
+      for (let i = 0; i < need.length; i += 40) {
+        const part = need.slice(i, i + 40), ids = part.map(x => `"${x.id}"`).join(',');
+        const full = await (await Cloud.rest(`/rest/v1/sermons?select=user_id,id,data,updated_at&shared_nb=eq.${encodeURIComponent(nb.id)}&id=in.(${encodeURIComponent(ids)})`)).json();
+        for (const row of full) { if (row.user_id === me) continue; await this.receive(row); got++; }
+      }
+    }
+    st.sharedCur[nb.id] = cur;
+    // páginas que saíram do caderno (movidas pelo autor) somem daqui
+    try {
+      const live = new Set((await (await Cloud.rest(`/rest/v1/sermons?select=id&shared_nb=eq.${encodeURIComponent(nb.id)}&deleted=is.false`)).json()).map(x => x.id));
+      const secIds = new Set(App.meta.sections.filter(x => x.nb === nb.id).map(x => x.id));
+      for (const s of [...App.sermons.values()]) if (secIds.has(s.sec) && s.owner && s.owner !== me && !live.has(s.id) && Cloud.st.synced[s.id]) { App.sermons.delete(s.id); DB.del('sermons', s.id); got++; }
+    } catch (e) { }
+    Cloud.saveState(); if (got) Cloud.res.down = (Cloud.res.down || 0) + got;
+  },
+  /* chega uma versão de outra pessoa (ou minha página editada por outra pessoa) */
+  async receive(row) {
+    const local = App.sermons.get(row.id), synced = Cloud.st.synced[row.id] || 0, remoteSnap = structuredClone(row.data);
+    let s = row.data; s.id = row.id; s.updated = row.updated_at;
+    if (row.user_id && row.user_id !== this.me()) s.owner = row.user_id; else delete s.owner;
+    if (local && local.updated > synced && synced) { // mudou aqui também: junta bloco a bloco
+      const base = await DB.get('kv', 'base:' + row.id);
+      s = this.merge(base, local, s); s.updated = Date.now(); App.pending.add(s.id); this.conflicts += s._conf || 0; delete s._conf;
+    }
+    await Cloud.inflateImages(s);
+    App.sermons.set(s.id, s); await DB.put('sermons', s.id, s);
+    Cloud.st.synced[s.id] = s.updated === row.updated_at ? row.updated_at : synced; // se juntou, ainda falta enviar
+    await this.saveBase({ data: remoteSnap }, row.id);
+    if (App.cur?.id === s.id) this.refreshOpen(s);
+  },
+  async saveBase(row, id) { try { const d = row.data || row; await DB.put('kv', 'base:' + id, { title: d.title, blocks: (d.blocks || []).map(b => ({ ...b })) }); } catch (e) { } },
+  sig(b) { const { by, at, conflict, ...rest } = b || {}; return JSON.stringify(rest); },
+  merge(base, local, remote) {
+    const B = new Map((base?.blocks || []).map(b => [b.id, b])), L = new Map(local.blocks.map(b => [b.id, b])), out = [];
+    let conf = 0; const used = new Set();
+    for (const r of remote.blocks || []) {
+      const l = L.get(r.id), b = B.get(r.id); used.add(r.id);
+      if (!l) { if (b && this.sig(r) === this.sig(b)) continue; out.push(r); continue; }       // apaguei aqui e o outro não mexeu → fica apagado
+      const lc = !b || this.sig(l) !== this.sig(b), rc = !b || this.sig(r) !== this.sig(b);
+      if (lc && rc && this.sig(l) !== this.sig(r)) { out.push(r); out.push({ ...l, id: uid(), conflict: { by: this.myEmail(), at: Date.now() } }); conf++; }
+      else out.push(lc ? l : r);
+    }
+    // blocos que só existem aqui
+    local.blocks.forEach((l, i) => {
+      if (used.has(l.id)) return; const b = B.get(l.id);
+      if (b && this.sig(l) === this.sig(b)) return;                                              // o outro apagou e eu não mexi → apaga
+      const prev = local.blocks.slice(0, i).reverse().find(x => out.some(o => o.id === x.id));
+      const at = prev ? out.findIndex(o => o.id === prev.id) + 1 : 0; out.splice(at, 0, l);
+    });
+    const tl = local.title !== base?.title, tr = remote.title !== base?.title;
+    return { ...remote, title: tl && !tr ? local.title : remote.title, blocks: out, _conf: conf };
+  },
+  refreshOpen(s) {
+    const editing = document.activeElement && $('#editor').contains(document.activeElement);
+    if (editing) UI.toast(`${this.nameOf(s.lastBy)} alterou esta página.`, { label: 'Atualizar', fn: () => { App.cur = App.sermons.get(s.id); App.renderEditor(); } });
+    else { App.cur = s; App.renderEditor(); }
+  },
+  /* envio das páginas de outras pessoas (que eu posso editar) */
+  async pushOthers() {
+    const me = this.me(), st = Cloud.st;
+    for (const s of App.sermons.values()) {
+      if (!s.owner || s.owner === me || (st.synced[s.id] || 0) >= s.updated) continue;
+      if (!this.canEdit(s)) { st.synced[s.id] = s.updated; continue; }
+      if (await Cloud.uploadImages(s)) await DB.put('sermons', s.id, s);
+      s.lastBy = this.myEmail();
+      const data = Cloud.outbound(s); delete data.owner;
+      const r = await Cloud.rest(`/rest/v1/sermons?user_id=eq.${s.owner}&id=eq.${encodeURIComponent(s.id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' }, body: JSON.stringify({ data, updated_at: s.updated, shared_nb: this.sharedNbId(s) }) });
+      const back = await r.json().catch(() => []);
+      if (!back.length) { UI.toast(`Não deu para salvar “${s.title}”: a página ficou só leitura.`); delete st.sharedCur[this.sharedNbId(s)]; }
+      st.synced[s.id] = s.updated; await this.saveBase({ data }, s.id);
+    }
+    for (const [id, t] of Object.entries(st.otherTombs || {})) {
+      try { await Cloud.rest(`/rest/v1/sermons?user_id=eq.${t.owner}&id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ deleted: true, updated_at: t.ts }) }); } catch (e) { }
+      delete st.otherTombs[id];
+    }
+    Cloud.saveState();
+  },
+  /* ── no editor: aviso de só leitura, seletor de permissão ── */
+  headControls(s) {
+    if (!this.inShared(s)) return null;
+    const nb = this.nbOfPage(s), canSet = this.isAuthor(s) || this.isNbOwner(s), mode = this.mode(s);
+    const who = nb.foreign ? `Caderno de ${nb.foreign.ownerName || this.nameOf(nb.foreign.ownerEmail)}` : `Compartilhado com ${(nb.shared?.members || []).length} pessoa(s)`;
+    const box = el('div', { class: 'shr-head' }, el('span', { class: 'shr-tag', text: '👥 ' + who + (this.isAuthor(s) ? '' : ` · página de ${this.authorName(s)}`) }));
+    if (canSet) {
+      const sel = el('select', { title: 'Quem pode escrever nesta página' }, el('option', { value: 'edit', text: '✍️ Colaboração', selected: mode === 'edit' }), el('option', { value: 'read', text: '🔒 Só leitura', selected: mode === 'read' }));
+      sel.onchange = () => { s.shareMode = sel.value; App.touch(s); App.renderEditor(); };
+      box.append(sel);
+    } else box.append(el('span', { class: 'shr-tag ' + (mode === 'edit' ? 'ok' : 'ro'), text: mode === 'edit' ? '✍️ Você pode colaborar' : '🔒 Só leitura' }));
+    const cs = Authorship.contributors(s);
+    if (cs.size) {
+      box.append(el('span', { class: 'shr-who' }, 'Contribuições: ', ...[...cs.keys()].map(e => el('span', { class: 'shr-c', style: { '--by': this.color(e) }, text: this.nameOf(e) }))));
+      if (canSet) box.append(el('button', { class: 'btn sm', text: '✓ Aceitar todas', title: 'Tira as marcas e deixa o texto limpo', onclick: () => Authorship.acceptAll(s) }));
+    }
+    return box;
+  },
+  decorate(s) {
+    if (!s || Book.is(s) && !this.inShared(s)) { document.body.classList.remove('page-ro'); return; }
+    $('#editor-inner .shr-head')?.remove(); $('#editor-inner .ro-banner')?.remove();
+    const h = this.headControls(s); if (h) { const meta = $('#editor-inner .s-meta') || $('#editor-inner .bk-head'); meta ? meta.after(h) : $('#editor-inner').prepend(h); }
+    this.lockEditor(s); Authorship.attach(s);
+    const del = $('#s-del'); if (del) del.hidden = !this.canDelete(s);
+  },
+  afterBlocks(s) {
+    if (!s || !this.inShared(s)) return;
+    for (const w of $$('#blocks .block')) {
+      const b = s.blocks.find(x => x.id === w.dataset.id); if (!b) continue;
+      if (b.conflict) { w.classList.add('b-conflict'); w.prepend(el('div', { class: 'conf-tag', html: b.conflict.by === this.myEmail() ? '⚠ <b>Sua versão</b> — você e outra pessoa mexeram neste trecho ao mesmo tempo; a versão dela está logo acima. Fique com a melhor e apague a outra.' : `⚠ <b>Versão de ${esc(this.nameOf(b.conflict.by))}</b> — ela e outra pessoa mexeram neste trecho ao mesmo tempo. Fique com a melhor e apague a outra.`, onclick: e => { if (e.target.closest('button')) return; } }, el('button', { class: 'btn sm', text: 'Manter esta e tirar o aviso', onclick: () => { delete b.conflict; App.touch(s); App.renderBlocks(); } }))); }
+      if (b.by && b.by !== s.author?.email) { const t = w.querySelector('.b-tag'); t && t.after(el('span', { class: 'by-tag', style: { '--by': this.color(b.by) }, text: '✎ ' + this.nameOf(b.by), title: 'Último a mexer neste bloco' + (b.at ? ' · ' + new Date(b.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '') })); }
+    }
+    this.lockEditor(s, true);
+  },
+  lockEditor(s, quiet) {
+    document.body.classList.toggle('page-ro', !this.canEdit(s));
+    if (this.canEdit(s)) return;
+    const ed = $('#editor-inner');
+    ed.querySelectorAll('[contenteditable]').forEach(e => e.setAttribute('contenteditable', 'false'));
+    ed.querySelectorAll('input, select, textarea').forEach(e => { if (!e.closest('.shr-head')) e.disabled = true; });
+    if (!quiet && !ed.querySelector('.ro-banner')) ed.prepend(el('div', { class: 'ro-banner', text: `🔒 Somente leitura — página de ${this.authorName(s)}. Só o autor ou o dono do caderno podem abrir para colaboração.` }));
+  },
+  init() {
+    setInterval(() => { if (App.cur && this.inShared(App.cur) && !document.hidden && Cloud.session) Cloud.schedule(100); }, 45000);
+  }
+};
+
+/* ===== Autoria no texto: o que outra pessoa escreve fica sublinhado na cor dela ===== */
+const Authorship = {
+  attach(s) {
+    this.mo?.disconnect(); this.s = s; this.pending = new Map(); this.composing = false;
+    const host = $('#blocks'); if (!host) return;
+    host.onclick = e => { const sp = e.target.closest?.('span.by'); if (sp) this.info(sp); };
+    if (!s || !Shared.inShared(s) || !Shared.canEdit(s) || Shared.isAuthor(s)) return; // o autor escreve "limpo"
+    this.me = Shared.myEmail(); if (!this.me) return;
+    this.mo = new MutationObserver(recs => this.collect(recs));
+    this.mo.observe(host, { subtree: true, characterData: true, characterDataOldValue: true, childList: true });
+    host.addEventListener('compositionstart', () => this.composing = true);
+    host.addEventListener('compositionend', () => { this.composing = false; setTimeout(() => this.flush(), 0); });
+  },
+  body(n) { return (n.nodeType === 1 ? n : n.parentElement)?.closest?.('#blocks .b-body[contenteditable="true"]'); },
+  mine(n) { const sp = (n.nodeType === 1 ? n : n.parentElement)?.closest?.('span.by'); return sp && sp.dataset.by === this.me; },
+  collect(recs) {
+    for (const r of recs) {
+      if (r.type === 'characterData') { if (!this.pending.has(r.target)) this.pending.set(r.target, r.oldValue ?? ''); }
+      else for (const a of r.addedNodes) {
+        if (a.nodeType === 3) { if (!this.pending.has(a)) this.pending.set(a, ''); }
+        else if (a.nodeType === 1) { const w = document.createTreeWalker(a, NodeFilter.SHOW_TEXT); for (let t; (t = w.nextNode());) if (!this.pending.has(t)) this.pending.set(t, ''); }
+      }
+    }
+    if (!this.composing) this.flush();
+  },
+  flush() {
+    if (!this.pending.size || !this.mo) return;
+    const items = [...this.pending]; this.pending.clear();
+    const sel = getSelection(), an = sel.rangeCount ? sel.anchorNode : null, ao = sel.anchorOffset; let caret = null;
+    const touched = new Set();
+    for (const [n, old] of items) {
+      if (!n.isConnected || !n.data || this.mine(n)) continue;
+      const body = this.body(n); if (!body) continue;
+      const v = n.data; let p = 0; while (p < old.length && p < v.length && old[p] === v[p]) p++;
+      let q = 0; while (q < old.length - p && q < v.length - p && old[old.length - 1 - q] === v[v.length - 1 - q]) q++;
+      const len = v.length - p - q; if (len <= 0 || !v.slice(p, p + len).replace(/​/g, '').length) continue;
+      let mid = n; if (p > 0) mid = n.splitText(p); let tail = null; if (len < mid.data.length) tail = mid.splitText(len);
+      const sp = document.createElement('span'); sp.className = 'by'; sp.dataset.by = this.me; sp.dataset.at = new Date().toISOString().slice(0, 10);
+      sp.style.setProperty('--by', Shared.color(this.me)); sp.title = 'Escrito por ' + Shared.myName();
+      mid.replaceWith(sp); sp.append(mid);
+      if (an === n) { if (ao >= p && ao <= p + len) caret = [mid, ao - p]; else if (ao > p + len && tail) caret = [tail, ao - p - len]; }
+      touched.add(body);
+    }
+    this.mo.takeRecords(); // ignora as mudanças que nós mesmos fizemos
+    if (caret) { const r = document.createRange(); r.setStart(caret[0], Math.min(caret[1], caret[0].data.length)); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
+    for (const body of touched) {
+      const id = body.closest('.block')?.dataset.id, b = this.s?.blocks.find(x => x.id === id);
+      if (b) { b.by = this.me; b.at = Date.now(); }
+      body.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    this.mo.takeRecords();
+  },
+  info(sp) {
+    const who = Shared.nameOf(sp.dataset.by), when = sp.dataset.at ? new Date(sp.dataset.at + 'T12:00').toLocaleDateString('pt-BR') : '';
+    const s = App.cur, can = s && (Shared.isAuthor(s) || Shared.isNbOwner(s));
+    UI.toast(`✎ Escrito por ${who}${when ? ' em ' + when : ''}`, can ? { label: 'Aceitar', fn: () => { const body = sp.closest('.b-body'); sp.replaceWith(...sp.childNodes); body?.dispatchEvent(new Event('input', { bubbles: true })); } } : undefined);
+  },
+  contributors(s) {
+    const set = new Map();
+    for (const b of s.blocks) for (const m of String(b.html || '').matchAll(/data-by="([^"]+)"/g)) set.set(m[1], (set.get(m[1]) || 0) + 1);
+    return set;
+  },
+  acceptAll(s) {
+    for (const b of s.blocks) if (b.html?.includes('data-by=')) { const d = document.createElement('div'); d.innerHTML = b.html; d.querySelectorAll('span.by').forEach(x => x.replaceWith(...x.childNodes)); b.html = d.innerHTML; delete b.by; }
+    App.touch(s); App.renderEditor(); UI.toast('Contribuições aceitas — o texto ficou limpo');
   }
 };
 
@@ -7039,7 +7402,7 @@ Seja específico e honesto; não elogie à toa; notas de 0 a 10.`;
    Fixada: vira uma coluna à esquerda. Solta: abre como menu flutuante. */
 const NbPanel = {
   /* nomes dos dois grupos de cadernos (o usuário pode renomear; vai junto com a conta) */
-  gname(k) { return App.meta.groupNames?.[k] || (k === 'book' ? 'Livros' : 'Sermões'); },
+  gname(k) { return App.meta.groupNames?.[k] || (k === 'book' ? 'Livros' : k === 'shared' ? 'Compartilhados comigo' : 'Sermões'); },
   async renameGroup(k) {
     const n = await UI.ask('Renomear grupo', this.gname(k), k === 'book' ? 'Ex.: Livros, Escrita' : 'Ex.: Ministério, Pregações e devocionais'); if (!n?.trim()) return;
     (App.meta.groupNames ||= {})[k] = n.trim(); App.saveMeta(); App.renderNav();
@@ -7084,7 +7447,7 @@ const NbPanel = {
       g.ondblclick = () => this.renameGroup(k); this.col.append(g);
       for (const nb of list) {
         const row = el('div', { class: 'nbc-row' + (nb.id === m.currentNb ? ' on' : ''), draggable: 'true', 'data-id': nb.id, title: nb.name, onclick: () => this.switchTo(nb.id) },
-          el('span', { class: 'nb-ic', text: Book.isNb(nb) ? '📖' : '🎤' }), el('span', { class: 'nbc-name', text: nb.name }), el('span', { class: 'nbc-n', text: count(nb) }),
+          el('span', { class: 'nb-ic', text: nb.foreign || nb.shared ? '👥' : Book.isNb(nb) ? '📖' : '🎤' }), el('span', { class: 'nbc-name', text: nb.name, title: nb.foreign ? `Caderno de ${nb.foreign.ownerName || ''}` : nb.name }), el('span', { class: 'nbc-n', text: count(nb) }),
           el('button', { class: 'icon-btn sm', title: 'Opções do caderno', text: '⋯', onclick: e => { e.stopPropagation(); if (nb.id !== m.currentNb) this.switchTo(nb.id); this.close(); App.notebookMenu(); } }));
         row.addEventListener('dragstart', e => { this.drag = nb.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', nb.id); });
         row.addEventListener('dragover', e => { if (!this.drag || this.drag === nb.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); row.classList.toggle('d-after', e.clientY > r.top + r.height / 2); row.classList.toggle('d-before', e.clientY <= r.top + r.height / 2); });
@@ -7096,7 +7459,7 @@ const NbPanel = {
         this.col.append(row);
       }
     };
-    group('ser', m.notebooks.filter(n => !Book.isNb(n))); group('book', m.notebooks.filter(n => Book.isNb(n)));
+    group('ser', m.notebooks.filter(n => !n.foreign && !Book.isNb(n))); group('book', m.notebooks.filter(n => !n.foreign && Book.isNb(n))); group('shared', m.notebooks.filter(n => n.foreign));
   }
 };
 
