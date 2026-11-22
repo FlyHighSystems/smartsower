@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.4 — 22/11/2026
+- Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos.
+
 ## 3.12.3 — 22/11/2026
 - Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.
 - Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de "Fé e igreja", e mais nuvens em Natureza.

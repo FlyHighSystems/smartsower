@@ -494,9 +494,21 @@ const Spell = {
     }
     return out;
   },
+  /* texto do bloco como o leitor vê: parágrafos, itens de lista e quebras de linha viram "\n"
+     (sem isso, "encontrará.</div><div>Vamos" chegava ao corretor como "encontrará.Vamos") */
   scan(body) {
-    const nodes = []; let text = ''; const tw = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
-    for (let n; (n = tw.nextNode());) { nodes.push({ n, start: text.length }); text += n.data; }
+    const nodes = []; let text = '', pend = false, lastBlk = null;
+    const BLK = /^(P|DIV|LI|UL|OL|H[1-6]|BLOCKQUOTE|PRE|TD|TR|TABLE|SECTION|ARTICLE)$/;
+    const blockOf = n => { for (let e = n.parentElement; e && e !== body; e = e.parentElement) if (BLK.test(e.tagName)) return e; return body; };
+    const tw = document.createTreeWalker(body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    for (let n; (n = tw.nextNode());) {
+      if (n.nodeType === 1) { if (n.tagName === 'BR' || BLK.test(n.tagName)) pend = true; continue; }
+      if (!n.data) continue;
+      const blk = blockOf(n);
+      if ((pend || (lastBlk && blk !== lastBlk)) && text && !text.endsWith('\n')) text += '\n';
+      pend = false; lastBlk = blk;
+      nodes.push({ n, start: text.length }); text += n.data;
+    }
     return { nodes, text };
   },
   /* reencontra o trecho no texto ATUAL do bloco, pelo contexto em volta (não confia em posições antigas) */
@@ -544,6 +556,7 @@ const Spell = {
           if (fix < 0) continue; off = fix; word = cw;
         }
         if (m.rule?.issueType === 'misspelling' && dict.has(word.toLowerCase())) continue;
+        if (/\n/.test(word) || (m.replacements || []).some(r => /\n/.test(r.value))) continue; // nunca mexe em quebra de parágrafo/linha
         issues.push({ sg: part.sg, off, len: word.length, word, before: part.sg.text.slice(Math.max(0, off - 30), off), after: part.sg.text.substr(off + word.length, 30), msg: m.shortMessage || m.message, long: m.message, reps: (m.replacements || []).slice(0, 4).map(r => r.value), type: this.TYPES[m.rule?.issueType] ? m.rule.issueType : 'other', ctx: part.sg.text });
       }
     }
@@ -570,6 +583,7 @@ const Spell = {
     /* posições atuais das outras sugestões do mesmo bloco, para atualizá-las depois */
     const sib = list.filter(o => o !== it && !o.done && o.sg.b === it.sg.b && o.sg.bi === it.sg.bi).map(o => ({ o, L: this.locate(o) })).filter(x => x.L);
     if (!L) { UI.toast('Não achei esse trecho igual no texto (ele mudou?). Rode a verificação de novo (F7).'); return false; }
+    if (L.text.substr(L.off, it.len).includes('\n')) { UI.toast('Essa correção atravessa dois parágrafos — ajuste à mão.'); return false; }
     /* troca caractere a caractere dentro dos próprios nós de texto: a formatação (negrito, cor, realce) fica onde estava */
     let off = L.off, left = it.len, first = true;
     for (const { n, start } of L.nodes) {
