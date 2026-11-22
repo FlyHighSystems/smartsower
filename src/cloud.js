@@ -471,12 +471,28 @@ const Updater = {
       el('div', { class: 'row-btns' }, el('button', { class: 'btn', text: '⟳ Procurar atualização', onclick: () => this.now() })));
     UI.modal({ title: '✨ Novidades do SmartSower', body });
   },
+  // procura versão nova no servidor (ao voltar para o app e a cada 15 min) e avisa
+  async poll() {
+    if (!navigator.onLine || this.found) return;
+    try {
+      const t = await (await fetch(location.pathname + '?check=' + Date.now(), { cache: 'no-store' })).text();
+      const code = (t.match(/"code": "([0-9a-f]+)"/) || [])[1], ver = (t.match(/"version": "([^"]+)"/) || [])[1];
+      if (!code || code === window.SS_BUILD?.code) return;
+      this.found = ver || 'nova'; const b = $('#btn-reload'); if (b) { b.classList.add('has-new'); b.title = `Versão ${this.found} disponível — toque para atualizar`; }
+      UI.toast(`Nova versão ${ver || ''} disponível`, { label: 'Atualizar', fn: () => this.now() });
+    } catch (e) { }
+  },
+  initPoll() {
+    $('#btn-reload')?.addEventListener('click', () => this.now());
+    setTimeout(() => this.poll(), 20000); setInterval(() => this.poll(), 15 * 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.poll(); });
+  },
   checkSeen() { // avisa uma vez quando o app foi atualizado
     const v = this.ver(); if (!v) return; let seen = ''; try { seen = localStorage.getItem('ss-seen-ver') || ''; localStorage.setItem('ss-seen-ver', v); } catch (e) { }
     if (seen && seen !== v) setTimeout(() => UI.toast(`SmartSower atualizado para a versão ${v}`, { label: 'Novidades', fn: () => this.notes() }), 1500);
   },
   async now() {
-    if (!navigator.onLine) return UI.toast('Sem internet agora — conecte-se para atualizar');
+    if (!navigator.onLine) { App.flush(); return location.reload(); } // sem internet: só recarrega com o que já está no aparelho
     App.flush(); UI.toast('Atualizando o app…'); await new Promise(r => setTimeout(r, 400));
     try { const regs = await navigator.serviceWorker?.getRegistrations?.() || []; for (const r of regs) await r.unregister(); } catch (e) { }
     try { for (const k of await caches.keys()) await caches.delete(k); } catch (e) { }

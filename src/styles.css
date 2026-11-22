@@ -687,3 +687,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 #nb-pane{display:flex;flex-direction:column}.app-ver{margin-top:auto;border:0;background:none;color:var(--muted);font-size:11.5px;padding:10px 14px;text-align:left;cursor:pointer}.app-ver:hover{color:var(--accent)}
 .cl-v{border-top:1px solid var(--line);padding:6px 0}.cl-v h4{margin:6px 0 4px;display:flex;align-items:center;gap:6px}.cl-v ul{margin:0;padding-left:20px;font-size:14px;line-height:1.5}
 .cl-tag{font-size:11px;background:var(--accent);color:#fff;border-radius:99px;padding:0 7px;font-weight:600}
+
+.reload-btn{font-size:17px;position:relative}.reload-btn.has-new{color:#fff;background:#107c10;border-radius:8px}
+.reload-btn.has-new::after{content:'';position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#ffd400;box-shadow:0 0 0 2px #107c10}
+@media (max-width: 460px) { .pr-l { display: none; } .topbar .btn.preach { padding: 6px 12px; } }
