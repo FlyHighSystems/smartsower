@@ -43,7 +43,7 @@ const FindView = {
     const q = el('input', { class: 'inp fv-q', type: 'search', value: st.q, placeholder: 'Palavras ou "uma frase exata"…', enterkeyhint: 'search' });
     const opt = (v, t, cur) => el('option', { value: v, text: t, selected: v === cur });
     const where = el('select', { class: 'inp', title: 'Onde procurar' }, opt('all', '📚 Todo o app', st.where), opt('sec', '📄 Só a seção aberta', st.where),
-      ...(App.meta.notebooks.some(n => n.shared || n.foreign) ? [opt('shared', '👥 Todos os compartilhados', st.where), ...(App.meta.notebooks.some(n => n.foreign) ? [opt('withme', '👥 Compartilhados comigo', st.where)] : [])] : []),
+      opt('shared', '👥 Todos os compartilhados', st.where), opt('withme', '👥 Compartilhados comigo', st.where),
       ...App.meta.notebooks.map(n => opt('nb:' + n.id, (n.foreign || n.shared ? '👥 ' : Book.isNb(n) ? '📖 ' : '🎤 ') + n.name, st.where)));
     const kind = el('select', { class: 'inp', title: 'Tipo de página' }, opt('', 'Todos os tipos', st.kind), ...PAGE_KINDS.map(([id, l, ic]) => opt(id, ic + ' ' + l, st.kind)), opt('none', '▫ Sem tipo', st.kind), opt('book', '📖 Páginas de livro', st.kind));
     const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
@@ -54,6 +54,9 @@ const FindView = {
       Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked }); this.save();
       out.innerHTML = ''; const filt = st.kind || st.period || st.where !== 'all';
       if (!st.q && !filt) { out.append(el('div', { class: 'fv-help muted' }, el('p', { html: 'Digite palavras (em qualquer ordem) ou <b>"uma frase exata"</b> entre aspas. Acentos não importam.' }), el('p', { text: 'Ou escolha só um tipo — por exemplo “🌅 Devocional” — para ver todas as devocionais do app, de todos os cadernos.' }))); return; }
+      if ((st.where === 'shared' && !App.meta.notebooks.some(n => n.shared || n.foreign)) || (st.where === 'withme' && !App.meta.notebooks.some(n => n.foreign))) {
+        out.append(el('div', { class: 'fv-help muted' }, el('p', { text: st.where === 'withme' ? 'Ninguém compartilhou um caderno com você ainda. Quando compartilharem, as páginas aparecem aqui.' : 'Você ainda não tem cadernos compartilhados. Abra uma página e toque em “👥 Compartilhar”, ao lado do Tipo.' }))); return;
+      }
       const res = this.run(); const total = res.reduce((n, r) => n + r.hits, 0);
       out.append(el('div', { class: 'fv-sum' }, el('b', { text: res.length ? `${res.length} página${res.length > 1 ? 's' : ''}` : 'Nada encontrado' }), st.q && res.length ? ` · ${total} ocorrência${total > 1 ? 's' : ''}` : '', !res.length && st.where !== 'all' ? ' — tente “Todo o app”.' : ''));
       for (const r of res.slice(0, 300)) {

@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.13 — 22/11/2026
+- Pesquisar: as opções "👥 Todos os compartilhados" e "👥 Compartilhados comigo" aparecem sempre em Onde, com explicação quando ainda não há nada compartilhado.
+
 ## 3.12.12 — 22/11/2026
 - Pesquisar: "👥 Todos os compartilhados" e "👥 Compartilhados comigo" em Onde; os resultados mostram 👥 e de quem é a página.
 
