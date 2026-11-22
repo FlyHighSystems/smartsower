@@ -49,25 +49,44 @@ const EMOJI_CATS = [
   ]],
 ];
 const Emoji = {
-  range: null, field: null,
+  range: null, field: null, last: null, // last: 'field' | 'block' — o que você tocou por último
   isField(e) { return e?.matches?.('#editor input.s-title, #editor input.verse-ref, #editor .s-meta input[type=text], #editor input.b-title, #editor textarea'); },
   recent() { try { return JSON.parse(localStorage.getItem('ss-emoji-recent') || '[]'); } catch (e) { return []; } },
   pushRecent(e) { const r = [e, ...this.recent().filter(x => x !== e)].slice(0, 24); try { localStorage.setItem('ss-emoji-recent', JSON.stringify(r)); } catch (x) { } },
-  host(n) { return (n?.nodeType === 1 ? n : n?.parentElement)?.closest?.('#blocks [contenteditable="true"], #blocks .b-body[contenteditable], .s-title[contenteditable], input.verse-ref'); },
+  host(n) { return (n?.nodeType === 1 ? n : n?.parentElement)?.closest?.('#blocks [contenteditable="true"], #blocks .b-body[contenteditable]'); },
+  // guarda onde está o cursor — só quando o foco está de fato no título/campo ou no texto
   remember() {
-    const a = document.activeElement; if (this.isField(a)) { this.field = { el: a, s: a.selectionStart ?? a.value.length, e: a.selectionEnd ?? a.value.length }; this.range = null; return; }
-    const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); if (this.host(r.startContainer)) { this.range = r.cloneRange(); this.field = null; } } },
+    const a = document.activeElement;
+    if (this.isField(a)) { this.field = { el: a, id: a.id, s: a.selectionStart ?? a.value.length, e: a.selectionEnd ?? a.value.length }; this.last = 'field'; return; }
+    const s = getSelection(); if (!s.rangeCount) return;
+    const r = s.getRangeAt(0), h = this.host(r.startContainer);
+    if (h && (a === h || h.contains(a))) { this.range = r.cloneRange(); this.rangeBlock = h.closest('.block')?.dataset.id; this.last = 'block'; }
+  },
+  resolveField() { const f = this.field; if (!f) return null; if (!f.el.isConnected && f.id) f.el = document.getElementById(f.id); return f.el?.isConnected ? f : null; },
+  resolveRange() {
+    let r = this.range; if (r && this.host(r.startContainer)?.isConnected) return r;
+    const b = this.rangeBlock && $(`#blocks .block[data-id="${this.rangeBlock}"] .b-body[contenteditable]`); if (!b) return null;
+    r = document.createRange(); r.selectNodeContents(b); r.collapse(false); return this.range = r;
+  },
   insert(e) {
-    const f = this.field;
-    if (f && f.el.isConnected) { // título da página e outros campos de uma linha
-      f.el.focus({ preventScroll: true }); f.el.setRangeText(e, f.s, f.e, 'end'); f.s = f.e = f.el.selectionEnd;
+    const touch = matchMedia('(pointer:coarse)').matches;
+    const f = this.resolveField(), r = this.resolveRange();
+    const useField = f && (this.last === 'field' || !r);
+    if (useField) { // título da página e outros campos de uma linha
+      if (!touch) f.el.focus({ preventScroll: true });
+      f.el.setRangeText(e, f.s, f.e, 'end'); f.s = f.e = f.s + e.length;
       f.el.dispatchEvent(new Event('input', { bubbles: true })); this.pushRecent(e); return;
     }
-    const r = this.range, h = r && this.host(r.startContainer);
-    if (!h || !h.isConnected) return UI.toast('Clique no texto ou no título onde quer o emoji e tente de novo');
-    h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
-    document.execCommand('insertText', false, e);
-    this.remember(); this.pushRecent(e);
+    if (!r) return UI.toast('Toque no texto ou no título onde quer o emoji e tente de novo');
+    const h = this.host(r.startContainer);
+    if (touch) { // no celular: insere sem abrir o teclado a cada emoji
+      r.deleteContents(); const t = document.createTextNode(e); r.insertNode(t); r.setStartAfter(t); r.collapse(true);
+      h.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+      h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      document.execCommand('insertText', false, e); const s2 = getSelection(); if (s2.rangeCount) this.range = s2.getRangeAt(0).cloneRange();
+    }
+    this.pushRecent(e);
   },
   open(anchor) {
     this.remember(); this.close();
@@ -92,8 +111,8 @@ const Emoji = {
   },
   close(back) {
     const had = !!this.pop; this.pop?.remove(); this.pop = null;
-    if (had && back && this.field?.el.isConnected) { const f = this.field; f.el.focus({ preventScroll: true }); f.el.setSelectionRange(f.s, f.e); return; }
-    if (had && back) { const r = this.range, h = r && this.host(r.startContainer); if (h?.isConnected) { h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } } if (this._out) document.removeEventListener('pointerdown', this._out, true); this._out = null; },
+    if (had && back && this.last === 'field' && this.resolveField()) { const f = this.field; f.el.focus({ preventScroll: true }); f.el.setSelectionRange(f.s, f.e); return; }
+    if (had && back) { const r = this.resolveRange(), h = r && this.host(r.startContainer); if (h?.isConnected) { h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } } if (this._out) document.removeEventListener('pointerdown', this._out, true); this._out = null; },
   init() {
     const rem = () => { if (!this.pop || !this.pop.contains(document.activeElement)) this.remember(); };
     document.addEventListener('selectionchange', rem); document.addEventListener('keyup', rem, true); document.addEventListener('pointerup', rem, true); document.addEventListener('focusin', rem, true);
