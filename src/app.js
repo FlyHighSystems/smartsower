@@ -272,6 +272,7 @@ const App = {
     const list = $('#page-list'); list.innerHTML = '';
     if (kf) { const K = PageKinds.get(kf); list.append(el('div', { class: 'pk-note' }, el('span', { text: `${K ? K[2] + ' ' + K[1] : '▫ Sem tipo'} — ${items.length} página(s) de todas as seções` }), el('button', { class: 'btn link sm', text: '✕', title: 'Voltar para a seção', onclick: () => PageKinds.setFilter('') }))); }
     const flat = !!(q || kf); let lastSec = null;
+    if (!flat && !this.selMode) { const ask = PageKinds.suggestion(this.meta.currentSec); if (ask) list.append(ask); }
     this.sel ||= new Set(); this.renderBulk();
     if (!items.length) list.append(el('p', { class: 'muted pad', text: q ? 'Nada encontrado.' : kf ? 'Nenhuma página deste tipo neste caderno.' : 'Nenhuma ministração nesta seção.' }));
     if (!flat) { this.normalizeLevels(items); }

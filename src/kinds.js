@@ -33,10 +33,10 @@ const PageKinds = {
   get(id) { return PAGE_KINDS.find(k => k[0] === id); },
   of(s) { return !Book.is(s) && this.get(s.kind) ? s.kind : null; },
   guess(s) { if (Book.is(s)) return null; const n = stripAccents((App.meta.sections.find(x => x.id === s.sec)?.name || '').toLowerCase()); return /devoc/.test(n) ? 'devocional' : /estud/.test(n) ? 'estudo' : /celula|\bpg\b|pequeno/.test(n) ? 'celula' : /insight|ideia/.test(n) ? 'insight' : /serm|ministra|prega/.test(n) ? 'sermao' : null; },
-  eff(s) { return this.of(s) || this.guess(s); },
+  eff(s) { return this.of(s); }, // só o que você escolheu; o palpite pela seção só vira sugestão
   badge(s) {
-    const k = this.get(this.eff(s)); if (!k) return null; const g = !this.of(s);
-    return el('span', { class: 'pk-badge' + (g ? ' guess' : ''), style: { '--pk': k[3] }, title: g ? `${k[1]} (pelo nome da seção — abra a página e escolha o tipo para confirmar)` : k[1], text: k[2] + ' ' + k[1] });
+    const k = this.get(this.of(s)); if (!k) return null;
+    return el('span', { class: 'pk-badge', style: { '--pk': k[3] }, title: k[1], text: k[2] + ' ' + k[1] });
   },
   set(s, id) { const was = this.timeMode(s); s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s) || was !== this.timeMode(s)) { s.durSet = false; s.duration = this.planned(s); } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); } },
   // ── criar página já com o tipo
@@ -67,12 +67,27 @@ const PageKinds = {
     for (const [id, label, ic, color] of PAGE_KINDS) { const n = count(id); if (n || cur === id) bar.append(chip(id, ic + ' ' + label, n, color)); }
     const nn = count('none'); if (nn && pages.length > nn) bar.append(chip('none', '▫ Sem tipo', nn));
   },
+  // ── sugestão para a seção: "Marcar as N páginas sem tipo como Devocional?"
+  askKey(secId) { return 'ss-kindask-' + secId; },
+  suggestion(secId) {
+    const sec = App.meta.sections.find(x => x.id === secId); if (!sec) return null;
+    const nb = App.meta.notebooks.find(n => n.id === sec.nb); if (!nb || Book.isNb(nb)) return null;
+    try { if (localStorage.getItem(this.askKey(secId))) return null; } catch (e) { }
+    const pages = App.sectionSermons(secId), g = pages.length && this.guess(pages[0]); if (!g) return null;
+    const free = pages.filter(s => !this.of(s)); if (!free.length) return null;
+    const K = this.get(g);
+    const box = el('div', { class: 'pk-ask' },
+      el('span', { text: `Esta seção parece ser de ${K[2]} ${K[1]}. Marcar ${free.length === 1 ? 'a página' : 'as ' + free.length + ' páginas'} sem tipo como ${K[1]}?` }),
+      el('div', { class: 'pk-ask-b' },
+        el('button', { class: 'btn sm primary', text: 'Marcar', onclick: () => { for (const s of free) this.set(s, g); try { localStorage.setItem(this.askKey(secId), 'done'); } catch (e) { } App.flush(); App.renderPages(); if (App.cur) App.renderEditor(); UI.toast(`${free.length} página(s) marcada(s) como ${K[1]}`); } }),
+        el('button', { class: 'btn sm', text: 'Agora não', onclick: () => { try { localStorage.setItem(this.askKey(secId), 'no'); } catch (e) { } box.remove(); } })));
+    return box;
+  },
   // ── seletor no cabeçalho da página
   headSelect(s) {
     const sel = el('select', { id: 's-kind', title: 'O que é esta página — usado no filtro "Tipo" e na revisão com IA' },
       el('option', { value: '', text: '— sem tipo —' }), ...PAGE_KINDS.map(([id, label, ic]) => el('option', { value: id, text: ic + ' ' + label, selected: s.kind === id })));
     sel.onchange = () => { this.set(s, sel.value); App.renderPages(); };
-    const g = !this.of(s) && this.guess(s); if (g) sel.append(el('option', { value: '', text: '', hidden: true })), sel.title += ` · pelo nome da seção, parece: ${this.get(g)[1]}`;
     return el('label', { class: 'pk-head' }, 'Tipo ', sel);
   },
   // ── ação em massa (modo Selecionar)
