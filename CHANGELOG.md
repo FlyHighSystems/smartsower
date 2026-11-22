@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.3 — 22/11/2026
+- Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.
+- Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de "Fé e igreja", e mais nuvens em Natureza.
+
 ## 3.12.2 — 22/11/2026
 - Botão **⟳** no topo para recarregar o app sem fechar e abrir.
 - O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece "Atualizar".

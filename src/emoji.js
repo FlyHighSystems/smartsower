@@ -1,7 +1,7 @@
 /* ===== Emojis no editor: botão 😊 na Formatação, na barra flutuante e Ctrl+Shift+E ===== */
 const EMOJI_CATS = [
   ['⛪', 'Fé e igreja', [
-    ['🙏', 'orar oração mãos rezar gratidão'], ['✝️', 'cruz cristo jesus'], ['📖', 'bíblia livro palavra leitura'], ['🕊️', 'pomba espírito santo paz'],
+    ['🙏', 'orar oração mãos rezar gratidão'], ['❤️‍🔥', 'coração em chamas paixão fogo avivamento'], ['☁️', 'nuvem glória presença'], ['🚀', 'foguete crescimento decolar'], ['✝️', 'cruz cristo jesus'], ['📖', 'bíblia livro palavra leitura'], ['🕊️', 'pomba espírito santo paz'],
     ['🔥', 'fogo avivamento espírito'], ['🙌', 'louvor adoração aleluia glória'], ['✨', 'brilho glória especial'], ['👑', 'coroa rei reino'],
     ['🍞', 'pão ceia'], ['🍷', 'vinho cálice ceia sangue'], ['💧', 'água batismo'], ['🌿', 'ramo vida crescimento'], ['⛪', 'igreja templo'],
     ['🎵', 'música louvor nota'], ['🎶', 'músicas louvor cântico'], ['🎤', 'microfone pregar cantar'], ['🎹', 'teclado piano'], ['🎸', 'guitarra violão'],
@@ -44,7 +44,7 @@ const EMOJI_CATS = [
   ]],
   ['🌸', 'Natureza e comida', [
     ['🌸', 'flor'], ['🌷', 'tulipa'], ['🌹', 'rosa'], ['🌻', 'girassol'], ['🌳', 'árvore'], ['🌲', 'pinheiro'], ['🍃', 'folha vento'], ['🍂', 'outono'],
-    ['❄️', 'neve frio'], ['⛈️', 'tempestade'], ['🌧️', 'chuva'], ['⚡', 'raio poder'], ['🌋', 'vulcão'], ['🏜️', 'deserto'], ['🐦', 'pássaro'], ['🦅', 'águia'],
+    ['☁️', 'nuvem'], ['⛅', 'nuvem sol'], ['🌤️', 'sol entre nuvens'], ['🌥️', 'nublado nuvem'], ['🌦️', 'chuva sol'], ['❄️', 'neve frio'], ['⛈️', 'tempestade'], ['🌧️', 'chuva'], ['⚡', 'raio poder'], ['🌋', 'vulcão'], ['🏜️', 'deserto'], ['🐦', 'pássaro'], ['🦅', 'águia'],
     ['🐝', 'abelha'], ['🦋', 'borboleta transformação'], ['🐍', 'serpente'], ['🍎', 'maçã fruto'], ['🍯', 'mel'], ['🥛', 'leite'], ['☕', 'café'], ['🍽️', 'refeição mesa'],
   ]],
 ];
@@ -99,7 +99,7 @@ const Emoji = {
     };
     const showCat = i => { [...tabs.children].forEach((t, j) => t.classList.toggle('on', j === i)); if (i === 0) { const r = this.recent(); show(r.map(e => [e, '']), r.length ? 'Usados recentemente' : 'Os que você usar aparecem aqui'); if (!r.length) show(EMOJI_CATS[0][2], 'Fé e igreja'); } else show(EMOJI_CATS[i - 1][2], EMOJI_CATS[i - 1][1]); };
     tabs.append(el('button', { class: 'em-t', text: '🕘', title: 'Recentes', onclick: () => showCat(0) }), ...EMOJI_CATS.map((c, i) => el('button', { class: 'em-t', text: c[0], title: c[1], onclick: () => showCat(i + 1) })));
-    q.oninput = () => { const t = stripAccents(q.value.trim().toLowerCase()); if (!t) return showCat(0); const all = EMOJI_CATS.flatMap(c => c[2]); show(all.filter(([e, k]) => stripAccents(k).includes(t)), `“${q.value.trim()}”`); };
+    q.oninput = () => { const t = stripAccents(q.value.trim().toLowerCase()); if (!t) return showCat(0); const all = EMOJI_CATS.flatMap(c => c[2]); const seen = new Set(); show(all.filter(([e, k]) => stripAccents(k).includes(t) && !seen.has(e) && seen.add(e)), `“${q.value.trim()}”`); };
     q.onkeydown = e => { if (e.key === 'Enter') { const b = grid.querySelector('.em-b'); if (b) b.click(); } if (e.key === 'Escape') { e.stopPropagation(); this.close(true); } };
     const pop = this.pop = el('div', { class: 'em-pop', role: 'dialog', 'aria-label': 'Emojis' }, q, tabs, grid, el('div', { class: 'em-foot muted', text: 'Clique para inserir · pode escolher vários · Esc fecha' }));
     document.body.append(pop); showCat(0);

@@ -664,6 +664,7 @@ const FloatBar = {
     const B = (html, title, fn, cls = '') => { const b = el('button', { class: 'fb-b ' + cls, title, html }); b.addEventListener('pointerdown', e => e.preventDefault()); b.addEventListener('mousedown', e => e.preventDefault()); b.onclick = e => { e.preventDefault(); fn(); }; return b; };
     const sep = () => el('span', { class: 'fb-sep' });
     const bar = el('div', { class: 'fbar', role: 'toolbar', 'aria-label': 'Formatação' },
+      B('😊', 'Emoji (Ctrl+Shift+E)', () => { const a = document.activeElement; if (!Emoji.isField(a)) { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }, 'fb-emoji'), sep(),
       B('<b>N</b>', 'Negrito (Ctrl+B)', () => this.exec('bold'), 'st-bold'), B('<i>I</i>', 'Itálico (Ctrl+I)', () => this.exec('italic'), 'st-italic'),
       B('<u>S</u>', 'Sublinhado (Ctrl+U)', () => this.exec('underline'), 'st-underline'), B('<s>ab</s>', 'Tachado', () => this.exec('strikeThrough'), 'st-strikeThrough'), sep(),
       ...this.HL.map(c => B('', 'Marca-texto', () => this.exec('hiliteColor', c, true), 'fb-sw').tap(x => x.style.background = c)),
@@ -671,16 +672,33 @@ const FloatBar = {
       ...this.COL.map(c => B('A', 'Cor do texto', () => this.exec('foreColor', c, true), 'fb-col').tap(x => x.style.color = c)), sep(),
       B('•', 'Lista com marcadores', () => this.exec('insertUnorderedList')), B('1.', 'Lista numerada', () => this.exec('insertOrderedList')),
       B('⇤', 'Diminuir recuo (Shift+Tab)', () => indentSel(-1)), B('⇥', 'Aumentar recuo / subitem (Tab)', () => indentSel(1)),
-      B('😊', 'Emoji (Ctrl+Shift+E) — entra no fim da seleção', () => { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }),
       B('¹', 'Nota de rodapé no fim da seleção (Ctrl+Alt+N)', () => { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } this.hide(); Footnotes.insert(); }),
       B('⨯', 'Limpar formatação', () => this.exec('removeFormat')));
     document.body.append(bar); return bar;
   },
   paintState() { if (!this.bar) return; for (const c of ['bold', 'italic', 'underline', 'strikeThrough']) { try { this.bar.querySelector('.st-' + c)?.classList.toggle('on', document.queryCommandState(c)); } catch (e) { } } },
   hide() { if (this.bar) this.bar.classList.remove('show'); },
+  /* toque no texto (sem selecionar): mostra a barra junto do cursor — no título, só o emoji */
+  caretUpdate() {
+    if (!this.caretTap) return this.hide();
+    const a = document.activeElement; let box, mini = false;
+    if (Emoji.isField(a)) { box = a.getBoundingClientRect(); mini = true; box = { top: box.top, bottom: box.bottom, left: box.left + Math.min(box.width - 60, 12), width: 0 }; }
+    else {
+      const s = getSelection(); if (!s.rangeCount) return this.hide(); const r = s.getRangeAt(0);
+      const h = (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement)?.closest('#blocks .b-body[contenteditable]'); if (!h) return this.hide();
+      box = r.getClientRects()[0] || (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement).getBoundingClientRect();
+    }
+    this.bar ||= this.build(); this.bar.classList.toggle('mini', mini); this.paintState();
+    const vh = window.visualViewport?.height || innerHeight, bw = this.bar.offsetWidth || 420, bh = this.bar.offsetHeight || 40;
+    let top = box.bottom + 10; if (top + bh > vh - 8) top = Math.max(56, box.top - bh - 10);
+    const left = Math.max(8, Math.min(innerWidth - bw - 8, box.left - 20));
+    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
+  },
   update() {
     const s = getSelection();
-    if (!s.rangeCount || s.isCollapsed) return this.hide();
+    if (!Emoji.isField(document.activeElement)) this.bar?.classList.remove('mini');
+    if (Emoji.isField(document.activeElement) || !s.rangeCount || s.isCollapsed) return this.caretUpdate();
+    this.caretTap = false;
     const r = s.getRangeAt(0); const host = n => (n.nodeType === 1 ? n : n.parentElement)?.closest('#blocks .b-body[contenteditable]');
     const h = host(r.startContainer); if (!h || h !== host(r.endContainer) || !r.toString().trim()) return this.hide();
     this.bar ||= this.build(); this.paintState();
@@ -695,8 +713,15 @@ const FloatBar = {
     if (!Element.prototype.tap) Object.defineProperty(Element.prototype, 'tap', { value(fn) { fn(this); return this; }, configurable: true });
     const up = debounce(() => this.update(), 120);
     document.addEventListener('selectionchange', up);
-    document.addEventListener('pointerdown', e => { this.touch = e.pointerType === 'touch' || e.pointerType === 'pen'; if (this.bar && !this.bar.contains(e.target)) this.hide(); }, true);
-    document.addEventListener('pointerup', up, true); document.addEventListener('keyup', e => { if (e.shiftKey || e.key.startsWith('Arrow')) up(); });
+    document.addEventListener('pointerdown', e => { this.touch = e.pointerType === 'touch' || e.pointerType === 'pen'; if (this.bar && !this.bar.contains(e.target)) { this.hide(); this.caretTap = false; } }, true);
+    document.addEventListener('pointerup', e => {
+      if (this.bar?.contains(e.target)) return;
+      // tocou dentro do texto ou do título com o dedo/caneta → barra junto do cursor
+      this.caretTap = this.touch && !!e.target.closest?.('#blocks .b-body[contenteditable], #editor input.s-title');
+      setTimeout(() => this.update(), 180);
+    }, true);
+    document.addEventListener('keydown', e => { if (this.caretTap && !['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) { this.caretTap = false; if (getSelection().isCollapsed || Emoji.isField(document.activeElement)) this.hide(); } }, true);
+    window.visualViewport?.addEventListener('resize', () => { if (this.bar?.classList.contains('show')) up(); }); document.addEventListener('keyup', e => { if (e.shiftKey || e.key.startsWith('Arrow')) up(); });
     $('#editor')?.addEventListener('scroll', () => { if (this.bar?.classList.contains('show')) up(); }, { passive: true });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.hide(); });
   }

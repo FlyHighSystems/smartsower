@@ -691,3 +691,5 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .reload-btn{font-size:17px;position:relative}.reload-btn.has-new{color:#fff;background:#107c10;border-radius:8px}
 .reload-btn.has-new::after{content:'';position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#ffd400;box-shadow:0 0 0 2px #107c10}
 @media (max-width: 460px) { .pr-l { display: none; } .topbar .btn.preach { padding: 6px 12px; } }
+.fbar.mini > :not(.fb-emoji) { display: none; }
+.fbar { max-width: calc(100vw - 16px); overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; } .fbar::-webkit-scrollbar { display: none; } .fbar > * { flex-shrink: 0; }
