@@ -6951,7 +6951,7 @@ const PageKinds = {
     const k = this.get(this.eff(s)); if (!k) return null; const g = !this.of(s);
     return el('span', { class: 'pk-badge' + (g ? ' guess' : ''), style: { '--pk': k[3] }, title: g ? `${k[1]} (pelo nome da seção — abra a página e escolha o tipo para confirmar)` : k[1], text: k[2] + ' ' + k[1] });
   },
-  set(s, id) { s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s)) { s.duration = this.planned(s); s.durSet = false; } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); } },
+  set(s, id) { const was = this.timeMode(s); s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s) || was !== this.timeMode(s)) { s.durSet = false; s.duration = this.planned(s); } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); } },
   // ── criar página já com o tipo
   addMenu(anchor) {
     $('.mk-menu')?.remove();
