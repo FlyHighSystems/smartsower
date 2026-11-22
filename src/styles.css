@@ -666,3 +666,5 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .pk-sec{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#888);padding:10px 14px 3px}
 .pk-ic{width:1.6em;text-align:center;font-size:16px}.pk-menu .mk-item{display:flex;align-items:center;gap:8px}.pk-menu kbd{margin-left:auto;font:inherit;font-size:11px;opacity:.6;background:none;border:0}
 .pk-head select{max-width:12em}
+
+.s-est.over{color:#c50f1f}

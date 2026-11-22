@@ -9,7 +9,27 @@ const PAGE_KINDS = [
   ['insight', 'Insight', '💡', '#b4009e', 'Ideia, anotação, semente de mensagem'],
   ['outro', 'Outro', '📝', '#605e5c', 'Qualquer outro tipo'],
 ];
+// tempo de cada tipo: [como medir, minutos padrão]
+const KIND_TIME = { sermao: ['fala', 40], estudo: ['fala', 50], celula: ['fala', 20], devocional: ['leitura', 5], insight: ['nenhum', 0], outro: ['fala', 0] };
+const READ_WPM = 200; // leitura silenciosa em português (conservador)
 const PageKinds = {
+  timeMode(s) { return KIND_TIME[this.eff(s)]?.[0] || 'fala'; },
+  userSetDur(s) { return s.durSet === true || (s.durSet === undefined && !!s.duration && s.duration !== 40); }, // páginas antigas: 40 era o padrão de toda página
+  planned(s) { if (Book.is(s)) return s.duration || 0; if (this.userSetDur(s)) return s.duration || 0; const k = KIND_TIME[this.eff(s)]; return k ? k[1] : (s.duration || 0); },
+  readMin(s) { return Estimate.ofBlocks(s.blocks, 1 / READ_WPM).minutes; },
+  timeText(s) { // o que vai para a revisão com IA
+    const m = this.timeMode(s), p = this.planned(s);
+    if (m === 'nenhum') return '';
+    if (m === 'leitura') return `Tempo de leitura estimado: ≈ ${Estimate.fmt(this.readMin(s))}${p ? ` (meta: até ${p} min de leitura)` : ''}. É um texto para LER, não uma pregação: não avalie duração de culto.`;
+    return (p ? `Duração planejada: ${p} min` : '') + `${p ? ' · ' : ''}tempo falado estimado: ≈ ${Estimate.fmt(Estimate.sermon(s).minutes)}`;
+  },
+  paintTime(s) {
+    const L = $('#s-dur-label'), I = $('#s-duration'); if (!L || !I) return; const m = this.timeMode(s);
+    L.hidden = m === 'nenhum'; L.firstChild.textContent = m === 'leitura' ? 'Leitura até ' : 'Duração ';
+    L.title = m === 'leitura' ? 'Meta de tempo de leitura (devocional)' : 'Tempo planejado para ministrar';
+    const p = this.planned(s); if (document.activeElement !== I) I.value = p || '';
+  },
+
   get(id) { return PAGE_KINDS.find(k => k[0] === id); },
   of(s) { return !Book.is(s) && this.get(s.kind) ? s.kind : null; },
   guess(s) { if (Book.is(s)) return null; const n = stripAccents((App.meta.sections.find(x => x.id === s.sec)?.name || '').toLowerCase()); return /devoc/.test(n) ? 'devocional' : /estud/.test(n) ? 'estudo' : /celula|\bpg\b|pequeno/.test(n) ? 'celula' : /insight|ideia/.test(n) ? 'insight' : /serm|ministra|prega/.test(n) ? 'sermao' : null; },
@@ -18,12 +38,12 @@ const PageKinds = {
     const k = this.get(this.eff(s)); if (!k) return null; const g = !this.of(s);
     return el('span', { class: 'pk-badge' + (g ? ' guess' : ''), style: { '--pk': k[3] }, title: g ? `${k[1]} (pelo nome da seção — abra a página e escolha o tipo para confirmar)` : k[1], text: k[2] + ' ' + k[1] });
   },
-  set(s, id) { s.kind = id || undefined; if (!id) delete s.kind; App.touch(s); },
+  set(s, id) { s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s)) { s.duration = this.planned(s); s.durSet = false; } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); } },
   // ── criar página já com o tipo
   addMenu(anchor) {
     $('.mk-menu')?.remove();
     const box = el('div', { class: 'mk-menu pk-menu' }, el('div', { class: 'muted small', style: { padding: '4px 10px' }, text: 'Nova página — o que vai ser?' }),
-      ...PAGE_KINDS.map(([id, label, ic, color, hint]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); try { localStorage.setItem('ss-last-kind', id); } catch (e) { } App.newSermon({ kind: id }); } },
+      ...PAGE_KINDS.map(([id, label, ic, color, hint]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); try { localStorage.setItem('ss-last-kind', id); } catch (e) { } App.newSermon({ kind: id, duration: KIND_TIME[id][1], durSet: false }); } },
         el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }), el('kbd', { text: hint }))),
       el('button', { class: 'mk-item muted', onclick: () => { box.remove(); App.newSermon(); } }, el('span', { class: 'pk-ic', text: '▫' }), el('span', { class: 'mk-l', text: 'Sem tipo' }), el('kbd', { text: 'decido depois' })));
     document.body.append(box); const r = anchor.getBoundingClientRect();

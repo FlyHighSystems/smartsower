@@ -131,6 +131,9 @@ const App = {
   updateEstimate() {
     const E = $('#s-est'); if (!E || !this.cur) return; const e = Estimate.sermon(this.cur);
     const last = (this.cur.preached || []).slice(-1)[0];
+    if (!Book.is(this.cur) && PageKinds.timeMode(this.cur) === 'leitura') { const r = PageKinds.readMin(this.cur), p = PageKinds.planned(this.cur); E.textContent = `≈ ${Estimate.fmt(r)} de leitura`; E.classList.toggle('over', !!p && r > p * 1.2); E.title = `${e.words} palavras · leitura silenciosa a ${READ_WPM} palavras/min${p ? ` · meta: até ${p} min` : ''}\nFalado (se for ler em voz alta no culto): ≈ ${Estimate.fmt(e.minutes)}`; return; }
+    E.classList.remove('over');
+    if (!Book.is(this.cur) && PageKinds.timeMode(this.cur) === 'nenhum') { E.textContent = `${e.words} palavras`; E.title = 'Insight: sem tempo de ministração'; return; }
     E.textContent = `≈ ${Estimate.fmt(e.minutes)} pregando`;
     E.title = `${e.words} palavras · estimativa ${Estimate.label(e)}` + (last ? `\nÚltima vez: ${last.minutes} min em ${new Date(last.date + 'T12:00').toLocaleDateString('pt-BR')}` : '');
   },
@@ -408,7 +411,7 @@ const App = {
         <div class="s-meta">
           <label>Data <input type="date" id="s-date" value="${esc(s.date || '')}"></label>
           <label>Texto-base <input id="s-passage" value="${esc(s.passage || '')}" placeholder="Ex.: Rm 8:28-39"></label>
-          <label>Duração <input id="s-duration" type="number" min="0" max="240" value="${s.duration || ''}" style="width:4.2em"> min</label>
+          <label id="s-dur-label">Duração <input id="s-duration" type="number" min="0" max="240" value="${s.duration || ''}" style="width:4.2em"> min</label>
           <span class="s-est" id="s-est"></span>
           <label>Seção <select id="s-sec">${secOpts}</select></label>
           <span id="s-kind-slot"></span>
@@ -433,8 +436,8 @@ const App = {
         if (s.blocks.some(b => b.type === 'verse' && b.ref === refLabel(r))) return;
         UI.toast('Inserir o texto-base como versículo?', { label: 'Inserir', fn: async () => { const res = await Bible.lookup(r); if (!res.error) { this.insertBlock('verse', { ref: res.label, version: res.version, html: Bible.versesHTML(res.verses) }, -1); } } });
       };
-      $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; this.touch(); };
-      $('#s-kind-slot').replaceWith(PageKinds.headSelect(s));
+      $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; s.durSet = true; this.touch(); };
+      $('#s-kind-slot').replaceWith(PageKinds.headSelect(s)); if (!Book.is(s)) PageKinds.paintTime(s);
       $('#s-sec').onchange = e => { s.sec = e.target.value; const sec = this.meta.sections.find(x => x.id === s.sec); this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.touch(); this.saveMeta(); this.renderNav(); };
       $('#s-dup').onclick = () => this.duplicateSermon();
       $('#s-share').onclick = () => { this.flush(); Share.open(s); };

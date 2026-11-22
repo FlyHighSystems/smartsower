@@ -113,7 +113,7 @@ const AI = {
   },
   /* Ministração em texto simples, com rótulos dos blocos */
   sermonText(s) {
-    const lines = [`# ${s.title}`]; if (s.passage) lines.push(`Texto-base: ${s.passage}`); if (s.duration) lines.push(`Duração planejada: ${s.duration} min`);
+    const lines = [`# ${s.title}`]; if (s.passage) lines.push(`Texto-base: ${s.passage}`); if (Book.is(s)) { if (s.duration) lines.push(`Duração planejada: ${s.duration} min`); } else { const tt = PageKinds.timeText(s); if (tt) lines.push(tt); }
     let n = 0;
     for (const b of s.blocks) {
       const t = htmlToText(b.html || '').trim();

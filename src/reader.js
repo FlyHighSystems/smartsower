@@ -104,9 +104,9 @@ const Reader = {
   updateClock() {
     const sec = Math.floor((Date.now() - this.t0) / 1000), mm = String(Math.floor(sec / 60)).padStart(2, '0'), ss = String(sec % 60).padStart(2, '0');
     const T = $('#r-timer'); T.textContent = `${mm}:${ss}`;
-    const dur = (this.s.duration || 0) * 60;
+    const dur = PageKinds.planned(this.s) * 60;
     T.className = 'r-timer' + (dur ? (sec >= dur ? ' over' : sec >= dur * 0.8 ? ' red' : sec >= dur * 0.5 ? ' yellow' : '') : '');
-    T.title = dur ? `Duração planejada: ${this.s.duration} min` : 'Toque para zerar';
+    T.title = dur ? `Duração planejada: ${PageKinds.planned(this.s)} min` : 'Toque para zerar';
     $('#r-clock').textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     this.updateEstimate(sec);
   },
@@ -122,7 +122,7 @@ const Reader = {
   updateEstimate(sec) {
     const E = $('#r-est'); if (!E || !this.est) return;
     const total = this.est.minutes, left = Math.max(0, total * (1 - this.progress()));
-    const finish = sec / 60 + left, dur = this.s.duration || 0;
+    const finish = sec / 60 + left, dur = PageKinds.planned(this.s);
     E.textContent = `≈ ${Estimate.fmt(total)} · ` + (left < 1 ? 'falta < 1 min' : `faltam ≈ ${Estimate.fmt(left)}`);
     E.className = 'r-est' + (dur && finish > dur * 1.05 ? ' late' : '');
     E.title = `Estimativa ${Estimate.label(this.est)}.` + (dur ? ` Pelo ritmo de agora você termina em ≈ ${Estimate.fmt(finish)} (planejado: ${dur} min).` : '');
