@@ -287,7 +287,7 @@ const App = {
         const on = this.sel.has(s.id);
         list.append(el('label', { class: 'page sel-row' + (on ? ' active' : '') },
           el('input', { type: 'checkbox', checked: on, onchange: e => { e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
+          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: () => this.open(s.id),
@@ -296,7 +296,7 @@ const App = {
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
           el('div', { class: 'page-title', text: (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : '') }),
-          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
+          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
         flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
       if (!flat) {
         row.addEventListener('dragover', e => { if (!this._drag || this._drag === s.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2; row.classList.toggle('drop-after', after); row.classList.toggle('drop-before', !after); });
@@ -427,6 +427,7 @@ const App = {
             <button class="btn sm" id="s-slide" title="Gerar imagem com o título para o telão ou redes sociais">🖼 Telão</button>
             <button class="btn sm" id="s-hist" title="Versões anteriores desta página">🕘 Versões</button>
             <button class="btn sm" id="s-move" title="Mover ou copiar para outra seção">⇢ Mover/Copiar</button>
+            <button class="btn sm" id="s-tr" title="Criar uma cópia traduzida para inglês ou espanhol">🌐 Traduzir</button>
             <button class="btn sm" id="s-dup" title="Duplicar">Duplicar</button>
             <button class="btn sm danger-text" id="s-del" title="Excluir">Excluir</button>
           </span>
@@ -444,7 +445,7 @@ const App = {
       $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; s.durSet = true; this.touch(); };
       $('#s-kind-slot').replaceWith(PageKinds.headSelect(s)); if (!Book.is(s)) PageKinds.paintTime(s);
       $('#s-sec').onchange = e => { s.sec = e.target.value; const sec = this.meta.sections.find(x => x.id === s.sec); this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.touch(); this.saveMeta(); this.renderNav(); };
-      $('#s-dup').onclick = () => this.duplicateSermon();
+      $('#s-dup').onclick = () => this.duplicateSermon(); $('#s-tr').onclick = () => Translate.open(s);
       $('#s-share').onclick = () => { this.flush(); Share.open(s); };
       $('#s-slide').onclick = () => { this.flush(); Slide.open(s); };
       $('#s-move').onclick = async () => {
@@ -575,7 +576,7 @@ const App = {
     sel.value = value && Bible.has(value) ? value : (Bible.current() || '');
   },
   bindEditable(body, b) {
-    body.spellcheck = Spell.live(); body.lang = 'pt-BR';
+    body.spellcheck = Spell.live(); body.lang = LANGS[App.cur?.lang]?.lt || 'pt-BR';
     const fixC = debounce(() => { if (ensureContrast(body)) { b.html = body.innerHTML; this.touch(); } }, 250);
     body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; this.touch(); fixC(); });
     requestAnimationFrame(() => { if (body.isConnected && ensureContrast(body)) { b.html = body.innerHTML; this.touch(b === this.cur?.blocks.find(x => x.id === b.id) ? this.cur : undefined); } });

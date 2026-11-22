@@ -530,7 +530,7 @@ const Spell = {
   },
   async check(text) {
     const r = await fetch(this.API, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ text, language: 'pt-BR', enabledOnly: 'false' }) });
+      body: new URLSearchParams({ text, language: LANGS[App.cur?.lang]?.lt || 'pt-BR', enabledOnly: 'false' }) });
     if (r.status === 429) throw new Error('Muitas verificações seguidas. Espere um minuto e tente de novo.');
     if (!r.ok) throw new Error('Verificador indisponível agora (erro ' + r.status + ').');
     return (await r.json()).matches || [];

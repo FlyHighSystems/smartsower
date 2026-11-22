@@ -7,6 +7,9 @@ const BIBLE_SOURCES = [
   { id: 'acf', short: 'ACF', name: 'Almeida Corrigida Fiel', license: '© Sociedade Bíblica Trinitariana do Brasil — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/acf.json'] },
   { id: 'arc', short: 'ARC', name: 'Almeida Revista e Corrigida', license: '© Sociedade Bíblica do Brasil — somente uso pessoal.', urls: [GH + 'maatheusgois/bible/main/versions/pt-br/arc.json'] },
   { id: 'nvi', short: 'NVI', name: 'Nova Versão Internacional', license: '© Biblica, Inc. — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/nvi.json'] },
+  { id: 'web', short: 'WEB', lang: 'en', open: true, name: 'World English Bible — inglês moderno', license: 'Domínio público.', urls: [GH + 'midvash/bible-data/main/versions/en/web/web.json'], perBook: GH + 'midvash/bible-data/main/versions/en/web/books/{OSIS}.json' },
+  { id: 'kjv', short: 'KJV', lang: 'en', open: true, name: 'King James Version — inglês clássico', license: 'Domínio público.', urls: [GH + 'midvash/bible-data/main/versions/en/kjv/kjv.json'], perBook: GH + 'midvash/bible-data/main/versions/en/kjv/books/{OSIS}.json' },
+  { id: 'rvr', short: 'RVR', lang: 'es', name: 'Reina-Valera — espanhol', license: 'Reina-Valera (edição de domínio público disponível em thiagobodruk/bible) — use para estudo e ministração.', urls: [GH + 'thiagobodruk/bible/master/json/es_rvr.json'] },
   { id: 'aa', short: 'AA', name: 'Almeida Revisada Imprensa Bíblica', license: '© Imprensa Bíblica Brasileira — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/aa.json'] },
 ];
 
@@ -103,7 +106,7 @@ const Bible = {
     const ranges = r.ranges.length ? r.ranges : [[1, ch.length]];
     for (const [a, z] of ranges) for (let v = a; v <= Math.min(z, ch.length); v++) if (ch[v - 1] != null) verses.push([v, ch[v - 1]]);
     if (!verses.length) return { error: 'Versículo não encontrado', r };
-    return { label: refLabel(r), verses, r, version };
+    return { label: refLabel(r, typeof App !== 'undefined' ? App.cur?.lang : null), verses, r, version };
   },
   versesHTML(verses) { return verses.length === 1 ? esc(verses[0][1]) : verses.map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' '); },
   async search(q, version, limit = 300) {

@@ -16,6 +16,11 @@ const BOOKS = [
   ['3 João', '3Jo', '3John'], ['Judas', 'Jd', 'Jude'], ['Apocalipse', 'Ap', 'Rev']
 ].map(([name, abbr, osis], i) => ({ id: i + 1, name, abbr, osis }));
 
+/* Nomes dos livros em inglês e espanhol (páginas traduzidas e texto colado de outros apps) */
+const BOOK_NAMES = {
+  en: ['Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Songs','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'],
+  es: ['Génesis','Éxodo','Levítico','Números','Deuteronomio','Josué','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Crónicas','2 Crónicas','Esdras','Nehemías','Ester','Job','Salmos','Proverbios','Eclesiastés','Cantares','Isaías','Jeremías','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amós','Abdías','Jonás','Miqueas','Nahúm','Habacuc','Sofonías','Hageo','Zacarías','Malaquías','Mateo','Marcos','Lucas','Juan','Hechos','Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón','Hebreos','Santiago','1 Pedro','2 Pedro','1 Juan','2 Juan','3 Juan','Judas','Apocalipsis'],
+};
 const BookIndex = (() => {
   const exact = new Map();      // chave com acento -> id
   const plain = new Map();      // chave sem acento -> id
@@ -36,8 +41,8 @@ const BookIndex = (() => {
     60: ['pe', 'ped', 'pd'], 61: ['pe', 'ped', 'pd'], 62: ['jo', 'joao'], 63: ['jo', 'joao'], 64: ['jo', 'joao'] };
   for (const b of BOOKS) { add(b.name, b.id); add(b.abbr, b.id); add(b.osis, b.id); }
   // Nomes em inglês (texto colado do YouVersion e de outros apps)
-  ['Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Songs','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation']
-    .forEach((n, i) => { if (!exact.has(n.toLowerCase().replace(/[\s.]/g, ''))) add(n, i + 1); });
+  BOOK_NAMES.en.forEach((n, i) => { if (!exact.has(n.toLowerCase().replace(/[\s.]/g, ''))) add(n, i + 1); });
+  BOOK_NAMES.es.forEach((n, i) => { if (!exact.has(norm(n)) && !plain.has(stripAccents(norm(n)))) add(n, i + 1); });
   add('psalm', 19); add('songofsolomon', 22);
   for (const [id, arr] of Object.entries(extra)) arr.forEach(k => add(k, +id));
   for (const [id, arr] of Object.entries(numbered)) { const n = BOOKS[id - 1].name[0]; arr.forEach(k => add(n + k, +id)); }
@@ -71,10 +76,10 @@ function parseRef(str) {
   }
   return { book, ch, ranges };
 }
-function refLabel(r) {
+function refLabel(r, lang) {
   if (!r) return '';
   const b = BOOKS[r.book - 1];
-  let s = `${b.name} ${r.ch}`;
+  let s = `${(lang && BOOK_NAMES[lang]?.[r.book - 1]) || b.name} ${r.ch}`;
   if (r.ranges && r.ranges.length) s += ':' + r.ranges.map(([a, z]) => a === z ? a : `${a}-${z}`).join(',');
   return s;
 }

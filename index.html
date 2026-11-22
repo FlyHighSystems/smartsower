@@ -709,6 +709,12 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .fb-ctx{flex:1 0 100%;display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:2px}
 .fb-sp,.fb-clip{display:flex;flex-wrap:wrap;align-items:center;gap:2px}.fb-sp .muted{padding:2px 6px;flex:1 0 100%}
 .fb-b.fb-txt{width:auto;padding:5px 9px;font-size:13px}.fb-b.fb-rep{font-weight:600;color:var(--accent)}.fb-b.off{opacity:.4;pointer-events:none}
+
+.lang-badge{display:inline-block;font-size:11px;line-height:1.5;padding:0 6px;border-radius:99px;margin-right:6px;border:1px solid var(--line);white-space:nowrap}
+.tr-langs{display:flex;gap:8px;margin:10px 0}.tr-lang{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font:inherit;font-size:15px;cursor:pointer}
+.tr-lang.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset;font-weight:600}.tr-flag{font-size:22px}
+.tr-bibles{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:10px;border:1px solid var(--line);border-radius:10px}
+.tr-opt{display:flex;align-items:center;gap:8px;font-size:14px}.tr-opt.off span{opacity:.6}.tr-opt .btn{margin-left:auto}
 </style>
 </head>
 <body>
@@ -906,7 +912,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.6", "code": "3a90d7", "at": "22/11 16:10", "notes": [{"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
+<script>window.SS_BUILD = {"version": "3.12.7", "code": "25b253", "at": "22/11 16:15", "notes": [{"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1060,6 +1066,11 @@ const BOOKS = [
   ['3 João', '3Jo', '3John'], ['Judas', 'Jd', 'Jude'], ['Apocalipse', 'Ap', 'Rev']
 ].map(([name, abbr, osis], i) => ({ id: i + 1, name, abbr, osis }));
 
+/* Nomes dos livros em inglês e espanhol (páginas traduzidas e texto colado de outros apps) */
+const BOOK_NAMES = {
+  en: ['Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Songs','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'],
+  es: ['Génesis','Éxodo','Levítico','Números','Deuteronomio','Josué','Jueces','Rut','1 Samuel','2 Samuel','1 Reyes','2 Reyes','1 Crónicas','2 Crónicas','Esdras','Nehemías','Ester','Job','Salmos','Proverbios','Eclesiastés','Cantares','Isaías','Jeremías','Lamentaciones','Ezequiel','Daniel','Oseas','Joel','Amós','Abdías','Jonás','Miqueas','Nahúm','Habacuc','Sofonías','Hageo','Zacarías','Malaquías','Mateo','Marcos','Lucas','Juan','Hechos','Romanos','1 Corintios','2 Corintios','Gálatas','Efesios','Filipenses','Colosenses','1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemón','Hebreos','Santiago','1 Pedro','2 Pedro','1 Juan','2 Juan','3 Juan','Judas','Apocalipsis'],
+};
 const BookIndex = (() => {
   const exact = new Map();      // chave com acento -> id
   const plain = new Map();      // chave sem acento -> id
@@ -1080,8 +1091,8 @@ const BookIndex = (() => {
     60: ['pe', 'ped', 'pd'], 61: ['pe', 'ped', 'pd'], 62: ['jo', 'joao'], 63: ['jo', 'joao'], 64: ['jo', 'joao'] };
   for (const b of BOOKS) { add(b.name, b.id); add(b.abbr, b.id); add(b.osis, b.id); }
   // Nomes em inglês (texto colado do YouVersion e de outros apps)
-  ['Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes','Song of Songs','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus','Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation']
-    .forEach((n, i) => { if (!exact.has(n.toLowerCase().replace(/[\s.]/g, ''))) add(n, i + 1); });
+  BOOK_NAMES.en.forEach((n, i) => { if (!exact.has(n.toLowerCase().replace(/[\s.]/g, ''))) add(n, i + 1); });
+  BOOK_NAMES.es.forEach((n, i) => { if (!exact.has(norm(n)) && !plain.has(stripAccents(norm(n)))) add(n, i + 1); });
   add('psalm', 19); add('songofsolomon', 22);
   for (const [id, arr] of Object.entries(extra)) arr.forEach(k => add(k, +id));
   for (const [id, arr] of Object.entries(numbered)) { const n = BOOKS[id - 1].name[0]; arr.forEach(k => add(n + k, +id)); }
@@ -1115,10 +1126,10 @@ function parseRef(str) {
   }
   return { book, ch, ranges };
 }
-function refLabel(r) {
+function refLabel(r, lang) {
   if (!r) return '';
   const b = BOOKS[r.book - 1];
-  let s = `${b.name} ${r.ch}`;
+  let s = `${(lang && BOOK_NAMES[lang]?.[r.book - 1]) || b.name} ${r.ch}`;
   if (r.ranges && r.ranges.length) s += ':' + r.ranges.map(([a, z]) => a === z ? a : `${a}-${z}`).join(',');
   return s;
 }
@@ -1134,6 +1145,9 @@ const BIBLE_SOURCES = [
   { id: 'acf', short: 'ACF', name: 'Almeida Corrigida Fiel', license: '© Sociedade Bíblica Trinitariana do Brasil — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/acf.json'] },
   { id: 'arc', short: 'ARC', name: 'Almeida Revista e Corrigida', license: '© Sociedade Bíblica do Brasil — somente uso pessoal.', urls: [GH + 'maatheusgois/bible/main/versions/pt-br/arc.json'] },
   { id: 'nvi', short: 'NVI', name: 'Nova Versão Internacional', license: '© Biblica, Inc. — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/nvi.json'] },
+  { id: 'web', short: 'WEB', lang: 'en', open: true, name: 'World English Bible — inglês moderno', license: 'Domínio público.', urls: [GH + 'midvash/bible-data/main/versions/en/web/web.json'], perBook: GH + 'midvash/bible-data/main/versions/en/web/books/{OSIS}.json' },
+  { id: 'kjv', short: 'KJV', lang: 'en', open: true, name: 'King James Version — inglês clássico', license: 'Domínio público.', urls: [GH + 'midvash/bible-data/main/versions/en/kjv/kjv.json'], perBook: GH + 'midvash/bible-data/main/versions/en/kjv/books/{OSIS}.json' },
+  { id: 'rvr', short: 'RVR', lang: 'es', name: 'Reina-Valera — espanhol', license: 'Reina-Valera (edição de domínio público disponível em thiagobodruk/bible) — use para estudo e ministração.', urls: [GH + 'thiagobodruk/bible/master/json/es_rvr.json'] },
   { id: 'aa', short: 'AA', name: 'Almeida Revisada Imprensa Bíblica', license: '© Imprensa Bíblica Brasileira — somente uso pessoal.', urls: [GH + 'thiagobodruk/biblia/master/json/aa.json'] },
 ];
 
@@ -1230,7 +1244,7 @@ const Bible = {
     const ranges = r.ranges.length ? r.ranges : [[1, ch.length]];
     for (const [a, z] of ranges) for (let v = a; v <= Math.min(z, ch.length); v++) if (ch[v - 1] != null) verses.push([v, ch[v - 1]]);
     if (!verses.length) return { error: 'Versículo não encontrado', r };
-    return { label: refLabel(r), verses, r, version };
+    return { label: refLabel(r, typeof App !== 'undefined' ? App.cur?.lang : null), verses, r, version };
   },
   versesHTML(verses) { return verses.length === 1 ? esc(verses[0][1]) : verses.map(([n, t]) => `<sup>${n}</sup>${esc(t)}`).join(' '); },
   async search(q, version, limit = 300) {
@@ -1885,7 +1899,7 @@ const App = {
         const on = this.sel.has(s.id);
         list.append(el('label', { class: 'page sel-row' + (on ? ' active' : '') },
           el('input', { type: 'checkbox', checked: on, onchange: e => { e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
+          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: () => this.open(s.id),
@@ -1894,7 +1908,7 @@ const App = {
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
           el('div', { class: 'page-title', text: (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : '') }),
-          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
+          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
         flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
       if (!flat) {
         row.addEventListener('dragover', e => { if (!this._drag || this._drag === s.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2; row.classList.toggle('drop-after', after); row.classList.toggle('drop-before', !after); });
@@ -2025,6 +2039,7 @@ const App = {
             <button class="btn sm" id="s-slide" title="Gerar imagem com o título para o telão ou redes sociais">🖼 Telão</button>
             <button class="btn sm" id="s-hist" title="Versões anteriores desta página">🕘 Versões</button>
             <button class="btn sm" id="s-move" title="Mover ou copiar para outra seção">⇢ Mover/Copiar</button>
+            <button class="btn sm" id="s-tr" title="Criar uma cópia traduzida para inglês ou espanhol">🌐 Traduzir</button>
             <button class="btn sm" id="s-dup" title="Duplicar">Duplicar</button>
             <button class="btn sm danger-text" id="s-del" title="Excluir">Excluir</button>
           </span>
@@ -2042,7 +2057,7 @@ const App = {
       $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; s.durSet = true; this.touch(); };
       $('#s-kind-slot').replaceWith(PageKinds.headSelect(s)); if (!Book.is(s)) PageKinds.paintTime(s);
       $('#s-sec').onchange = e => { s.sec = e.target.value; const sec = this.meta.sections.find(x => x.id === s.sec); this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.touch(); this.saveMeta(); this.renderNav(); };
-      $('#s-dup').onclick = () => this.duplicateSermon();
+      $('#s-dup').onclick = () => this.duplicateSermon(); $('#s-tr').onclick = () => Translate.open(s);
       $('#s-share').onclick = () => { this.flush(); Share.open(s); };
       $('#s-slide').onclick = () => { this.flush(); Slide.open(s); };
       $('#s-move').onclick = async () => {
@@ -2173,7 +2188,7 @@ const App = {
     sel.value = value && Bible.has(value) ? value : (Bible.current() || '');
   },
   bindEditable(body, b) {
-    body.spellcheck = Spell.live(); body.lang = 'pt-BR';
+    body.spellcheck = Spell.live(); body.lang = LANGS[App.cur?.lang]?.lt || 'pt-BR';
     const fixC = debounce(() => { if (ensureContrast(body)) { b.html = body.innerHTML; this.touch(); } }, 250);
     body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; this.touch(); fixC(); });
     requestAnimationFrame(() => { if (body.isConnected && ensureContrast(body)) { b.html = body.innerHTML; this.touch(b === this.cur?.blocks.find(x => x.id === b.id) ? this.cur : undefined); } });
@@ -5860,7 +5875,7 @@ const Spell = {
   },
   async check(text) {
     const r = await fetch(this.API, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ text, language: 'pt-BR', enabledOnly: 'false' }) });
+      body: new URLSearchParams({ text, language: LANGS[App.cur?.lang]?.lt || 'pt-BR', enabledOnly: 'false' }) });
     if (r.status === 429) throw new Error('Muitas verificações seguidas. Espere um minuto e tente de novo.');
     if (!r.ok) throw new Error('Verificador indisponível agora (erro ' + r.status + ').');
     return (await r.json()).matches || [];
@@ -6389,6 +6404,7 @@ const Book = {
           <button class="btn sm ai-btn" id="s-review" title="Editor de livro e leitor beta com IA">✦ Revisar</button>
           <button class="btn sm" id="s-hist" title="Versões anteriores deste capítulo">🕘 Versões</button>
           <button class="btn sm" id="s-move" title="Mover ou copiar">⇢ Mover/Copiar</button>
+          <button class="btn sm" id="s-tr" title="Criar uma cópia traduzida para inglês ou espanhol">🌐 Traduzir</button>
           <button class="btn sm" id="s-dup" title="Duplicar">Duplicar</button>
           <button class="btn sm danger-text" id="s-del" title="Excluir">Excluir</button>
         </span>
@@ -6406,7 +6422,7 @@ const Book = {
     $('#s-review').onclick = () => { App.flush(); Review.open(s); };
     $('#s-hist').onclick = () => { App.flush(); History.open(s); };
     $('#s-move').onclick = async () => { const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) App.moveSermons([s.id], r.sec, r.copy); };
-    $('#s-dup').onclick = () => App.duplicateSermon();
+    $('#s-dup').onclick = () => App.duplicateSermon(); $('#s-tr').onclick = () => Translate.open(s);
     $('#s-del').onclick = () => App.deleteSermon();
     this.updateCount();
   },
@@ -7260,6 +7276,97 @@ const FindView = {
     if (!this.ran) return null; const st = this.st;
     const label = st.q ? `“${st.q}”` : (PageKinds.get(st.kind)?.[1] || 'pesquisa');
     return el('div', { class: 'fv-back' }, el('button', { class: 'btn sm', text: `← Resultados de ${label}`, onclick: () => this.show() }), el('button', { class: 'icon-btn sm', text: '✕', title: 'Esconder', onclick: e => { this.ran = false; CSS.highlights?.delete('ss-find'); e.currentTarget.parentElement.remove(); } }));
+  }
+};
+
+/* ===== Traduzir a página para inglês ou espanhol =====
+   Cria uma NOVA página (a original fica intacta). O texto é traduzido pela IA mantendo a formatação;
+   os versículos vêm de uma Bíblia publicada no idioma (WEB/KJV, Reina-Valera) — a IA só traduz versículo se você pedir. */
+const LANGS = {
+  en: { label: 'Inglês', flag: '🇺🇸', ai: 'English (natural American English, as a pastor would preach it)', lt: 'en-US', tag: 'EN', bibles: ['web', 'kjv'] },
+  es: { label: 'Espanhol', flag: '🇪🇸', ai: 'Spanish (neutral Latin American Spanish, as a pastor would preach it)', lt: 'es', tag: 'ES', bibles: ['rvr'] },
+};
+const Translate = {
+  FIELDS: ['html', 'title', 'alt', 'caption', 'note', 'text'],
+  provider() { return AI.has('claude') ? 'claude' : AI.has('gemini') ? 'gemini' : null; },
+  langBadge(s) { const L = LANGS[s.lang]; return L ? el('span', { class: 'lang-badge', title: 'Página traduzida — ' + L.label, text: L.flag + ' ' + L.tag }) : null; },
+  open(s = App.cur) {
+    if (!s) return;
+    if (!this.provider()) return UI.modal({ title: '🌐 Traduzir', body: el('p', { html: 'A tradução usa a mesma IA da revisão. Configure uma chave em <b>✦ Revisar › ⚙ Chaves e modelos</b> (Gemini ou Claude) e tente de novo.' }) });
+    let lang = localStorage.getItem('ss-tr-lang') || 'en', bibleMode = '';
+    const body = el('div', { class: 'tr' }); const m = UI.modal({ title: '🌐 Traduzir esta página', body });
+    const draw = () => {
+      body.innerHTML = ''; const L = LANGS[lang];
+      const hasVerse = s.blocks.some(b => b.type === 'verse');
+      const inst = L.bibles.filter(id => Bible.has(id));
+      if (!bibleMode || (bibleMode !== 'ai' && !Bible.has(bibleMode))) bibleMode = inst[0] || 'ai';
+      body.append(
+        el('p', { class: 'muted small', text: 'Cria uma nova página traduzida na mesma seção. A original não muda.' }),
+        el('div', { class: 'tr-langs' }, ...Object.entries(LANGS).map(([id, x]) => el('button', { class: 'tr-lang' + (id === lang ? ' on' : ''), onclick: () => { lang = id; bibleMode = ''; localStorage.setItem('ss-tr-lang', id); draw(); } }, el('span', { class: 'tr-flag', text: x.flag }), x.label))));
+      if (hasVerse) {
+        const opts = el('div', { class: 'tr-bibles' }, el('div', { class: 'small', html: '<b>Versículos</b> — vêm de uma Bíblia publicada nesse idioma (não da IA):' }));
+        for (const id of L.bibles) {
+          const src = BIBLE_SOURCES.find(x => x.id === id), ok = Bible.has(id);
+          opts.append(el('label', { class: 'tr-opt' + (ok ? '' : ' off') }, el('input', { type: 'radio', name: 'trb', checked: bibleMode === id, disabled: !ok, onchange: () => { bibleMode = id; } }),
+            el('span', {}, el('b', { text: src.short }), ' — ' + src.name), ok ? null : el('button', { class: 'btn sm', text: 'Baixar', onclick: async e => { e.preventDefault(); await BibleManager.downloadOne(src); if (Bible.has(id)) bibleMode = id; draw(); } })));
+        }
+        opts.append(el('label', { class: 'tr-opt' }, el('input', { type: 'radio', name: 'trb', checked: bibleMode === 'ai', onchange: () => { bibleMode = 'ai'; } }), el('span', { text: 'Deixar a IA traduzir os versículos (tradução livre — fica marcado no versículo)' })));
+        body.append(opts);
+      }
+      const go = el('button', { class: 'btn primary', text: `${L.flag} Traduzir para ${L.label.toLowerCase()}`, onclick: () => this.run(s, lang, bibleMode, body, m) });
+      body.append(el('div', { class: 'row-btns' }, go), el('p', { class: 'muted small', text: `IA: ${this.provider() === 'claude' ? 'Claude' : 'Gemini'}. Imagens e desenhos são copiados como estão.` }));
+    };
+    draw();
+  },
+  async run(src, lang, bibleMode, body, modal) {
+    const L = LANGS[lang], prov = this.provider();
+    const log = el('p', { class: 'muted', text: 'Preparando…' }); body.innerHTML = ''; body.append(el('div', { class: 'spinner' }), log);
+    const s = structuredClone(src); s.id = uid(); s.created = s.updated = Date.now(); s.blocks.forEach(b => b.id = uid());
+    s.lang = lang; s.translatedFrom = src.id; delete s.reviews; delete s.preached;
+    // o que mandar para a IA
+    const items = [], put = (k, t) => { if (t && String(t).replace(/<[^>]+>/g, '').trim()) items.push({ k, t: String(t) }); };
+    put('title', s.title);
+    s.blocks.forEach((b, i) => {
+      if (b.type === 'verse') { if (bibleMode === 'ai') put(`b${i}.html`, b.html); return; }
+      for (const f of this.FIELDS) if (typeof b[f] === 'string') put(`b${i}.${f}`, b[f]);
+    });
+    // lotes de ~6000 caracteres
+    const batches = []; let cur = [], n = 0;
+    for (const it of items) { if (n + it.t.length > 6000 && cur.length) { batches.push(cur); cur = []; n = 0; } cur.push(it); n += it.t.length; }
+    if (cur.length) batches.push(cur);
+    const sys = `You translate Christian sermons, devotionals and book chapters from Brazilian Portuguese into ${L.ai}.
+Rules:
+- Keep the meaning, tone and warmth of the original; natural and fluent, not word-for-word.
+- Each item may contain HTML: keep EVERY tag and attribute exactly as it is, translating only the visible text. Also translate the text inside data-note="..." attributes (footnotes).
+- Keep emojis, names of people and places as is. Convert Bible book names in references to the target language (e.g. "Jo 3:16" → "${refLabel(parseRef('Jo 3:16'), lang)}").
+- Do not add, summarize or comment. Do not translate the keys.
+Answer ONLY with JSON: {"items":[{"k":"<same key>","t":"<translation>"}]}`;
+    const out = new Map();
+    try {
+      for (let i = 0; i < batches.length; i++) {
+        log.textContent = `Traduzindo${batches.length > 1 ? ` parte ${i + 1} de ${batches.length}` : ''}…`;
+        const user = JSON.stringify({ items: batches[i] });
+        let r; try { r = AI.parseJSON(await AI.ask(prov, sys, user, { maxTokens: 12000 })); }
+        catch (e) { if (!/mal formatada|vazia|JSON/i.test(e.message)) throw e; r = AI.parseJSON(await AI.ask(prov, sys, user + '\n\nIMPORTANT: answer with strictly valid JSON.', { maxTokens: 12000 })); }
+        for (const x of r.items || []) if (x && x.k) out.set(x.k, x.t);
+      }
+    } catch (e) { body.innerHTML = ''; body.append(el('p', { class: 'on-log', text: 'Não consegui traduzir: ' + e.message })); return; }
+    const missing = items.filter(it => !out.has(it.k)).length;
+    // aplica
+    if (out.has('title')) s.title = out.get('title');
+    s.blocks.forEach((b, i) => { for (const f of this.FIELDS) if (out.has(`b${i}.${f}`)) b[f] = sanitizeHTML ? (f === 'html' ? sanitizeHTML(out.get(`b${i}.${f}`)) : out.get(`b${i}.${f}`)) : out.get(`b${i}.${f}`); });
+    // texto-base e versículos
+    const pr = parseRef(s.passage); if (pr) s.passage = refLabel(pr, lang);
+    log.textContent = 'Buscando os versículos…';
+    for (const [i, b] of s.blocks.entries()) {
+      if (b.type !== 'verse') continue; const r = parseRef(b.ref); if (!r) continue;
+      if (bibleMode === 'ai') { b.ref = refLabel(r, lang) + ' (tradução livre)'; b.version = ''; continue; }
+      const res = await Bible.lookup(r, bibleMode);
+      if (res.error) { b.ref = refLabel(r, lang); b.html = ''; continue; }
+      b.ref = refLabel(r, lang); b.version = bibleMode; b.html = Bible.versesHTML(res.verses);
+    }
+    App.sermons.set(s.id, s); App.touch(s); App.flush(); modal.close(); App.renderNav(); App.open(s.id);
+    UI.toast(`${L.flag} Página traduzida para ${L.label.toLowerCase()}` + (missing ? ` — ${missing} trecho(s) ficaram em português, confira` : ''));
   }
 };
 

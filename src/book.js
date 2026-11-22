@@ -149,6 +149,7 @@ const Book = {
           <button class="btn sm ai-btn" id="s-review" title="Editor de livro e leitor beta com IA">✦ Revisar</button>
           <button class="btn sm" id="s-hist" title="Versões anteriores deste capítulo">🕘 Versões</button>
           <button class="btn sm" id="s-move" title="Mover ou copiar">⇢ Mover/Copiar</button>
+          <button class="btn sm" id="s-tr" title="Criar uma cópia traduzida para inglês ou espanhol">🌐 Traduzir</button>
           <button class="btn sm" id="s-dup" title="Duplicar">Duplicar</button>
           <button class="btn sm danger-text" id="s-del" title="Excluir">Excluir</button>
         </span>
@@ -166,7 +167,7 @@ const Book = {
     $('#s-review').onclick = () => { App.flush(); Review.open(s); };
     $('#s-hist').onclick = () => { App.flush(); History.open(s); };
     $('#s-move').onclick = async () => { const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) App.moveSermons([s.id], r.sec, r.copy); };
-    $('#s-dup').onclick = () => App.duplicateSermon();
+    $('#s-dup').onclick = () => App.duplicateSermon(); $('#s-tr').onclick = () => Translate.open(s);
     $('#s-del').onclick = () => App.deleteSermon();
     this.updateCount();
   },
