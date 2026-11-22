@@ -666,6 +666,17 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .em-h{grid-column:1/-1;font-size:12px;color:var(--muted,#888);padding:4px 2px}
 .em-b{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 0;border-radius:8px;cursor:pointer;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}.em-b:hover{background:var(--hover,#7719aa1a);transform:scale(1.15)}
 .em-foot{font-size:11px;text-align:center}
+
+.kind-bar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 10px 6px}.kind-bar::-webkit-scrollbar{display:none}
+.pk-chip{--pk:#7719aa;flex-shrink:0;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.pk-chip small{opacity:.65}.pk-chip.on{background:var(--pk);border-color:var(--pk);color:#fff}
+.pk-badge{--pk:#7719aa;display:inline-block;font-size:11px;line-height:1.5;padding:0 6px;border-radius:99px;margin-right:6px;background:color-mix(in srgb,var(--pk) 14%,transparent);color:var(--pk);border:1px solid color-mix(in srgb,var(--pk) 35%,transparent);white-space:nowrap;vertical-align:1px}
+.pk-badge.guess{background:transparent;border-style:dashed;opacity:.75}
+[data-theme=dark] .pk-badge{color:color-mix(in srgb,var(--pk) 55%,#fff)}
+.pk-note{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12.5px;padding:6px 12px;background:var(--hover,#7719aa12);border-bottom:1px solid var(--line)}
+.pk-sec{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#888);padding:10px 14px 3px}
+.pk-ic{width:1.6em;text-align:center;font-size:16px}.pk-menu .mk-item{display:flex;align-items:center;gap:8px}.pk-menu kbd{margin-left:auto;font:inherit;font-size:11px;opacity:.6;background:none;border:0}
+.pk-head select{max-width:12em}
 </style>
 </head>
 <body>
@@ -805,6 +816,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <button class="btn sm primary" id="page-add" title="Nova ministração">＋ Página</button>
     </div>
     <input id="page-search" class="inp search" placeholder="Pesquisar em tudo…">
+    <div id="kind-bar" class="kind-bar" hidden></div>
     <div class="page-tools"><button class="btn sm" id="page-select" title="Selecionar várias páginas para mover, copiar ou excluir">☑ Selecionar</button></div>
     <div id="page-bulk" class="page-bulk" hidden></div>
     <button class="btn link onenote-link" id="page-import">⇪ Importar páginas do OneNote</button>
@@ -1696,7 +1708,7 @@ const App = {
     const newEmpty = async () => { const n = await UI.ask('Novo caderno', '', 'Ex.: Conferência 2027'); if (!n) return; const nb = { id: uid(), name: n, color: SECTION_COLORS[this.meta.notebooks.length % 10] }; this.meta.notebooks.push(nb); const sec = { id: uid(), nb: nb.id, name: 'Geral', color: SECTION_COLORS[0] }; this.meta.sections.push(sec); this.meta.currentNb = nb.id; this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
     $('#nb-menu').onclick = () => this.notebookMenu();
     $('#sec-add').onclick = $('#sec-add')._orig = async () => { const n = await UI.ask('Nova seção (série, tema, evento…)', ''); if (!n) return; const sec = { id: uid(), nb: this.meta.currentNb, name: n, color: SECTION_COLORS[this.meta.sections.length % 10] }; this.meta.sections.push(sec); this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
-    $('#page-add').onclick = () => this.newSermon();
+    $('#page-add').onclick = e => PageKinds.addMenu(e.currentTarget);
     $('#page-import').onclick = () => Porter.importDialog();
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
@@ -1810,22 +1822,26 @@ const App = {
     const q = ($('#page-search').value || '').trim();
     Search.renderScope(q);
     if (q && !this.selMode) return Search.renderResults(q);
-    let items = this.sectionSermons(this.meta.currentSec);
+    PageKinds.renderBar(); const kf = PageKinds.filter();
+    let items = kf ? PageKinds.filtered(kf) : this.sectionSermons(this.meta.currentSec);
     const list = $('#page-list'); list.innerHTML = '';
+    if (kf) { const K = PageKinds.get(kf); list.append(el('div', { class: 'pk-note' }, el('span', { text: `${K ? K[2] + ' ' + K[1] : '▫ Sem tipo'} — ${items.length} página(s) de todas as seções` }), el('button', { class: 'btn link sm', text: '✕', title: 'Voltar para a seção', onclick: () => PageKinds.setFilter('') }))); }
+    const flat = !!(q || kf); let lastSec = null;
     this.sel ||= new Set(); this.renderBulk();
-    if (!items.length) list.append(el('p', { class: 'muted pad', text: q ? 'Nada encontrado.' : 'Nenhuma ministração nesta seção.' }));
-    if (!q) { this.normalizeLevels(items); }
-    const hidden = new Set(); { const stack = []; items.forEach((s, i) => { const lv = q ? 0 : (s.level || 0); while (stack.length && stack.at(-1).lv >= lv) stack.pop(); if (stack.some(x => x.collapsed)) hidden.add(s.id); stack.push({ lv, collapsed: !!s.collapsed }); }); }
+    if (!items.length) list.append(el('p', { class: 'muted pad', text: q ? 'Nada encontrado.' : kf ? 'Nenhuma página deste tipo neste caderno.' : 'Nenhuma ministração nesta seção.' }));
+    if (!flat) { this.normalizeLevels(items); }
+    const hidden = new Set(); { const stack = []; items.forEach((s, i) => { const lv = flat ? 0 : (s.level || 0); while (stack.length && stack.at(-1).lv >= lv) stack.pop(); if (stack.some(x => x.collapsed)) hidden.add(s.id); stack.push({ lv, collapsed: !!s.collapsed }); }); }
     for (const [idx, s] of items.entries()) {
-      if (!q && hidden.has(s.id)) continue;
-      const lv = q ? 0 : (s.level || 0);
-      const hasKids = !q && items[idx + 1] && (items[idx + 1].level || 0) > lv;
+      if (!flat && hidden.has(s.id)) continue;
+      if (kf && s.sec !== lastSec) { lastSec = s.sec; list.append(el('div', { class: 'pk-sec', text: App.meta.sections.find(x => x.id === s.sec)?.name || '' })); }
+      const lv = flat ? 0 : (s.level || 0);
+      const hasKids = !flat && items[idx + 1] && (items[idx + 1].level || 0) > lv;
       const preview = s.passage || htmlToText(s.blocks.find(b => b.type === 'text')?.html || '').slice(0, 60);
       if (this.selMode) {
         const on = this.sel.has(s.id);
         list.append(el('label', { class: 'page sel-row' + (on ? ' active' : '') },
           el('input', { type: 'checkbox', checked: on, onchange: e => { e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub', text: s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '' }))));
+          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: () => this.open(s.id),
@@ -1834,14 +1850,14 @@ const App = {
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
           el('div', { class: 'page-title', text: (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : '') }),
-          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub', text: [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · ') })),
-        q ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
-      if (!q) {
+          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
+        flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
+      if (!flat) {
         row.addEventListener('dragover', e => { if (!this._drag || this._drag === s.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2; row.classList.toggle('drop-after', after); row.classList.toggle('drop-before', !after); });
         row.addEventListener('dragleave', () => row.classList.remove('drop-after', 'drop-before'));
         row.addEventListener('drop', e => { e.preventDefault(); const after = row.classList.contains('drop-after'); row.classList.remove('drop-after', 'drop-before'); const id = e.dataTransfer.getData('text/x-sermon'); if (id) this.dropPage(id, s.id, after); });
       }
-      if (!q) bindContextMenu(row, () => this.pageMenu(s));
+      bindContextMenu(row, () => this.pageMenu(s));
       list.append(row);
     }
   },
@@ -1860,7 +1876,7 @@ const App = {
       if (this.cur && !this.sermons.has(this.cur.id)) { this.cur = null; this.renderEditor(); }
       this.sel = new Set(); this.renderNav();
     } });
-    bar.append(el('span', { class: 'small', text: n ? `${n} selecionada(s)` : 'Toque nas páginas' }), all, mv, cp, del);
+    bar.append(el('span', { class: 'small', text: n ? `${n} selecionada(s)` : 'Toque nas páginas' }), all, mv, cp, PageKinds.bulkButton(ids, n), del);
   },
   /* Move ou copia ministrações para outra seção */
   moveSermons(ids, secId, copy) {
@@ -1954,6 +1970,7 @@ const App = {
           <label>Duração <input id="s-duration" type="number" min="0" max="240" value="${s.duration || ''}" style="width:4.2em"> min</label>
           <span class="s-est" id="s-est"></span>
           <label>Seção <select id="s-sec">${secOpts}</select></label>
+          <span id="s-kind-slot"></span>
           <span class="s-actions">
             <button class="btn sm ai-btn" id="s-review" title="Revisar com IA (Claude e Gemini) e conferir referências">✦ Revisar</button>
             <button class="btn sm" id="s-report" title="Pregações registradas e relatório pós-culto">📊 Pregações${(s.preached || []).length ? ' (' + s.preached.length + ')' : ''}</button>
@@ -1976,6 +1993,7 @@ const App = {
         UI.toast('Inserir o texto-base como versículo?', { label: 'Inserir', fn: async () => { const res = await Bible.lookup(r); if (!res.error) { this.insertBlock('verse', { ref: res.label, version: res.version, html: Bible.versesHTML(res.verses) }, -1); } } });
       };
       $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; this.touch(); };
+      $('#s-kind-slot').replaceWith(PageKinds.headSelect(s));
       $('#s-sec').onchange = e => { s.sec = e.target.value; const sec = this.meta.sections.find(x => x.id === s.sec); this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.touch(); this.saveMeta(); this.renderNav(); };
       $('#s-dup').onclick = () => this.duplicateSermon();
       $('#s-share').onclick = () => { this.flush(); Share.open(s); };
@@ -4568,6 +4586,7 @@ const REVIEW_KINDS = [
   ['devocional', 'Devocional curta', 'Texto devocional CURTO (2 a 5 minutos de leitura) para edificação pessoal. NÃO cobre estrutura de sermão, várias ilustrações, apelo formal ou contexto exaustivo. Avalie proporcionalmente ao gênero: clareza, fidelidade, uma ideia central bem aplicada. Se um critério não se aplica a uma devocional, use "nota": null e diga "não se aplica a uma devocional".'],
   ['estudo', 'Estudo bíblico', 'Estudo bíblico de ensino: pese mais fidelidade, contexto e clareza didática; apelo emocional não é esperado.'],
   ['celula', 'Palavra para célula / PG', 'Palavra curta para pequeno grupo: deve gerar conversa e aplicação; perguntas para o grupo valem mais que oratória. Critérios que não se aplicam: "nota": null.'],
+  ['insight', 'Insight / anotação', 'Anotação curta ou semente de mensagem: avalie se a ideia central é clara, fiel ao texto e aproveitável; não cobre estrutura, ilustrações nem apelo ("nota": null).'],
   ['outro', 'Outro', 'Gênero livre: adapte os critérios ao propósito do texto e use "nota": null quando um critério não se aplicar.'],
   ['capitulo', 'Capítulo de livro (editor)', 'Capítulo de um LIVRO cristão de não ficção, não um sermão. Faça edição de desenvolvimento (tese, argumento, estrutura, ritmo) E edição de linha: em "riscos", aponte trechos concretos (frases longas, repetições de palavras, clichês, passagens que soam como pregação falada e não como texto escrito) com a reescrita sugerida. Não cobre apelo nem estrutura de culto.', 'book'],
   ['beta', 'Leitor beta', 'Leia como um LEITOR comum do público do livro, não como especialista. Diga com sinceridade onde ficou entediado, confuso ou desconfiado, onde se emocionou, e se teria vontade de continuar. Em "riscos", cite os trechos onde você largaria o livro e por quê.', 'book']
@@ -6162,7 +6181,7 @@ const Book = {
   },
   navLabels() {
     const b = !!this.cur();
-    const pa = $('#page-add'); if (pa) { pa.textContent = b ? '＋ Nova ▾' : '＋ Página'; pa.title = b ? 'Novo capítulo, roteiro, prefácio…' : 'Nova ministração'; pa.onclick = b ? e => this.addMenu(e.currentTarget) : () => App.newSermon(); }
+    const pa = $('#page-add'); if (pa) { pa.textContent = b ? '＋ Nova ▾' : '＋ Página ▾'; pa.title = b ? 'Novo capítulo, roteiro, prefácio…' : 'Nova página: sermão, devocional, estudo…'; pa.onclick = b ? e => this.addMenu(e.currentTarget) : e => PageKinds.addMenu(e.currentTarget); }
     const sa = $('#sec-add'); if (sa) { sa.textContent = b ? '＋ Nova parte ▾' : '＋ Adicionar seção'; sa.className = b ? 'btn sm primary sec-add-bk' : 'btn link'; sa.onclick = b ? e => this.partMenu(e.currentTarget) : sa._orig || sa.onclick; }
     let bb = $('#book-open');
     if (b && !bb) { bb = el('button', { class: 'btn sm', id: 'book-open', title: 'Visão geral, quadro, dados, referências e exportação do livro', text: '📖 Livro', onclick: () => this.open() }); $('.page-tools')?.prepend(bb); }
@@ -6884,6 +6903,77 @@ const NbPanel = {
       }
     };
     group('ser', m.notebooks.filter(n => !Book.isNb(n))); group('book', m.notebooks.filter(n => Book.isNb(n)));
+  }
+};
+
+/* ===== Tipo da página (cadernos de ministração): sermão, devocional, estudo…
+   O mesmo tipo é usado pela revisão com IA e pelo filtro "Tipo" que junta as páginas
+   de todas as seções do caderno. ===== */
+const PAGE_KINDS = [
+  ['sermao', 'Sermão', '🎤', '#7719aa', 'Ministração longa, para o culto'],
+  ['devocional', 'Devocional', '🌅', '#c27c0e', 'Texto curto de edificação'],
+  ['estudo', 'Estudo', '📖', '#0f6cbd', 'Estudo bíblico / ensino'],
+  ['celula', 'Célula / PG', '👥', '#107c10', 'Palavra para pequeno grupo'],
+  ['insight', 'Insight', '💡', '#b4009e', 'Ideia, anotação, semente de mensagem'],
+  ['outro', 'Outro', '📝', '#605e5c', 'Qualquer outro tipo'],
+];
+const PageKinds = {
+  get(id) { return PAGE_KINDS.find(k => k[0] === id); },
+  of(s) { return !Book.is(s) && this.get(s.kind) ? s.kind : null; },
+  guess(s) { if (Book.is(s)) return null; const n = stripAccents((App.meta.sections.find(x => x.id === s.sec)?.name || '').toLowerCase()); return /devoc/.test(n) ? 'devocional' : /estud/.test(n) ? 'estudo' : /celula|\bpg\b|pequeno/.test(n) ? 'celula' : /insight|ideia/.test(n) ? 'insight' : /serm|ministra|prega/.test(n) ? 'sermao' : null; },
+  eff(s) { return this.of(s) || this.guess(s); },
+  badge(s) {
+    const k = this.get(this.eff(s)); if (!k) return null; const g = !this.of(s);
+    return el('span', { class: 'pk-badge' + (g ? ' guess' : ''), style: { '--pk': k[3] }, title: g ? `${k[1]} (pelo nome da seção — abra a página e escolha o tipo para confirmar)` : k[1], text: k[2] + ' ' + k[1] });
+  },
+  set(s, id) { s.kind = id || undefined; if (!id) delete s.kind; App.touch(s); },
+  // ── criar página já com o tipo
+  addMenu(anchor) {
+    $('.mk-menu')?.remove();
+    const box = el('div', { class: 'mk-menu pk-menu' }, el('div', { class: 'muted small', style: { padding: '4px 10px' }, text: 'Nova página — o que vai ser?' }),
+      ...PAGE_KINDS.map(([id, label, ic, color, hint]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); try { localStorage.setItem('ss-last-kind', id); } catch (e) { } App.newSermon({ kind: id }); } },
+        el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }), el('kbd', { text: hint }))),
+      el('button', { class: 'mk-item muted', onclick: () => { box.remove(); App.newSermon(); } }, el('span', { class: 'pk-ic', text: '▫' }), el('span', { class: 'mk-l', text: 'Sem tipo' }), el('kbd', { text: 'decido depois' })));
+    document.body.append(box); const r = anchor.getBoundingClientRect();
+    box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = Math.min(r.bottom + 4, innerHeight - box.offsetHeight - 8) + 'px';
+    setTimeout(() => { const off = e => { if (!box.contains(e.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+  },
+  // ── filtro por tipo no caderno inteiro
+  filterKey() { return 'ss-kindf-' + (App.meta.currentNb || ''); },
+  filter() { try { const v = localStorage.getItem(this.filterKey()) || ''; return v === 'none' || this.get(v) ? v : ''; } catch (e) { return ''; } },
+  setFilter(v) { try { v ? localStorage.setItem(this.filterKey(), v) : localStorage.removeItem(this.filterKey()); } catch (e) { } App.renderPages(); },
+  nbPages() { const secs = App.meta.sections.filter(x => x.nb === App.meta.currentNb); return secs.flatMap(sec => App.sectionSermons(sec.id)); },
+  filtered(v) { return this.nbPages().filter(s => v === 'none' ? !this.eff(s) : this.eff(s) === v); },
+  renderBar() {
+    const bar = $('#kind-bar'); if (!bar) return;
+    const nb = App.meta.notebooks.find(n => n.id === App.meta.currentNb);
+    if (!nb || Book.isNb(nb)) { bar.hidden = true; return; }
+    const pages = this.nbPages(), count = id => pages.filter(s => id === 'none' ? !this.eff(s) : this.eff(s) === id).length, cur = this.filter();
+    bar.hidden = false; bar.innerHTML = '';
+    const chip = (id, txt, n, color) => el('button', { class: 'pk-chip' + (cur === id ? ' on' : ''), style: color ? { '--pk': color } : null, title: id ? 'Mostrar só este tipo, de todas as seções do caderno' : 'Voltar para a seção', onclick: () => this.setFilter(cur === id ? '' : id) }, txt, n != null ? el('small', { text: ' ' + n }) : null);
+    bar.append(chip('', 'Seção', null));
+    for (const [id, label, ic, color] of PAGE_KINDS) { const n = count(id); if (n || cur === id) bar.append(chip(id, ic + ' ' + label, n, color)); }
+    const nn = count('none'); if (nn && pages.length > nn) bar.append(chip('none', '▫ Sem tipo', nn));
+  },
+  // ── seletor no cabeçalho da página
+  headSelect(s) {
+    const sel = el('select', { id: 's-kind', title: 'O que é esta página — usado no filtro "Tipo" e na revisão com IA' },
+      el('option', { value: '', text: '— sem tipo —' }), ...PAGE_KINDS.map(([id, label, ic]) => el('option', { value: id, text: ic + ' ' + label, selected: s.kind === id })));
+    sel.onchange = () => { this.set(s, sel.value); App.renderPages(); };
+    const g = !this.of(s) && this.guess(s); if (g) sel.append(el('option', { value: '', text: '', hidden: true })), sel.title += ` · pelo nome da seção, parece: ${this.get(g)[1]}`;
+    return el('label', { class: 'pk-head' }, 'Tipo ', sel);
+  },
+  // ── ação em massa (modo Selecionar)
+  bulkButton(ids, n) {
+    return el('button', { class: 'btn sm', text: 'Tipo…', disabled: !n, onclick: e => {
+      $('.mk-menu')?.remove();
+      const box = el('div', { class: 'mk-menu pk-menu' }, el('div', { class: 'muted small', style: { padding: '4px 10px' }, text: `Marcar ${n} página(s) como:` }),
+        ...PAGE_KINDS.map(([id, label, ic, color]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); for (const i of ids()) { const s = App.sermons.get(i); if (s && !Book.is(s)) this.set(s, id); } App.flush(); App.renderPages(); if (App.cur) App.renderEditor(); UI.toast(`${n} página(s) marcada(s) como ${label}`); } }, el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }))),
+        el('button', { class: 'mk-item', onclick: () => { box.remove(); for (const i of ids()) { const s = App.sermons.get(i); if (s && !Book.is(s)) this.set(s, ''); } App.flush(); App.renderPages(); } }, el('span', { class: 'pk-ic', text: '▫' }), el('span', { class: 'mk-l', text: 'Tirar o tipo' })));
+      document.body.append(box); const r = e.currentTarget.getBoundingClientRect();
+      box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = Math.min(r.bottom + 4, innerHeight - box.offsetHeight - 8) + 'px';
+      setTimeout(() => { const off = ev => { if (!box.contains(ev.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+    } });
   }
 };
 

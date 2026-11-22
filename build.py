@@ -1,6 +1,6 @@
 import json, pathlib
 R = pathlib.Path(__file__).parent; S = R/'src'; D = R  # o site é publicado a partir da raiz do repositório
-js = '\n'.join((S/f).read_text() for f in ['core.js','books.js','bible.js','ink.js','theme.js','estimate.js','app.js','reader.js','porter.js','onenote.js','cloud.js','team.js','ai.js','report.js','strong.js','share.js','media.js','emoji.js','book.js','onepkg.js','main.js'])
+js = '\n'.join((S/f).read_text() for f in ['core.js','books.js','bible.js','ink.js','theme.js','estimate.js','app.js','reader.js','porter.js','onenote.js','cloud.js','team.js','ai.js','report.js','strong.js','share.js','media.js','emoji.js','book.js','kinds.js','onepkg.js','main.js'])
 html = (S/'index.html').read_text().replace('/*CSS*/', (S/'styles.css').read_text()).replace('/*JS*/', js)
 (D/'index.html').write_text(html)
 (D/'manifest.webmanifest').write_text(json.dumps({

@@ -655,3 +655,14 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .em-h{grid-column:1/-1;font-size:12px;color:var(--muted,#888);padding:4px 2px}
 .em-b{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 0;border-radius:8px;cursor:pointer;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}.em-b:hover{background:var(--hover,#7719aa1a);transform:scale(1.15)}
 .em-foot{font-size:11px;text-align:center}
+
+.kind-bar{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 10px 6px}.kind-bar::-webkit-scrollbar{display:none}
+.pk-chip{--pk:#7719aa;flex-shrink:0;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.pk-chip small{opacity:.65}.pk-chip.on{background:var(--pk);border-color:var(--pk);color:#fff}
+.pk-badge{--pk:#7719aa;display:inline-block;font-size:11px;line-height:1.5;padding:0 6px;border-radius:99px;margin-right:6px;background:color-mix(in srgb,var(--pk) 14%,transparent);color:var(--pk);border:1px solid color-mix(in srgb,var(--pk) 35%,transparent);white-space:nowrap;vertical-align:1px}
+.pk-badge.guess{background:transparent;border-style:dashed;opacity:.75}
+[data-theme=dark] .pk-badge{color:color-mix(in srgb,var(--pk) 55%,#fff)}
+.pk-note{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12.5px;padding:6px 12px;background:var(--hover,#7719aa12);border-bottom:1px solid var(--line)}
+.pk-sec{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#888);padding:10px 14px 3px}
+.pk-ic{width:1.6em;text-align:center;font-size:16px}.pk-menu .mk-item{display:flex;align-items:center;gap:8px}.pk-menu kbd{margin-left:auto;font:inherit;font-size:11px;opacity:.6;background:none;border:0}
+.pk-head select{max-width:12em}
