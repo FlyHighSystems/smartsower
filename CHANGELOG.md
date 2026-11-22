@@ -1,12 +1,9 @@
 # Novidades do SmartSower
 
-Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
-
-## 3.12.13 — 22/11/2026
-- Pesquisar: as opções "👥 Todos os compartilhados" e "👥 Compartilhados comigo" aparecem sempre em Onde, com explicação quando ainda não há nada compartilhado.
+Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
 ## 3.12.12 — 22/11/2026
-- Pesquisar: "👥 Todos os compartilhados" e "👥 Compartilhados comigo" em Onde; os resultados mostram 👥 e de quem é a página.
+- Pesquisar: "👥 Todos os compartilhados" e "👥 Compartilhados comigo" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página.
 
 ## 3.12.11 — 22/11/2026
 - Botão "👥 Compartilhar" ao lado do tipo da página (também nas páginas de livro); mostra "👥 Compartilhado · N" quando o caderno já está compartilhado.
