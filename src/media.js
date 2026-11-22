@@ -572,10 +572,20 @@ const Spell = {
     return null;
   },
   paint(list) {
+    this.last = list;
     if (!window.CSS?.highlights) return;
     for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t);
     const by = {}; for (const it of list) { if (it.done) continue; const L = this.locate(it); const r = L && this.range(L.nodes, L.off, it.len); if (r) (by[it.type] ||= []).push(r); }
     for (const [t, rs] of Object.entries(by)) CSS.highlights.set('ss-sp-' + t, new Highlight(...rs));
+  },
+  // sugestões do corretor para a palavra clicada (da última verificação desta página)
+  issueAt(body, node, off) {
+    if (!this.last?.length) return null; const { nodes } = this.scan(body); const e = nodes.find(x => x.n === node); if (!e) return null; const pos = e.start + off;
+    for (const it of this.last) {
+      if (it.done || !it.reps.length || it.sg.b.id !== body.closest('.block')?.dataset.id) continue;
+      const L = this.locate(it); if (L && L.body === body && pos >= L.off && pos <= L.off + it.len) return it;
+    }
+    return null;
   },
   clear() { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); },
   apply(it, rep, list = []) {
@@ -691,7 +701,31 @@ const FloatBar = {
     document.body.append(bar); return bar;
   },
   paintState() { if (!this.bar) return; for (const c of ['bold', 'italic', 'underline', 'strikeThrough']) { try { this.bar.querySelector('.st-' + c)?.classList.toggle('on', document.queryCommandState(c)); } catch (e) { } } },
-  hide() { if (this.bar) this.bar.classList.remove('show'); },
+  hide() { if (this.bar) { this.bar.classList.remove('show', 'ctx'); this.ctxBox?.remove(); this.ctxBox = null; } },
+  /* clique direito no texto: sugestões do corretor + recortar/copiar/colar + formatação (Shift+clique direito = menu do navegador) */
+  context(e, body) {
+    let node = null, off = 0;
+    const cp = document.caretPositionFromPoint?.(e.clientX, e.clientY); if (cp) { node = cp.offsetNode; off = cp.offset; } else { const cr = document.caretRangeFromPoint?.(e.clientX, e.clientY); if (cr) { node = cr.startContainer; off = cr.startOffset; } }
+    const s = getSelection(), inSel = s.rangeCount && !s.isCollapsed && s.getRangeAt(0).isPointInRange?.(node, off);
+    if (!inSel && node) { const r = document.createRange(); r.setStart(node, off); r.collapse(true); s.removeAllRanges(); s.addRange(r); }
+    body.focus({ preventScroll: true });
+    this.bar ||= this.build(); this.hide(); this.bar.classList.remove('mini'); this.paintState();
+    const B = (txt, title, fn, cls = '') => { const b = el('button', { class: 'fb-b fb-txt ' + cls, title, text: txt }); b.addEventListener('pointerdown', x => x.preventDefault()); b.addEventListener('mousedown', x => x.preventDefault()); b.onclick = x => { x.preventDefault(); fn(); }; return b; };
+    const box = el('div', { class: 'fb-ctx' });
+    const it = node?.nodeType === 3 && Spell.issueAt(body, node, off);
+    if (it) box.append(el('div', { class: 'fb-sp' }, el('span', { class: 'muted small', text: it.msg || 'Sugestão' }), ...it.reps.map(r => B(r, 'Trocar por esta', () => { Spell.apply(it, r, Spell.last); Spell.paint(Spell.last); this.hide(); }, 'fb-rep')),
+      B('+ Dicionário', 'Não marcar mais esta palavra', () => { Spell.addWord?.(it.word); it.done = true; Spell.paint(Spell.last); this.hide(); })));
+    const has = !s.isCollapsed;
+    box.append(el('div', { class: 'fb-clip' },
+      B('✂ Recortar', 'Ctrl+X', () => { document.execCommand('cut'); this.hide(); }, has ? '' : 'off'),
+      B('⧉ Copiar', 'Ctrl+C', () => { document.execCommand('copy'); this.hide(); }, has ? '' : 'off'),
+      B('📋 Colar', 'Ctrl+V', async () => { this.hide(); try { const t = await navigator.clipboard.readText(); if (t) document.execCommand('insertText', false, t); } catch (x) { UI.toast('O navegador não deixou colar por aqui — use Ctrl+V'); } }),
+      B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
+    this.ctxBox = box; this.bar.prepend(box); this.bar.classList.add('ctx', 'show');
+    const bw = this.bar.offsetWidth, bh = this.bar.offsetHeight, vh = window.visualViewport?.height || innerHeight;
+    this.bar.style.left = Math.max(8, Math.min(innerWidth - bw - 8, e.clientX)) + 'px';
+    this.bar.style.top = Math.max(8, Math.min(vh - bh - 8, e.clientY + 6)) + 'px';
+  },
   /* toque no texto (sem selecionar): mostra a barra junto do cursor — no título, só o emoji */
   caretUpdate() {
     if (!this.caretTap) return this.hide();
@@ -709,6 +743,7 @@ const FloatBar = {
     this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
   },
   update() {
+    if (this.bar?.classList.contains('ctx')) return; // menu do clique direito aberto
     const s = getSelection();
     if (!Emoji.isField(document.activeElement)) this.bar?.classList.remove('mini');
     if (Emoji.isField(document.activeElement) || !s.rangeCount || s.isCollapsed) return this.caretUpdate();
@@ -738,5 +773,10 @@ const FloatBar = {
     window.visualViewport?.addEventListener('resize', () => { if (this.bar?.classList.contains('show')) up(); }); document.addEventListener('keyup', e => { if (e.shiftKey || e.key.startsWith('Arrow')) up(); });
     $('#editor')?.addEventListener('scroll', () => { if (this.bar?.classList.contains('show')) up(); }, { passive: true });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.hide(); });
+    document.addEventListener('contextmenu', e => {
+      const body = e.target.closest?.('#blocks .b-body[contenteditable]'); if (!body || e.shiftKey) return;
+      if (this.bar?.classList.contains('ctx')) { this.hide(); return; } // segundo clique direito: menu do navegador
+      e.preventDefault(); this.context(e, body);
+    });
   }
 };

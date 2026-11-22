@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.5 — 22/11/2026
+- Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador.
+
 ## 3.12.4 — 22/11/2026
 - Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos.
 
