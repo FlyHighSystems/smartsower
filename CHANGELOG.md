@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.10 — 22/11/2026
+- Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora.
+
 ## 3.12.9 — 22/11/2026
 - **Cadernos compartilhados**: no menu do caderno, "👥 Compartilhar…" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em "Compartilhados comigo".
 - Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.
