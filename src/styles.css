@@ -668,3 +668,5 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .pk-head select{max-width:12em}
 
 .s-est.over{color:#c50f1f}
+
+.ver-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;flex-wrap:wrap}

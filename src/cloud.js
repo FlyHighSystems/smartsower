@@ -411,6 +411,8 @@ const CloudUI = {
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
+      el('div', { class: 'ver-row' }, el('span', { class: 'muted small', text: `Versão do app: ${window.SS_BUILD ? SS_BUILD.code + ' · ' + SS_BUILD.at : '—'}` }),
+        el('button', { class: 'btn sm', text: '⟳ Atualizar agora', title: 'Baixa a versão mais nova do app (seus textos não são afetados)', onclick: () => Updater.now() })),
       el('div', { class: 'row-btns' }, btn,
         el('button', { class: 'btn', text: 'Sair desta conta', onclick: async () => { Cloud.listeners.delete(paint); App.flush(); await Cloud.signOut(); location.reload(); } }),
         el('button', { class: 'btn danger', text: 'Sair e apagar deste aparelho', title: 'Para computador emprestado ou da igreja', onclick: () => Gate.wipe() })),
@@ -455,5 +457,16 @@ const Gate = {
     try { Object.keys(localStorage).filter(k => k.startsWith('ss-') || k.startsWith('smart')).forEach(k => localStorage.removeItem(k)); } catch (e) { }
     try { for (const k of await caches.keys()) await caches.delete(k); } catch (e) { }
     location.reload();
+  }
+};
+
+// ── Forçar atualização do app (limpa só o cache do app, nunca os seus textos) ──
+const Updater = {
+  async now() {
+    if (!navigator.onLine) return UI.toast('Sem internet agora — conecte-se para atualizar');
+    App.flush(); UI.toast('Atualizando o app…'); await new Promise(r => setTimeout(r, 400));
+    try { const regs = await navigator.serviceWorker?.getRegistrations?.() || []; for (const r of regs) await r.unregister(); } catch (e) { }
+    try { for (const k of await caches.keys()) await caches.delete(k); } catch (e) { }
+    location.replace(location.pathname + '?v=' + Date.now());
   }
 };

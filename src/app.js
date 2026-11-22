@@ -30,6 +30,7 @@ const App = {
 
   async init() {
     this.bootT = Date.now(); Gate.early();
+    if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); setTimeout(() => UI.toast(`App atualizado · versão ${window.SS_BUILD?.code || ''}`), 1200); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
     await DB.init();
     this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
