@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.12 — 22/11/2026
+- Pesquisar: "👥 Todos os compartilhados" e "👥 Compartilhados comigo" em Onde; os resultados mostram 👥 e de quem é a página.
+
 ## 3.12.11 — 22/11/2026
 - Botão "👥 Compartilhar" ao lado do tipo da página (também nas páginas de livro); mostra "👥 Compartilhado · N" quando o caderno já está compartilhado.
 - O antigo "↗ Compartilhar" (WhatsApp / link de leitura) passou a se chamar "↗ Enviar", para não confundir.

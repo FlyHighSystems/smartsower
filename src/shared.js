@@ -5,7 +5,7 @@
    • O texto escrito por outra pessoa fica marcado na cor dela (ver Authorship). */
 const Shared = {
   people: new Map(), // e-mail -> nome
-  me() { return Cloud.uid?.() || null; },
+  me() { try { return Cloud.session ? Cloud.uid() : null; } catch (e) { return null; } },
   myEmail() { return Team.email(); },
   myName() { const e = this.myEmail(); return this.people.get(e) || e.split('@')[0]; },
   nameOf(email) { return email ? (this.people.get(email) || email.split('@')[0]) : 'alguém'; },

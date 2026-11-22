@@ -9,6 +9,8 @@ const FindView = {
     const m = App.meta, w = this.st.where; let list = [...App.sermons.values()];
     if (w.startsWith('nb:')) { const secs = new Set(m.sections.filter(x => x.nb === w.slice(3)).map(x => x.id)); list = list.filter(s => secs.has(s.sec)); }
     else if (w === 'sec') list = list.filter(s => s.sec === m.currentSec);
+    else if (w === 'shared') list = list.filter(s => Shared.inShared(s));
+    else if (w === 'withme') list = list.filter(s => Shared.nbOfPage(s)?.foreign);
     else { const ok = new Set(m.sections.map(x => x.id)); list = list.filter(s => ok.has(s.sec)); }
     const k = this.st.kind;
     if (k === 'book') list = list.filter(s => Book.is(s)); else if (k === 'none') list = list.filter(s => !Book.is(s) && !PageKinds.of(s)); else if (k) list = list.filter(s => PageKinds.of(s) === k);
@@ -41,7 +43,8 @@ const FindView = {
     const q = el('input', { class: 'inp fv-q', type: 'search', value: st.q, placeholder: 'Palavras ou "uma frase exata"…', enterkeyhint: 'search' });
     const opt = (v, t, cur) => el('option', { value: v, text: t, selected: v === cur });
     const where = el('select', { class: 'inp', title: 'Onde procurar' }, opt('all', '📚 Todo o app', st.where), opt('sec', '📄 Só a seção aberta', st.where),
-      ...App.meta.notebooks.map(n => opt('nb:' + n.id, (Book.isNb(n) ? '📖 ' : '🎤 ') + n.name, st.where)));
+      ...(App.meta.notebooks.some(n => n.shared || n.foreign) ? [opt('shared', '👥 Todos os compartilhados', st.where), ...(App.meta.notebooks.some(n => n.foreign) ? [opt('withme', '👥 Compartilhados comigo', st.where)] : [])] : []),
+      ...App.meta.notebooks.map(n => opt('nb:' + n.id, (n.foreign || n.shared ? '👥 ' : Book.isNb(n) ? '📖 ' : '🎤 ') + n.name, st.where)));
     const kind = el('select', { class: 'inp', title: 'Tipo de página' }, opt('', 'Todos os tipos', st.kind), ...PAGE_KINDS.map(([id, l, ic]) => opt(id, ic + ' ' + l, st.kind)), opt('none', '▫ Sem tipo', st.kind), opt('book', '📖 Páginas de livro', st.kind));
     const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
     const sort = el('select', { class: 'inp', title: 'Ordem' }, opt('rel', 'Mais relevantes', st.sort), opt('date', 'Mais recentes', st.sort));
@@ -56,7 +59,7 @@ const FindView = {
       for (const r of res.slice(0, 300)) {
         const s = r.s, row = el('button', { class: 'fv-row' + (App.cur?.id === s.id ? ' cur' : ''), onclick: () => this.openResult(s.id) },
           el('div', { class: 'fv-top' }, el('b', { class: 'fv-title', text: s.title || 'Sem título' }), r.hits ? el('span', { class: 'sr-n', text: r.hits }) : null),
-          el('div', { class: 'fv-meta' }, PageKinds.badge(s), el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
+          el('div', { class: 'fv-meta' }, PageKinds.badge(s), Translate.langBadge(s), Shared.inShared(s) ? el('span', { class: 'lang-badge', title: 'Caderno compartilhado', text: Shared.isAuthor(s) ? '👥' : '👥 de ' + Shared.authorName(s) }) : null, el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
           r.ts.length ? Search.snippet(r.d, r.ts) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
         out.append(row);
       }
