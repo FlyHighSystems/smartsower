@@ -411,7 +411,7 @@ const CloudUI = {
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
-      el('div', { class: 'ver-row' }, el('span', { class: 'muted small', text: `Versão do app: ${window.SS_BUILD ? SS_BUILD.code + ' · ' + SS_BUILD.at : '—'}` }),
+      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() })),
         el('button', { class: 'btn sm', text: '⟳ Atualizar agora', title: 'Baixa a versão mais nova do app (seus textos não são afetados)', onclick: () => Updater.now() })),
       el('div', { class: 'row-btns' }, btn,
         el('button', { class: 'btn', text: 'Sair desta conta', onclick: async () => { Cloud.listeners.delete(paint); App.flush(); await Cloud.signOut(); location.reload(); } }),
@@ -434,6 +434,7 @@ const Gate = {
     const card = el('div', { class: 'gate-card' });
     this.box = el('div', { id: 'gate' }, card); document.body.append(this.box);
     card.append(el('div', { class: 'gate-logo', html: '<img src="icon-192.png" alt="">' }), el('h1', { text: 'SmartSower' }));
+    setTimeout(() => card.append(el('p', { class: 'muted small', style: { marginTop: '14px' }, text: 'Versão ' + Updater.ver() })), 0);
     const body = el('div', { class: 'cloud' }); card.append(body);
     const prev = CloudUI.body; CloudUI.body = body; let msg = ''; try { msg = sessionStorage.getItem('ss-gate-msg') || ''; sessionStorage.removeItem('ss-gate-msg'); } catch (e) { } CloudUI.viewLogin(msg || (this.back && this.back !== 'ok' ? this.back : '')); this._prev = prev;
     if (!navigator.onLine) body.prepend(el('p', { class: 'on-log', text: '📴 Sem internet. Conecte-se para entrar pela primeira vez neste aparelho.' }));
@@ -462,6 +463,18 @@ const Gate = {
 
 // ── Forçar atualização do app (limpa só o cache do app, nunca os seus textos) ──
 const Updater = {
+  ver() { return window.SS_BUILD?.version || ''; },
+  notes() {
+    const B = window.SS_BUILD || { notes: [] };
+    const body = el('div', { class: 'cl' }, el('p', { class: 'muted small', text: `Você está na versão ${B.version || '—'} (${B.code || ''} · publicada ${B.at || ''}). Cada atualização sobe o último número.` }),
+      ...B.notes.map((n, i) => el('div', { class: 'cl-v' + (i === 0 ? ' now' : '') }, el('h4', {}, `${n.v}`, el('span', { class: 'muted small', text: ' · ' + n.d }), i === 0 ? el('span', { class: 'cl-tag', text: 'atual' }) : null), el('ul', {}, ...n.items.map(t => el('li', { text: t }))))),
+      el('div', { class: 'row-btns' }, el('button', { class: 'btn', text: '⟳ Procurar atualização', onclick: () => this.now() })));
+    UI.modal({ title: '✨ Novidades do SmartSower', body });
+  },
+  checkSeen() { // avisa uma vez quando o app foi atualizado
+    const v = this.ver(); if (!v) return; let seen = ''; try { seen = localStorage.getItem('ss-seen-ver') || ''; localStorage.setItem('ss-seen-ver', v); } catch (e) { }
+    if (seen && seen !== v) setTimeout(() => UI.toast(`SmartSower atualizado para a versão ${v}`, { label: 'Novidades', fn: () => this.notes() }), 1500);
+  },
   async now() {
     if (!navigator.onLine) return UI.toast('Sem internet agora — conecte-se para atualizar');
     App.flush(); UI.toast('Atualizando o app…'); await new Promise(r => setTimeout(r, 400));

@@ -683,6 +683,21 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .ver-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;flex-wrap:wrap}
 
 .pk-ask{margin:8px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--hover,#7719aa12);font-size:13px;line-height:1.4}.pk-ask-b{display:flex;gap:6px;margin-top:8px}
+
+.fv{max-width:900px;margin:0 auto}.fv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.fv-head h2{margin:0;font-size:1.4em}
+.fv-q{width:100%;font-size:18px;padding:10px 12px}.fv-filters{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px;align-items:center}.fv-filters select.inp{width:auto;flex:0 1 auto;max-width:100%}
+.fv-chk{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+.fv-sum{font-size:13px;color:var(--muted);margin:4px 0 8px}.fv-help{font-size:14px;line-height:1.5;padding:12px 2px}
+.fv-results{display:flex;flex-direction:column;gap:6px}
+.fv-row{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}
+.fv-row:hover{border-color:var(--accent)}.fv-row.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.fv-top{display:flex;align-items:center;gap:8px}.fv-title{font-size:15.5px}.fv-meta{font-size:12.5px;color:var(--muted);margin:3px 0 4px;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.fv-row .sr-snip{white-space:normal;line-height:1.45}
+.fv-back{display:flex;align-items:center;gap:6px;margin:-6px 0 10px}
+
+#nb-pane{display:flex;flex-direction:column}.app-ver{margin-top:auto;border:0;background:none;color:var(--muted);font-size:11.5px;padding:10px 14px;text-align:left;cursor:pointer}.app-ver:hover{color:var(--accent)}
+.cl-v{border-top:1px solid var(--line);padding:6px 0}.cl-v h4{margin:6px 0 4px;display:flex;align-items:center;gap:6px}.cl-v ul{margin:0;padding-left:20px;font-size:14px;line-height:1.5}
+.cl-tag{font-size:11px;background:var(--accent);color:#fff;border-radius:99px;padding:0 7px;font-weight:600}
 </style>
 </head>
 <body>
@@ -693,6 +708,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     <button class="rtab on" data-tab="home">Formatação</button>
     <button class="rtab" data-tab="insert">Inserir</button>
     <button class="rtab" data-tab="draw">Desenhar</button>
+    <button class="rtab" data-tab="find">Pesquisar</button>
     <button class="rtab" data-tab="team" hidden>Equipe</button>
   </nav>
   <div class="top-right">
@@ -797,6 +813,9 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <button data-insert="ink" class="rb t-ink">+ Novo desenho</button>
     </div>
   </div>
+  <div class="rpanel" data-panel="find" hidden>
+    <div class="rgroup"><span class="rlabel">Procure em todos os cadernos e livros: palavras, "frase exata" entre aspas, tipo de página, caderno e período. Os resultados aparecem abaixo.</span></div>
+  </div>
   <div class="rpanel" data-panel="team" hidden>
     <div class="rgroup">
       <button id="team-add" class="rb">＋ Adicionar pessoa</button>
@@ -815,6 +834,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     </div>
     <div id="sec-list"></div>
     <button class="btn link" id="sec-add">＋ Adicionar seção</button>
+    <button class="app-ver" id="app-ver" title="Novidades desta versão"></button>
   </nav>
   <nav id="pages-pane">
     <div class="pane-head">
@@ -874,7 +894,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = { code: '46d55a', at: '22/11 08:59' };
+<script>window.SS_BUILD = {"version": "3.12.1", "code": "859ccd", "at": "22/11 09:04", "notes": [{"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}, {"v": "3.12", "d": "22/11/2026", "items": ["Tipo da página (sermão, devocional, estudo, célula, insight) com filtro no caderno e sugestão para marcar a seção inteira.", "Tempo conforme o tipo: devocional mede tempo de leitura; a revisão com IA recebe o tempo certo.", "Emojis no editor e nos títulos (botão 😊, barra de seleção e Ctrl+Shift+E).", "Tela da frente do Galaxy Fold e celulares sem letra minúscula; menu fica aberto até escolher a página.", "Procurar versículo por frase ou palavra na caixa do versículo.", "Aba Equipe: só e-mails cadastrados entram; tela de entrada com login.", "Continuar de onde parei, por aparelho ou entre aparelhos."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1596,7 +1616,7 @@ const App = {
 
   async init() {
     this.bootT = Date.now(); Gate.early();
-    if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); setTimeout(() => UI.toast(`App atualizado · versão ${window.SS_BUILD?.code || ''}`), 1200); }
+    if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
     await DB.init();
     this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
@@ -1724,7 +1744,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init();
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -1942,6 +1962,7 @@ const App = {
   },
   // keepNav: abriu por troca de caderno/seção — o menu continua aberto até você escolher a página
   open(id, boot, keepNav) {
+    if (typeof FindView !== 'undefined') { if (FindView.active) { FindView.active = false; $$('.rtab').forEach(x => x.classList.toggle('on', x.dataset.tab === 'home')); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== 'home'); } if (!FindView._opening) FindView.ran = false; }
     this.flush();
     const s = this.sermons.get(id); if (!s) return;
     this.cur = s; this.meta.currentSermon = id;
@@ -1966,9 +1987,11 @@ const App = {
 
   /* ---- editor ---- */
   renderEditor() {
+    if (typeof FindView !== 'undefined' && FindView.active) return FindView.render();
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const ed = $('#editor-inner'); ed.innerHTML = '';
     const s = this.cur;
+    { const bb = typeof FindView !== 'undefined' && FindView.backBar(); if (bb && s) ed.append(bb); }
     if (!s) { ed.append(el('div', { class: 'empty-state' }, el('h2', { text: 'Nenhuma ministração aberta' }), el('button', { class: 'btn primary', text: '+ Nova ministração', onclick: () => this.newSermon() }))); return; }
     if (Book.is(s)) Book.renderHead(s, ed);
     else {
@@ -2358,7 +2381,7 @@ const TypeManager = {
 
 const Ribbon = {
   bind() {
-    $$('.rtab').forEach(t => t.onclick = () => { $$('.rtab').forEach(x => x.classList.toggle('on', x === t)); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab); });
+    $$('.rtab').forEach(t => t.onclick = () => { if (t.dataset.tab === 'find') return FindView.show(); $$('.rtab').forEach(x => x.classList.toggle('on', x === t)); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab); FindView.hide(); });
     // Não roubar o foco do texto ao tocar nos botões de formatação
     $$('.ribbon-body button, .ribbon-body .no-focus').forEach(b => b.addEventListener('pointerdown', e => { if (!b.matches('select,input')) e.preventDefault(); }));
     $$('[data-cmd]').forEach(b => b.onclick = () => { document.execCommand('styleWithCSS', false, b.dataset.css === '1'); document.execCommand(b.dataset.cmd, false, b.dataset.val || null); });
@@ -2529,10 +2552,10 @@ const Search = {
     if (res.length > 300) list.append(el('p', { class: 'muted small pad', text: `Mostrando 300 de ${res.length}. Refine a busca.` }));
   },
   /* marca as ocorrências no editor (sem mexer no texto) e rola até a primeira */
-  highlight() {
+  highlight(given) {
     if (!window.CSS?.highlights) return;
     CSS.highlights.delete('ss-find');
-    const q = ($('#page-search')?.value || '').trim(); const ts = q ? this.terms(q) : []; if (!ts.length) return;
+    const q = ($('#page-search')?.value || '').trim(); const ts = Array.isArray(given) ? given : q ? this.terms(q) : []; if (!ts.length) return;
     const ranges = []; const w = document.createTreeWalker($('#editor-inner'), NodeFilter.SHOW_TEXT);
     for (let n; (n = w.nextNode());) {
       const h = this.norm(n.data);
@@ -4215,7 +4238,7 @@ const CloudUI = {
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
-      el('div', { class: 'ver-row' }, el('span', { class: 'muted small', text: `Versão do app: ${window.SS_BUILD ? SS_BUILD.code + ' · ' + SS_BUILD.at : '—'}` }),
+      el('div', { class: 'ver-row' }, el('span', { class: 'small' }, el('b', { text: `Versão ${window.SS_BUILD?.version || '—'}` }), el('span', { class: 'muted', text: window.SS_BUILD ? ` · ${SS_BUILD.code} · ${SS_BUILD.at}` : '' }), ' ', el('button', { class: 'btn link sm', text: 'Novidades', onclick: () => Updater.notes() })),
         el('button', { class: 'btn sm', text: '⟳ Atualizar agora', title: 'Baixa a versão mais nova do app (seus textos não são afetados)', onclick: () => Updater.now() })),
       el('div', { class: 'row-btns' }, btn,
         el('button', { class: 'btn', text: 'Sair desta conta', onclick: async () => { Cloud.listeners.delete(paint); App.flush(); await Cloud.signOut(); location.reload(); } }),
@@ -4238,6 +4261,7 @@ const Gate = {
     const card = el('div', { class: 'gate-card' });
     this.box = el('div', { id: 'gate' }, card); document.body.append(this.box);
     card.append(el('div', { class: 'gate-logo', html: '<img src="icon-192.png" alt="">' }), el('h1', { text: 'SmartSower' }));
+    setTimeout(() => card.append(el('p', { class: 'muted small', style: { marginTop: '14px' }, text: 'Versão ' + Updater.ver() })), 0);
     const body = el('div', { class: 'cloud' }); card.append(body);
     const prev = CloudUI.body; CloudUI.body = body; let msg = ''; try { msg = sessionStorage.getItem('ss-gate-msg') || ''; sessionStorage.removeItem('ss-gate-msg'); } catch (e) { } CloudUI.viewLogin(msg || (this.back && this.back !== 'ok' ? this.back : '')); this._prev = prev;
     if (!navigator.onLine) body.prepend(el('p', { class: 'on-log', text: '📴 Sem internet. Conecte-se para entrar pela primeira vez neste aparelho.' }));
@@ -4266,6 +4290,18 @@ const Gate = {
 
 // ── Forçar atualização do app (limpa só o cache do app, nunca os seus textos) ──
 const Updater = {
+  ver() { return window.SS_BUILD?.version || ''; },
+  notes() {
+    const B = window.SS_BUILD || { notes: [] };
+    const body = el('div', { class: 'cl' }, el('p', { class: 'muted small', text: `Você está na versão ${B.version || '—'} (${B.code || ''} · publicada ${B.at || ''}). Cada atualização sobe o último número.` }),
+      ...B.notes.map((n, i) => el('div', { class: 'cl-v' + (i === 0 ? ' now' : '') }, el('h4', {}, `${n.v}`, el('span', { class: 'muted small', text: ' · ' + n.d }), i === 0 ? el('span', { class: 'cl-tag', text: 'atual' }) : null), el('ul', {}, ...n.items.map(t => el('li', { text: t }))))),
+      el('div', { class: 'row-btns' }, el('button', { class: 'btn', text: '⟳ Procurar atualização', onclick: () => this.now() })));
+    UI.modal({ title: '✨ Novidades do SmartSower', body });
+  },
+  checkSeen() { // avisa uma vez quando o app foi atualizado
+    const v = this.ver(); if (!v) return; let seen = ''; try { seen = localStorage.getItem('ss-seen-ver') || ''; localStorage.setItem('ss-seen-ver', v); } catch (e) { }
+    if (seen && seen !== v) setTimeout(() => UI.toast(`SmartSower atualizado para a versão ${v}`, { label: 'Novidades', fn: () => this.notes() }), 1500);
+  },
   async now() {
     if (!navigator.onLine) return UI.toast('Sem internet agora — conecte-se para atualizar');
     App.flush(); UI.toast('Atualizando o app…'); await new Promise(r => setTimeout(r, 400));
@@ -7034,6 +7070,89 @@ const PageKinds = {
       box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = Math.min(r.bottom + 4, innerHeight - box.offsetHeight - 8) + 'px';
       setTimeout(() => { const off = ev => { if (!box.contains(ev.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
     } });
+  }
+};
+
+/* ===== Aba Pesquisar: busca no app inteiro (palavras, "frase exata", tipo, caderno, período) =====
+   Os resultados ocupam a área do editor; ao abrir um resultado, uma barra no topo volta para a lista. */
+const FindView = {
+  active: false, ran: false,
+  st: { q: '', where: 'all', kind: '', period: '', titles: false, sort: 'rel' },
+  load() { try { Object.assign(this.st, JSON.parse(localStorage.getItem('ss-find') || '{}'), { q: this.st.q }); } catch (e) { } },
+  save() { try { const { q, ...rest } = this.st; localStorage.setItem('ss-find', JSON.stringify(rest)); } catch (e) { } },
+  pool() {
+    const m = App.meta, w = this.st.where; let list = [...App.sermons.values()];
+    if (w.startsWith('nb:')) { const secs = new Set(m.sections.filter(x => x.nb === w.slice(3)).map(x => x.id)); list = list.filter(s => secs.has(s.sec)); }
+    else if (w === 'sec') list = list.filter(s => s.sec === m.currentSec);
+    else { const ok = new Set(m.sections.map(x => x.id)); list = list.filter(s => ok.has(s.sec)); }
+    const k = this.st.kind;
+    if (k === 'book') list = list.filter(s => Book.is(s)); else if (k === 'none') list = list.filter(s => !Book.is(s) && !PageKinds.of(s)); else if (k) list = list.filter(s => PageKinds.of(s) === k);
+    const p = this.st.period;
+    if (p) { const now = new Date(), from = p === 'year' ? `${now.getFullYear()}-01-01` : new Date(now - (+p) * 864e5).toISOString().slice(0, 10); list = list.filter(s => (s.date || '') >= from); }
+    return list;
+  },
+  run() {
+    const ts = Search.terms(this.st.q), out = [];
+    for (const s of this.pool()) {
+      const d = Search.doc(s);
+      if (!ts.length) { out.push({ s, d, ts, hits: 0, score: 0 }); continue; }
+      let score = 0, hits = 0, ok = true;
+      for (const t of ts) { const a = Search.count(d.nt, t), b = this.st.titles ? 0 : Search.count(d.nr, t); if (!a && !b) { ok = false; break; } score += a * 10 + b; hits += a + b; }
+      if (ok) out.push({ s, d, ts, hits, score });
+    }
+    const byDate = (a, b) => (b.s.date || '').localeCompare(a.s.date || '') || (b.s.updated || 0) - (a.s.updated || 0);
+    return out.sort(this.st.sort === 'date' || !ts.length ? byDate : (a, b) => b.score - a.score || byDate(a, b));
+  },
+  show() {
+    if (!this.active) { this.active = true; this.load(); }
+    $$('.rtab').forEach(x => x.classList.toggle('on', x.dataset.tab === 'find')); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== 'find');
+    if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
+    this.render(true);
+  },
+  hide() { if (!this.active) return; this.active = false; CSS.highlights?.delete('ss-find'); App.renderEditor(); },
+  render(focus) {
+    App.inkSurfaces.forEach(i => i.destroy()); App.inkSurfaces = [];
+    const ed = $('#editor-inner'); ed.innerHTML = ''; const st = this.st;
+    const q = el('input', { class: 'inp fv-q', type: 'search', value: st.q, placeholder: 'Palavras ou "uma frase exata"…', enterkeyhint: 'search' });
+    const opt = (v, t, cur) => el('option', { value: v, text: t, selected: v === cur });
+    const where = el('select', { class: 'inp', title: 'Onde procurar' }, opt('all', '📚 Todo o app', st.where), opt('sec', '📄 Só a seção aberta', st.where),
+      ...App.meta.notebooks.map(n => opt('nb:' + n.id, (Book.isNb(n) ? '📖 ' : '🎤 ') + n.name, st.where)));
+    const kind = el('select', { class: 'inp', title: 'Tipo de página' }, opt('', 'Todos os tipos', st.kind), ...PAGE_KINDS.map(([id, l, ic]) => opt(id, ic + ' ' + l, st.kind)), opt('none', '▫ Sem tipo', st.kind), opt('book', '📖 Páginas de livro', st.kind));
+    const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
+    const sort = el('select', { class: 'inp', title: 'Ordem' }, opt('rel', 'Mais relevantes', st.sort), opt('date', 'Mais recentes', st.sort));
+    const titles = el('label', { class: 'fv-chk' }, el('input', { type: 'checkbox', checked: st.titles }), ' Só nos títulos');
+    const out = el('div', { class: 'fv-results' });
+    const go = () => {
+      Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked }); this.save();
+      out.innerHTML = ''; const filt = st.kind || st.period || st.where !== 'all';
+      if (!st.q && !filt) { out.append(el('div', { class: 'fv-help muted' }, el('p', { html: 'Digite palavras (em qualquer ordem) ou <b>"uma frase exata"</b> entre aspas. Acentos não importam.' }), el('p', { text: 'Ou escolha só um tipo — por exemplo “🌅 Devocional” — para ver todas as devocionais do app, de todos os cadernos.' }))); return; }
+      const res = this.run(); const total = res.reduce((n, r) => n + r.hits, 0);
+      out.append(el('div', { class: 'fv-sum' }, el('b', { text: res.length ? `${res.length} página${res.length > 1 ? 's' : ''}` : 'Nada encontrado' }), st.q && res.length ? ` · ${total} ocorrência${total > 1 ? 's' : ''}` : '', !res.length && st.where !== 'all' ? ' — tente “Todo o app”.' : ''));
+      for (const r of res.slice(0, 300)) {
+        const s = r.s, row = el('button', { class: 'fv-row' + (App.cur?.id === s.id ? ' cur' : ''), onclick: () => this.openResult(s.id) },
+          el('div', { class: 'fv-top' }, el('b', { class: 'fv-title', text: s.title || 'Sem título' }), r.hits ? el('span', { class: 'sr-n', text: r.hits }) : null),
+          el('div', { class: 'fv-meta' }, PageKinds.badge(s), el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
+          r.ts.length ? Search.snippet(r.d, r.ts) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
+        out.append(row);
+      }
+      if (res.length > 300) out.append(el('p', { class: 'muted small', text: `Mostrando 300 de ${res.length}. Refine a busca.` }));
+    };
+    let t; q.oninput = () => { clearTimeout(t); t = setTimeout(go, 200); }; q.onkeydown = e => { if (e.key === 'Enter') { clearTimeout(t); go(); q.blur(); } };
+    for (const c of [where, kind, period, sort]) c.onchange = go; titles.firstChild.onchange = go;
+    ed.append(el('div', { class: 'fv' },
+      el('div', { class: 'fv-head' }, el('h2', { text: '🔎 Pesquisar' }), el('button', { class: 'btn sm', text: '✕ Fechar', title: 'Voltar para a página', onclick: () => { $('.rtab[data-tab="home"]').click(); } })),
+      q, el('div', { class: 'fv-filters' }, where, kind, period, sort, titles), out));
+    go(); if (focus && !matchMedia('(pointer:coarse)').matches) setTimeout(() => { q.focus(); q.select(); }, 30);
+  },
+  openResult(id) {
+    this.active = false; this.ran = true; this._opening = true; try { App.open(id); } finally { this._opening = false; }
+    const ts = Search.terms(this.st.q); setTimeout(() => Search.highlight(ts), 60);
+  },
+  // barra no topo da página aberta a partir da pesquisa
+  backBar() {
+    if (!this.ran) return null; const st = this.st;
+    const label = st.q ? `“${st.q}”` : (PageKinds.get(st.kind)?.[1] || 'pesquisa');
+    return el('div', { class: 'fv-back' }, el('button', { class: 'btn sm', text: `← Resultados de ${label}`, onclick: () => this.show() }), el('button', { class: 'icon-btn sm', text: '✕', title: 'Esconder', onclick: e => { this.ran = false; CSS.highlights?.delete('ss-find'); e.currentTarget.parentElement.remove(); } }));
   }
 };
 

@@ -30,7 +30,7 @@ const App = {
 
   async init() {
     this.bootT = Date.now(); Gate.early();
-    if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); setTimeout(() => UI.toast(`App atualizado · versão ${window.SS_BUILD?.code || ''}`), 1200); }
+    if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
     await DB.init();
     this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
@@ -158,7 +158,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init();
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Updater.checkSeen(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -376,6 +376,7 @@ const App = {
   },
   // keepNav: abriu por troca de caderno/seção — o menu continua aberto até você escolher a página
   open(id, boot, keepNav) {
+    if (typeof FindView !== 'undefined') { if (FindView.active) { FindView.active = false; $$('.rtab').forEach(x => x.classList.toggle('on', x.dataset.tab === 'home')); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== 'home'); } if (!FindView._opening) FindView.ran = false; }
     this.flush();
     const s = this.sermons.get(id); if (!s) return;
     this.cur = s; this.meta.currentSermon = id;
@@ -400,9 +401,11 @@ const App = {
 
   /* ---- editor ---- */
   renderEditor() {
+    if (typeof FindView !== 'undefined' && FindView.active) return FindView.render();
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const ed = $('#editor-inner'); ed.innerHTML = '';
     const s = this.cur;
+    { const bb = typeof FindView !== 'undefined' && FindView.backBar(); if (bb && s) ed.append(bb); }
     if (!s) { ed.append(el('div', { class: 'empty-state' }, el('h2', { text: 'Nenhuma ministração aberta' }), el('button', { class: 'btn primary', text: '+ Nova ministração', onclick: () => this.newSermon() }))); return; }
     if (Book.is(s)) Book.renderHead(s, ed);
     else {
@@ -792,7 +795,7 @@ const TypeManager = {
 
 const Ribbon = {
   bind() {
-    $$('.rtab').forEach(t => t.onclick = () => { $$('.rtab').forEach(x => x.classList.toggle('on', x === t)); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab); });
+    $$('.rtab').forEach(t => t.onclick = () => { if (t.dataset.tab === 'find') return FindView.show(); $$('.rtab').forEach(x => x.classList.toggle('on', x === t)); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab); FindView.hide(); });
     // Não roubar o foco do texto ao tocar nos botões de formatação
     $$('.ribbon-body button, .ribbon-body .no-focus').forEach(b => b.addEventListener('pointerdown', e => { if (!b.matches('select,input')) e.preventDefault(); }));
     $$('[data-cmd]').forEach(b => b.onclick = () => { document.execCommand('styleWithCSS', false, b.dataset.css === '1'); document.execCommand(b.dataset.cmd, false, b.dataset.val || null); });
@@ -963,10 +966,10 @@ const Search = {
     if (res.length > 300) list.append(el('p', { class: 'muted small pad', text: `Mostrando 300 de ${res.length}. Refine a busca.` }));
   },
   /* marca as ocorrências no editor (sem mexer no texto) e rola até a primeira */
-  highlight() {
+  highlight(given) {
     if (!window.CSS?.highlights) return;
     CSS.highlights.delete('ss-find');
-    const q = ($('#page-search')?.value || '').trim(); const ts = q ? this.terms(q) : []; if (!ts.length) return;
+    const q = ($('#page-search')?.value || '').trim(); const ts = Array.isArray(given) ? given : q ? this.terms(q) : []; if (!ts.length) return;
     const ranges = []; const w = document.createTreeWalker($('#editor-inner'), NodeFilter.SHOW_TEXT);
     for (let n; (n = w.nextNode());) {
       const h = this.norm(n.data);

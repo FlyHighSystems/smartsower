@@ -672,3 +672,18 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .ver-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;flex-wrap:wrap}
 
 .pk-ask{margin:8px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--hover,#7719aa12);font-size:13px;line-height:1.4}.pk-ask-b{display:flex;gap:6px;margin-top:8px}
+
+.fv{max-width:900px;margin:0 auto}.fv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.fv-head h2{margin:0;font-size:1.4em}
+.fv-q{width:100%;font-size:18px;padding:10px 12px}.fv-filters{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px;align-items:center}.fv-filters select.inp{width:auto;flex:0 1 auto;max-width:100%}
+.fv-chk{display:flex;align-items:center;gap:4px;font-size:14px;white-space:nowrap}
+.fv-sum{font-size:13px;color:var(--muted);margin:4px 0 8px}.fv-help{font-size:14px;line-height:1.5;padding:12px 2px}
+.fv-results{display:flex;flex-direction:column;gap:6px}
+.fv-row{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit}
+.fv-row:hover{border-color:var(--accent)}.fv-row.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.fv-top{display:flex;align-items:center;gap:8px}.fv-title{font-size:15.5px}.fv-meta{font-size:12.5px;color:var(--muted);margin:3px 0 4px;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.fv-row .sr-snip{white-space:normal;line-height:1.45}
+.fv-back{display:flex;align-items:center;gap:6px;margin:-6px 0 10px}
+
+#nb-pane{display:flex;flex-direction:column}.app-ver{margin-top:auto;border:0;background:none;color:var(--muted);font-size:11.5px;padding:10px 14px;text-align:left;cursor:pointer}.app-ver:hover{color:var(--accent)}
+.cl-v{border-top:1px solid var(--line);padding:6px 0}.cl-v h4{margin:6px 0 4px;display:flex;align-items:center;gap:6px}.cl-v ul{margin:0;padding-left:20px;font-size:14px;line-height:1.5}
+.cl-tag{font-size:11px;background:var(--accent);color:#fff;border-radius:99px;padding:0 7px;font-weight:600}
