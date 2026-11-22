@@ -646,3 +646,12 @@ html, body { max-width: 100%; overflow-x: hidden; }
   #page-import { white-space: normal; text-align: left; }
   #bible-pane { width: 100vw !important; left: 0; }
 }
+
+.em-pop{position:fixed;z-index:9000;width:340px;max-width:calc(100vw - 16px);background:var(--panel,#fff);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px #0004;padding:8px;display:flex;flex-direction:column;gap:6px}
+.em-pop.sheet{left:0!important;right:0;bottom:0;top:auto!important;width:auto;max-width:none;border-radius:14px 14px 0 0}
+.em-q{width:100%}.em-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.em-t{flex:1;border:0;background:transparent;font-size:18px;padding:4px 0;border-radius:6px;cursor:pointer}.em-t.on{background:var(--hover,#7719aa1a)}
+.em-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-height:240px;overflow:auto;align-content:start}
+.em-h{grid-column:1/-1;font-size:12px;color:var(--muted,#888);padding:4px 2px}
+.em-b{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 0;border-radius:8px;cursor:pointer;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}.em-b:hover{background:var(--hover,#7719aa1a);transform:scale(1.15)}
+.em-foot{font-size:11px;text-align:center}

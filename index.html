@@ -657,6 +657,15 @@ html, body { max-width: 100%; overflow-x: hidden; }
   #page-import { white-space: normal; text-align: left; }
   #bible-pane { width: 100vw !important; left: 0; }
 }
+
+.em-pop{position:fixed;z-index:9000;width:340px;max-width:calc(100vw - 16px);background:var(--panel,#fff);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px #0004;padding:8px;display:flex;flex-direction:column;gap:6px}
+.em-pop.sheet{left:0!important;right:0;bottom:0;top:auto!important;width:auto;max-width:none;border-radius:14px 14px 0 0}
+.em-q{width:100%}.em-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.em-t{flex:1;border:0;background:transparent;font-size:18px;padding:4px 0;border-radius:6px;cursor:pointer}.em-t.on{background:var(--hover,#7719aa1a)}
+.em-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-height:240px;overflow:auto;align-content:start}
+.em-h{grid-column:1/-1;font-size:12px;color:var(--muted,#888);padding:4px 2px}
+.em-b{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 0;border-radius:8px;cursor:pointer;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}.em-b:hover{background:var(--hover,#7719aa1a);transform:scale(1.15)}
+.em-foot{font-size:11px;text-align:center}
 </style>
 </head>
 <body>
@@ -710,6 +719,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <button data-cmd="removeFormat" class="rb" title="Limpar formatação">Limpar</button>
     </div>
     <div class="rgroup">
+      <button id="rb-emoji" class="rb" title="Emojis (Ctrl+Shift+E)">😊 Emoji</button>
       <button id="rb-fn" class="rb" title="Nota de rodapé (Ctrl+Alt+N)">¹ Nota</button>
       <button id="rb-spell" class="rb" title="Ortografia e gramática (F7)">Abc ✓</button>
       <button id="rb-live" class="rb" title="Sublinhar erros enquanto digito (corretor do navegador)">〰</button>
@@ -1691,7 +1701,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init();
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init();
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -5883,6 +5893,7 @@ const FloatBar = {
       ...this.COL.map(c => B('A', 'Cor do texto', () => this.exec('foreColor', c, true), 'fb-col').tap(x => x.style.color = c)), sep(),
       B('•', 'Lista com marcadores', () => this.exec('insertUnorderedList')), B('1.', 'Lista numerada', () => this.exec('insertOrderedList')),
       B('⇤', 'Diminuir recuo (Shift+Tab)', () => indentSel(-1)), B('⇥', 'Aumentar recuo / subitem (Tab)', () => indentSel(1)),
+      B('😊', 'Emoji (Ctrl+Shift+E) — entra no fim da seleção', () => { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }),
       B('¹', 'Nota de rodapé no fim da seleção (Ctrl+Alt+N)', () => { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } this.hide(); Footnotes.insert(); }),
       B('⨯', 'Limpar formatação', () => this.exec('removeFormat')));
     document.body.append(bar); return bar;
@@ -5910,6 +5921,104 @@ const FloatBar = {
     document.addEventListener('pointerup', up, true); document.addEventListener('keyup', e => { if (e.shiftKey || e.key.startsWith('Arrow')) up(); });
     $('#editor')?.addEventListener('scroll', () => { if (this.bar?.classList.contains('show')) up(); }, { passive: true });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.hide(); });
+  }
+};
+
+/* ===== Emojis no editor: botão 😊 na Formatação, na barra flutuante e Ctrl+Shift+E ===== */
+const EMOJI_CATS = [
+  ['⛪', 'Fé e igreja', [
+    ['🙏', 'orar oração mãos rezar gratidão'], ['✝️', 'cruz cristo jesus'], ['📖', 'bíblia livro palavra leitura'], ['🕊️', 'pomba espírito santo paz'],
+    ['🔥', 'fogo avivamento espírito'], ['🙌', 'louvor adoração aleluia glória'], ['✨', 'brilho glória especial'], ['👑', 'coroa rei reino'],
+    ['🍞', 'pão ceia'], ['🍷', 'vinho cálice ceia sangue'], ['💧', 'água batismo'], ['🌿', 'ramo vida crescimento'], ['⛪', 'igreja templo'],
+    ['🎵', 'música louvor nota'], ['🎶', 'músicas louvor cântico'], ['🎤', 'microfone pregar cantar'], ['🎹', 'teclado piano'], ['🎸', 'guitarra violão'],
+    ['🥁', 'bateria'], ['🎺', 'trombeta'], ['🌱', 'semente semear broto'], ['🌾', 'colheita trigo seara'], ['🍇', 'uva fruto videira'],
+    ['🐑', 'ovelha rebanho'], ['🦁', 'leão judá'], ['🐟', 'peixe pescador'], ['⚓', 'âncora esperança'], ['🛡️', 'escudo fé proteção'],
+    ['⚔️', 'espada guerra batalha'], ['🗝️', 'chave'], ['🕯️', 'vela luz'], ['💡', 'luz ideia insight'], ['🌅', 'amanhecer novo dia'],
+    ['🌈', 'arco-íris aliança promessa'], ['⭐', 'estrela'], ['☀️', 'sol'], ['🌙', 'lua noite'], ['⛰️', 'monte montanha'], ['🌊', 'mar onda'],
+    ['🏔️', 'montanha neve'], ['🚪', 'porta'], ['🪨', 'rocha pedra'], ['🏠', 'casa lar família'], ['👣', 'pegadas caminho passos'], ['🧭', 'bússola direção'],
+    ['⏳', 'tempo ampulheta'], ['📜', 'pergaminho escritura lei'], ['🕎', 'menorá candelabro'], ['🫒', 'azeite oliva unção'], ['🪔', 'lâmpada azeite'],
+  ]],
+  ['😊', 'Rostos', [
+    ['😊', 'sorriso feliz'], ['😀', 'alegre feliz'], ['😂', 'risada rir'], ['🥹', 'emocionado'], ['😍', 'amei apaixonado'], ['🥰', 'carinho amor'],
+    ['😇', 'anjo santo'], ['🤗', 'abraço'], ['🤔', 'pensar pensando dúvida'], ['🤯', 'mente explodindo uau'], ['😮', 'surpresa'], ['😢', 'triste choro'],
+    ['😭', 'chorar'], ['😔', 'pensativo triste'], ['😬', 'tenso'], ['😴', 'sono'], ['😎', 'legal'], ['🤩', 'incrível'], ['😅', 'ufa alívio'],
+    ['🙂', 'leve sorriso'], ['😉', 'piscada'], ['🤫', 'silêncio segredo'], ['🫣', 'espiando'], ['🫡', 'saudação continência'], ['😡', 'raiva'],
+  ]],
+  ['👍', 'Gestos e pessoas', [
+    ['👍', 'joia curtir ok'], ['👎', 'não'], ['👏', 'palmas aplauso'], ['🤝', 'aperto mão acordo aliança'], ['✋', 'mão pare'], ['👋', 'tchau olá'],
+    ['💪', 'força forte'], ['👉', 'apontar direita'], ['👈', 'esquerda'], ['👆', 'cima'], ['👇', 'baixo'], ['☝️', 'um atenção'], ['✌️', 'paz vitória'],
+    ['🫶', 'coração mãos amor'], ['👀', 'olhos ver olhar'], ['👂', 'ouvir ouvido'], ['🧠', 'mente cérebro'], ['❤️‍🔥', 'coração em chamas paixão'],
+    ['👨‍👩‍👧‍👦', 'família'], ['👶', 'bebê criança'], ['🧒', 'criança'], ['👨', 'homem'], ['👩', 'mulher'], ['👴', 'idoso'], ['👵', 'idosa'], ['🧑‍🤝‍🧑', 'amigos comunhão'],
+    ['🚶', 'andar caminhar'], ['🏃', 'correr corrida'], ['🧎', 'ajoelhar'], ['💑', 'casal'], ['💍', 'anel casamento aliança'],
+  ]],
+  ['❤️', 'Símbolos', [
+    ['❤️', 'coração amor'], ['💜', 'roxo coração'], ['💙', 'azul coração'], ['💚', 'verde coração'], ['💛', 'amarelo coração'], ['🧡', 'laranja'],
+    ['🤍', 'branco coração'], ['🖤', 'preto coração'], ['💔', 'coração partido'], ['❣️', 'exclamação coração'], ['💯', 'cem'], ['✅', 'feito ok certo check'],
+    ['☑️', 'marcado'], ['✔️', 'certo'], ['❌', 'errado não x'], ['⚠️', 'atenção aviso cuidado'], ['❗', 'exclamação importante'], ['❓', 'pergunta'],
+    ['‼️', 'importante'], ['⁉️', 'surpresa pergunta'], ['➡️', 'seta direita'], ['⬅️', 'seta esquerda'], ['⬆️', 'seta cima'], ['⬇️', 'seta baixo'],
+    ['↪️', 'volta'], ['🔁', 'repetir'], ['🔴', 'vermelho círculo'], ['🟠', 'laranja'], ['🟡', 'amarelo'], ['🟢', 'verde'], ['🔵', 'azul'], ['🟣', 'roxo'],
+    ['⚫', 'preto'], ['⚪', 'branco'], ['🔸', 'losango'], ['🔹', 'losango azul'], ['▶️', 'play'], ['⏸️', 'pausa'], ['➕', 'mais'], ['➖', 'menos'],
+    ['1️⃣', 'um 1'], ['2️⃣', 'dois 2'], ['3️⃣', 'três 3'], ['4️⃣', 'quatro 4'], ['5️⃣', 'cinco 5'], ['6️⃣', 'seis 6'], ['7️⃣', 'sete 7'], ['8️⃣', 'oito 8'], ['9️⃣', 'nove 9'], ['🔟', 'dez 10'],
+  ]],
+  ['📌', 'Objetos e estudo', [
+    ['📌', 'alfinete fixar'], ['📍', 'local'], ['📝', 'anotação nota escrever'], ['✍️', 'escrever'], ['🖊️', 'caneta'], ['📚', 'livros estudo'],
+    ['📓', 'caderno'], ['📅', 'calendário data'], ['⏰', 'despertador hora'], ['🕐', 'relógio'], ['🎯', 'alvo objetivo foco'], ['🏆', 'troféu vitória'],
+    ['🎁', 'presente dom'], ['🎉', 'festa celebração'], ['🎊', 'confete'], ['🎂', 'aniversário bolo'], ['💰', 'dinheiro oferta'], ['🪙', 'moeda'],
+    ['💎', 'diamante tesouro'], ['🔑', 'chave'], ['🔒', 'cadeado'], ['🔍', 'lupa buscar'], ['💬', 'conversa fala'], ['🗣️', 'falar pregar'],
+    ['📣', 'anúncio megafone'], ['📢', 'aviso'], ['📱', 'celular'], ['💻', 'computador'], ['🎬', 'vídeo filme'], ['📷', 'foto câmera'], ['🧩', 'peça quebra-cabeça'],
+    ['⚖️', 'balança justiça'], ['🪞', 'espelho'], ['🧱', 'tijolo'], ['🏗️', 'construção'], ['🌍', 'mundo terra nações'], ['✈️', 'avião viagem missão'], ['🚀', 'foguete'],
+  ]],
+  ['🌸', 'Natureza e comida', [
+    ['🌸', 'flor'], ['🌷', 'tulipa'], ['🌹', 'rosa'], ['🌻', 'girassol'], ['🌳', 'árvore'], ['🌲', 'pinheiro'], ['🍃', 'folha vento'], ['🍂', 'outono'],
+    ['❄️', 'neve frio'], ['⛈️', 'tempestade'], ['🌧️', 'chuva'], ['⚡', 'raio poder'], ['🌋', 'vulcão'], ['🏜️', 'deserto'], ['🐦', 'pássaro'], ['🦅', 'águia'],
+    ['🐝', 'abelha'], ['🦋', 'borboleta transformação'], ['🐍', 'serpente'], ['🍎', 'maçã fruto'], ['🍯', 'mel'], ['🥛', 'leite'], ['☕', 'café'], ['🍽️', 'refeição mesa'],
+  ]],
+];
+const Emoji = {
+  range: null,
+  recent() { try { return JSON.parse(localStorage.getItem('ss-emoji-recent') || '[]'); } catch (e) { return []; } },
+  pushRecent(e) { const r = [e, ...this.recent().filter(x => x !== e)].slice(0, 24); try { localStorage.setItem('ss-emoji-recent', JSON.stringify(r)); } catch (x) { } },
+  host(n) { return (n?.nodeType === 1 ? n : n?.parentElement)?.closest?.('#blocks [contenteditable="true"], #blocks .b-body[contenteditable], .s-title[contenteditable], input.verse-ref'); },
+  remember() { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); if (this.host(r.startContainer)) this.range = r.cloneRange(); } },
+  insert(e) {
+    const r = this.range, h = r && this.host(r.startContainer);
+    if (!h || !h.isConnected) return UI.toast('Clique no texto onde quer o emoji e tente de novo');
+    h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    document.execCommand('insertText', false, e);
+    this.remember(); this.pushRecent(e);
+  },
+  open(anchor) {
+    this.remember(); this.close();
+    const grid = el('div', { class: 'em-grid' }), q = el('input', { class: 'inp em-q', placeholder: 'Procurar: oração, coração, fogo…' });
+    const tabs = el('div', { class: 'em-tabs' });
+    const show = (list, title) => {
+      grid.innerHTML = ''; if (title) grid.append(el('div', { class: 'em-h', text: title }));
+      if (!list.length) grid.append(el('div', { class: 'em-h muted', text: 'Nada encontrado' }));
+      for (const [e, k] of list) { const b = el('button', { class: 'em-b', text: e, title: k || '' }); b.addEventListener('mousedown', x => x.preventDefault()); b.onclick = () => this.insert(e); grid.append(b); }
+    };
+    const showCat = i => { [...tabs.children].forEach((t, j) => t.classList.toggle('on', j === i)); if (i === 0) { const r = this.recent(); show(r.map(e => [e, '']), r.length ? 'Usados recentemente' : 'Os que você usar aparecem aqui'); if (!r.length) show(EMOJI_CATS[0][2], 'Fé e igreja'); } else show(EMOJI_CATS[i - 1][2], EMOJI_CATS[i - 1][1]); };
+    tabs.append(el('button', { class: 'em-t', text: '🕘', title: 'Recentes', onclick: () => showCat(0) }), ...EMOJI_CATS.map((c, i) => el('button', { class: 'em-t', text: c[0], title: c[1], onclick: () => showCat(i + 1) })));
+    q.oninput = () => { const t = stripAccents(q.value.trim().toLowerCase()); if (!t) return showCat(0); const all = EMOJI_CATS.flatMap(c => c[2]); show(all.filter(([e, k]) => stripAccents(k).includes(t)), `“${q.value.trim()}”`); };
+    q.onkeydown = e => { if (e.key === 'Enter') { const b = grid.querySelector('.em-b'); if (b) b.click(); } if (e.key === 'Escape') { e.stopPropagation(); this.close(true); } };
+    const pop = this.pop = el('div', { class: 'em-pop', role: 'dialog', 'aria-label': 'Emojis' }, q, tabs, grid, el('div', { class: 'em-foot muted', text: 'Clique para inserir · pode escolher vários · Esc fecha' }));
+    document.body.append(pop); showCat(0);
+    const b = anchor?.getBoundingClientRect?.(), W = pop.offsetWidth, H = pop.offsetHeight;
+    if (innerWidth < 600 || !b) pop.classList.add('sheet');
+    else { pop.style.left = Math.max(8, Math.min(innerWidth - W - 8, b.left)) + 'px'; pop.style.top = (b.bottom + 6 + H > innerHeight ? Math.max(8, b.top - H - 6) : b.bottom + 6) + 'px'; }
+    if (!matchMedia('(pointer:coarse)').matches) setTimeout(() => q.focus({ preventScroll: true }), 30);
+    setTimeout(() => { this._out = e => { if (!pop.contains(e.target) && e.target !== anchor) this.close(); }; document.addEventListener('pointerdown', this._out, true); }, 0);
+  },
+  close(back) {
+    const had = !!this.pop; this.pop?.remove(); this.pop = null;
+    if (had && back) { const r = this.range, h = r && this.host(r.startContainer); if (h?.isConnected) { h.focus({ preventScroll: true }); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } } if (this._out) document.removeEventListener('pointerdown', this._out, true); this._out = null; },
+  init() {
+    document.addEventListener('selectionchange', () => { if (!this.pop || !this.pop.contains(document.activeElement)) this.remember(); });
+    $('#rb-emoji')?.addEventListener('mousedown', e => e.preventDefault());
+    $('#rb-emoji')?.addEventListener('click', e => this.open(e.currentTarget));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && this.pop) { this.close(true); return; }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') { const s = getSelection(); if (s.rangeCount && this.host(s.getRangeAt(0).startContainer)) { e.preventDefault(); const r = s.getRangeAt(0).getBoundingClientRect(); this.open({ getBoundingClientRect: () => r }); } }
+    });
   }
 };
 
