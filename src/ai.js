@@ -241,8 +241,10 @@ Responda SOMENTE com JSON válido neste formato:
  "pontos_fortes":["..."],
  "riscos":[{"trecho":"citação curta do sermão","problema":"...","sugestao":"..."}],
  "perguntas_ouvinte_cetico":["perguntas que um ouvinte crítico faria"],
- "melhorias_prioritarias":["as 3 mudanças que mais melhorariam o sermão"]}
-Notas de 0 a 10.`;
+ "melhorias_prioritarias":["as 3 mudanças que mais melhorariam o sermão"],
+ "trocas":[{"trecho":"trecho COPIADO LITERALMENTE do texto, de 3 a 40 palavras","novo":"como o trecho ficaria reescrito","motivo":"por quê, em uma frase"}]}
+Notas de 0 a 10.
+Sobre "trocas" (até 8): são reescritas prontas para o autor aplicar com um clique. O "trecho" precisa ser cópia EXATA, caractere por caractere, de um pedaço contínuo do texto (sem reticências, sem juntar partes, sem mudar pontuação), senão não dá para achar. Não mexa em citações bíblicas. Mantenha a voz e o estilo do autor; corrija só o que melhora de verdade (clareza, concisão, gramática, repetição, frase de efeito fraca).`;
   },
   async run(s, providers, onStep) {
     const text = AI.sermonText(s); const kind = reviewKind(s); const K = REVIEW_KINDS.find(k => k[0] === kind);
@@ -315,6 +317,30 @@ Notas de 0 a 10.`;
     const refs = rev.refs || []; const probs = refs.filter(r => r.status !== 'ok');
     body.append(el('h4', { text: `Referências bíblicas (${refs.length} conferidas${probs.length ? ', ' + probs.length + ' para revisar' : ', todas certas'})` }));
     if (probs.length) body.append(el('ul', { class: 'rv-refs' }, probs.map(r => el('li', { class: 'rv-' + r.status }, el('b', { text: `${r.ref} ` }), el('span', { class: 'muted', text: `(${r.where}) ` }), r.msg))));
+    // Trocas prontas: aplicar direto no texto
+    const swaps = ok.flatMap(p => (R[p].data.trocas || []).filter(x => x && x.trecho && x.novo != null && x.trecho !== x.novo).map(x => [p, x]));
+    if (swaps.length) {
+      const box = el('div', { class: 'rv-swaps' });
+      body.append(el('h4', { text: `Trocas sugeridas (${swaps.length}) — aplique direto no texto` }), box);
+      if (s !== App.cur) box.append(el('p', { class: 'muted small', text: 'Abra esta página para aplicar as trocas.' }));
+      const paintSwap = (p, x, row) => {
+        row.innerHTML = '';
+        const where = s === App.cur ? TextFix.find(x.trecho) : null;
+        const nova = el('div', { class: 'rv-new', contentEditable: 'plaintext-only', title: 'Você pode ajustar o texto antes de aplicar', text: x.novo });
+        row.append(el('div', { class: 'rv-sw-h' }, el('span', { class: 'pill', text: name(p) }), x.motivo ? el('span', { class: 'muted small', text: ' ' + x.motivo }) : null),
+          el('div', { class: 'rv-old', text: x.trecho }), nova,
+          el('div', { class: 'row-btns rv-sw-a' },
+            x.applied ? el('span', { class: 'rv-ok', text: '✓ Aplicado' }) : null,
+            x.applied && x.undo ? el('button', { class: 'btn sm', text: '↶ Desfazer', onclick: () => { if (TextFix.undo(x)) { delete x.applied; App.touch(s); paintSwap(p, x, row); } } }) : null,
+            !x.applied && where ? el('button', { class: 'btn sm primary', text: '✓ Aplicar no texto', onclick: () => { const txt = nova.textContent.replace(/\s*\n\s*/g, ' ').trim(); const u = TextFix.apply(x.trecho, txt); if (!u) return UI.toast('Não achei o trecho (o texto mudou?).'); x.applied = true; x.undo = u; x.novo = txt; App.touch(s); paintSwap(p, x, row); } }) : null,
+            !x.applied && where ? el('button', { class: 'btn sm', text: '👁 Ver no texto', onclick: () => TextFix.show(x.trecho) }) : null,
+            !x.applied && s === App.cur && !where ? el('span', { class: 'muted small', text: '⚠ Trecho não encontrado igualzinho no texto (a IA citou diferente ou você já mudou). Use 👁 nas outras ou ajuste à mão.' }) : null,
+            !x.applied ? el('button', { class: 'btn link sm', text: 'Copiar', onclick: () => navigator.clipboard?.writeText(nova.textContent).then(() => UI.toast('Copiado')) }) : null));
+      };
+      for (const [p, x] of swaps) { const row = el('div', { class: 'rv-swap' + (x.applied ? ' done' : '') }); box.append(row); paintSwap(p, x, row); }
+      const pend = () => swaps.filter(([, x]) => !x.applied && s === App.cur && TextFix.find(x.trecho));
+      if (pend().length > 1) box.prepend(el('div', { class: 'row-btns', style: { justifyContent: 'flex-end' } }, el('button', { class: 'btn sm', text: '✓ Aplicar todas', title: 'Aplica as trocas encontradas no texto (dá para desfazer uma a uma)', onclick: () => { let n = 0; for (const [, x] of pend()) { const u = TextFix.apply(x.trecho, x.novo); if (u) { x.applied = true; x.undo = u; n++; } } App.touch(s); UI.toast(`${n} troca(s) aplicada(s)`); this.render(body, rev, s, back); } })));
+    }
     // Critérios lado a lado
     if (ok.length) {
       const tbl = el('table', { class: 'rv-tbl' });
@@ -334,7 +360,7 @@ Notas de 0 a 10.`;
         body.append(el('h4', { text: title }), el('ul', { class: 'rv-list' }, items.map(([p, x]) => el('li', {}, el('span', { class: 'pill', text: name(p) }), ' ', fmt(x), ' ', q(p, `${title}: ${plain(x)}`)))));
       };
       list('melhorias_prioritarias', 'O que mais melhoraria o texto', x => x);
-      list('riscos', 'Pontos de atenção', x => el('span', {}, x.trecho ? el('i', { text: `“${x.trecho}” — ` }) : null, x.problema || '', x.sugestao ? el('div', { class: 'rv-sug', text: '→ ' + x.sugestao }) : null));
+      list('riscos', 'Pontos de atenção', x => el('span', {}, x.trecho ? el('i', { text: `“${x.trecho}” — ` }) : null, x.trecho && s === App.cur && TextFix.find(x.trecho) ? el('button', { class: 'btn link sm', text: '👁', title: 'Ver no texto', onclick: () => TextFix.show(x.trecho) }) : null, x.problema || '', x.sugestao ? el('div', { class: 'rv-sug', text: '→ ' + x.sugestao }) : null));
       list('pontos_fortes', 'Pontos fortes', x => x);
       list('perguntas_ouvinte_cetico', 'Perguntas de um ouvinte crítico', x => x);
     }
@@ -394,4 +420,67 @@ Como responder:
       log, provBox, quoteBox, ta, el('div', { class: 'row-btns' }, btn, el('span', { class: 'muted small', text: 'Ctrl+Enter envia' })));
     return { el: box, quote: (p, t) => { if (ok.includes(p)) { prov = p; paintProv(); } setQuote(t); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => ta.focus(), 300); } };
   }
+};
+
+
+/* ===== Achar e trocar um trecho citado pela IA no texto da página aberta (mantendo a formatação) ===== */
+const TextFix = {
+  /* normaliza espaços, aspas e travessões para achar a citação mesmo com pequenas diferenças */
+  norm(t) {
+    const out = [], idx = [];
+    for (let i = 0; i < t.length; i++) {
+      let c = t[i];
+      if (/\s/.test(c)) { if (out.length && out[out.length - 1] === ' ') continue; c = ' '; }
+      else if (/[“”„"«»]/.test(c)) c = '"'; else if (/[‘’‚']/.test(c)) c = "'"; else if (/[–—]/.test(c)) c = '-';
+      out.push(c); idx.push(i);
+    }
+    return { s: out.join(''), idx };
+  },
+  clean(q) { return (q || '').replace(/^[\s“”"'‘’.…]+|[\s“”"'‘’…]+$/g, '').replace(/\.\.\.$/, '').trim(); },
+  find(q) {
+    q = this.clean(q); if (q.length < 3) return null;
+    const nq = this.norm(q).s;
+    for (const w of document.querySelectorAll('#blocks .block')) {
+      const b = App.cur?.blocks.find(x => x.id === w.dataset.id); if (!b || b.type === 'verse') continue;
+      for (const body of w.querySelectorAll('.b-body[contenteditable]')) {
+        const { nodes, text } = Spell.scan(body); const N = this.norm(text);
+        let i = N.s.indexOf(nq);
+        if (i < 0) { const lo = N.s.toLowerCase(); i = lo.indexOf(nq.toLowerCase()); }
+        if (i < 0) continue;
+        const off = N.idx[i], end = N.idx[i + nq.length - 1] + 1;
+        return { b, body, nodes, text, off, len: end - off };
+      }
+    }
+    return null;
+  },
+  show(q) {
+    const f = this.find(q); if (!f) return UI.toast('Não achei esse trecho no texto.');
+    const r = Spell.range(f.nodes, f.off, f.len); if (!r) return;
+    if (window.CSS?.highlights) { CSS.highlights.set('ss-find', new Highlight(r)); clearTimeout(this._t); this._t = setTimeout(() => CSS.highlights.delete('ss-find'), 6000); }
+    const rect = r.getBoundingClientRect(), ed = $('#editor'); if (ed) ed.scrollBy({ top: rect.top - ed.getBoundingClientRect().top - ed.clientHeight / 3, behavior: 'smooth' });
+    UI.toast('Trecho destacado no texto.');
+  },
+  apply(q, rep) {
+    const f = this.find(q); if (!f) return null;
+    if (f.text.substr(f.off, f.len).includes('\n')) { UI.toast('Esse trecho atravessa parágrafos — ajuste à mão.'); return null; }
+    const before = f.b.html;
+    let off = f.off, left = f.len, first = true;
+    for (const { n, start } of f.nodes) {
+      const s0 = start, s1 = start + n.data.length; if (s1 <= off || left <= 0) continue;
+      const a = off - s0, take = Math.min(left, s1 - off);
+      if (first) { n.replaceData(a, take, rep); first = false; } else n.deleteData(a, take);
+      left -= take; off += take;
+    }
+    if (first) return null;
+    f.body.querySelectorAll('b,strong,i,em,u,s,span,font,mark').forEach(e => { if (!e.textContent && !e.querySelector('img,br')) e.remove(); });
+    f.b.html = f.body.innerHTML;
+    return { block: f.b.id, before, after: f.b.html };
+  },
+  /* desfaz: se o bloco não mudou desde a troca, volta o HTML exato; senão troca o texto novo de volta pelo original */
+  undo(x) {
+    const u = x.undo; if (!u || !App.cur) return false; const b = App.cur.blocks.find(y => y.id === u.block);
+    if (b && b.html === u.after) { b.html = u.before; delete x.undo; App.renderBlocks(); return true; }
+    if (this.apply(x.novo, this.clean(x.trecho))) { delete x.undo; return true; }
+    UI.toast('Não achei mais o texto trocado — desfaça à mão (🕘 Versões).'); return false;
+  },
 };

@@ -74,20 +74,37 @@ body.locked img{pointer-events:none}
   }
   var id = new URLSearchParams(location.search).get('id');
   if (!id || !cfg.supabaseUrl) return msg('Link inválido.');
-  fetch(cfg.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/get_share', { method: 'POST', headers: { apikey: cfg.supabaseAnonKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: id }) })
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (j) {
-      if (!j || !j.data) return msg('Este link expirou, foi revogado ou não existe.');
-      document.title = j.data.title + ' — SmartSower';
-      C.innerHTML = clean(j.data.html || '');
-      if (!j.allow_copy) {
-        document.body.classList.add('locked');
-        ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach(function (ev) { document.addEventListener(ev, function (e) { e.preventDefault(); }); });
-        document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && /^[acxspu]$/i.test(e.key)) e.preventDefault(); });
-        window.addEventListener('beforeprint', function () { C.style.display = 'none'; }); window.addEventListener('afterprint', function () { C.style.display = ''; });
-      }
-    })
-    .catch(function () { msg('Não foi possível carregar. Verifique a internet e tente de novo.'); });
+  var last = null, locked = false, first = true;
+  function badge() {
+    var b = document.getElementById('live-b');
+    if (!b) { b = document.createElement('div'); b.id = 'live-b'; b.style.cssText = 'position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#7719aa;color:#fff;padding:7px 14px;border-radius:18px;font:600 13px system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:opacity .6s;z-index:9;pointer-events:none'; document.body.appendChild(b); }
+    b.textContent = '● Atualizado agora'; b.style.opacity = '1'; clearTimeout(b._t); b._t = setTimeout(function () { b.style.opacity = '0'; }, 3500);
+  }
+  function load() {
+    return fetch(cfg.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/get_share', { method: 'POST', headers: { apikey: cfg.supabaseAnonKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: id }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (!j || !j.data) { if (first) msg('Este link expirou, foi revogado ou não existe.'); else msg('Este link foi revogado ou expirou.'); last = 'gone'; return; }
+        if (last === j.updated_at) return;
+        // atualização ao vivo: mantém a posição de leitura
+        var sc = document.scrollingElement || document.documentElement, ratio = sc.scrollHeight > innerHeight ? sc.scrollTop / (sc.scrollHeight - innerHeight) : 0, keepTop = sc.scrollTop;
+        document.title = j.data.title + ' — SmartSower';
+        C.innerHTML = clean(j.data.html || '');
+        if (!first) { sc.scrollTop = keepTop || ratio * (sc.scrollHeight - innerHeight); badge(); }
+        last = j.updated_at; first = false;
+        if (!j.allow_copy && !locked) {
+          locked = true; document.body.classList.add('locked');
+          ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach(function (ev) { document.addEventListener(ev, function (e) { e.preventDefault(); }); });
+          document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && /^[acxspu]$/i.test(e.key)) e.preventDefault(); });
+          window.addEventListener('beforeprint', function () { C.style.display = 'none'; }); window.addEventListener('afterprint', function () { C.style.display = ''; });
+        }
+      })
+      .catch(function () { if (first) msg('Não foi possível carregar. Verifique a internet e tente de novo.'); });
+  }
+  load();
+  // ao vivo: confere a cada 30 s enquanto a página está aberta e ao voltar para ela
+  setInterval(function () { if (!document.hidden && last !== 'gone') load(); }, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && last !== 'gone') load(); });
 })();
 </script>
 </body>

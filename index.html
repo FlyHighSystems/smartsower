@@ -839,6 +839,13 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .rc-h{padding:2px 4px 6px}.rc-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer}
 .rc-item.on{background:var(--accent-l)}.rc-main{flex:1;min-width:0;display:flex;flex-direction:column}.rc-main b,.rc-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rc-t{white-space:nowrap}.rc-side{opacity:.6}.rc-item:hover .rc-side{opacity:1}.rc-tip{margin:8px 0 0}
+/* Revisão: trocas prontas */
+.rv-swaps{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.rv-swap{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.rv-swap.done{opacity:.75}
+.rv-old{text-decoration:line-through;color:#b42318;background:rgba(209,52,56,.07);border-radius:6px;padding:4px 8px;margin:6px 0 4px}
+.rv-new{color:#107c10;background:rgba(16,124,16,.08);border-radius:6px;padding:4px 8px;outline:none;white-space:pre-wrap}
+.rv-new:focus{box-shadow:0 0 0 2px var(--accent-l)}
+.rv-sw-a{margin-top:6px;flex-wrap:wrap;align-items:center}.rv-ok{color:#107c10;font-weight:600}
 </style>
 </head>
 <body>
@@ -1043,7 +1050,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.25", "code": "3ec67f", "at": "22/11 22:16", "notes": [{"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}]};
+<script>window.SS_BUILD = {"version": "3.12.26", "code": "b426d1", "at": "22/11 23:00", "notes": [{"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1804,6 +1811,7 @@ const App = {
     });
     const saveAll = () => { this.flush(); DB.put('kv', 'meta', this.meta); };
     window.addEventListener('beforeunload', saveAll); window.addEventListener('pagehide', saveAll);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) Share.flushLive?.(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden) saveAll(); });
   },
   seedMeta() {
@@ -1878,7 +1886,7 @@ const App = {
 
   /* ---- persistência ---- */
   pending: new Set(),
-  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
+  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); typeof Share !== 'undefined' && Share.changed(s); },
   _est: debounce(() => App.updateEstimate(), 400),
   updateEstimate() {
     const E = $('#s-est'); if (!E || !this.cur) return; const e = Estimate.sermon(this.cur);
@@ -5226,8 +5234,10 @@ Responda SOMENTE com JSON válido neste formato:
  "pontos_fortes":["..."],
  "riscos":[{"trecho":"citação curta do sermão","problema":"...","sugestao":"..."}],
  "perguntas_ouvinte_cetico":["perguntas que um ouvinte crítico faria"],
- "melhorias_prioritarias":["as 3 mudanças que mais melhorariam o sermão"]}
-Notas de 0 a 10.`;
+ "melhorias_prioritarias":["as 3 mudanças que mais melhorariam o sermão"],
+ "trocas":[{"trecho":"trecho COPIADO LITERALMENTE do texto, de 3 a 40 palavras","novo":"como o trecho ficaria reescrito","motivo":"por quê, em uma frase"}]}
+Notas de 0 a 10.
+Sobre "trocas" (até 8): são reescritas prontas para o autor aplicar com um clique. O "trecho" precisa ser cópia EXATA, caractere por caractere, de um pedaço contínuo do texto (sem reticências, sem juntar partes, sem mudar pontuação), senão não dá para achar. Não mexa em citações bíblicas. Mantenha a voz e o estilo do autor; corrija só o que melhora de verdade (clareza, concisão, gramática, repetição, frase de efeito fraca).`;
   },
   async run(s, providers, onStep) {
     const text = AI.sermonText(s); const kind = reviewKind(s); const K = REVIEW_KINDS.find(k => k[0] === kind);
@@ -5300,6 +5310,30 @@ Notas de 0 a 10.`;
     const refs = rev.refs || []; const probs = refs.filter(r => r.status !== 'ok');
     body.append(el('h4', { text: `Referências bíblicas (${refs.length} conferidas${probs.length ? ', ' + probs.length + ' para revisar' : ', todas certas'})` }));
     if (probs.length) body.append(el('ul', { class: 'rv-refs' }, probs.map(r => el('li', { class: 'rv-' + r.status }, el('b', { text: `${r.ref} ` }), el('span', { class: 'muted', text: `(${r.where}) ` }), r.msg))));
+    // Trocas prontas: aplicar direto no texto
+    const swaps = ok.flatMap(p => (R[p].data.trocas || []).filter(x => x && x.trecho && x.novo != null && x.trecho !== x.novo).map(x => [p, x]));
+    if (swaps.length) {
+      const box = el('div', { class: 'rv-swaps' });
+      body.append(el('h4', { text: `Trocas sugeridas (${swaps.length}) — aplique direto no texto` }), box);
+      if (s !== App.cur) box.append(el('p', { class: 'muted small', text: 'Abra esta página para aplicar as trocas.' }));
+      const paintSwap = (p, x, row) => {
+        row.innerHTML = '';
+        const where = s === App.cur ? TextFix.find(x.trecho) : null;
+        const nova = el('div', { class: 'rv-new', contentEditable: 'plaintext-only', title: 'Você pode ajustar o texto antes de aplicar', text: x.novo });
+        row.append(el('div', { class: 'rv-sw-h' }, el('span', { class: 'pill', text: name(p) }), x.motivo ? el('span', { class: 'muted small', text: ' ' + x.motivo }) : null),
+          el('div', { class: 'rv-old', text: x.trecho }), nova,
+          el('div', { class: 'row-btns rv-sw-a' },
+            x.applied ? el('span', { class: 'rv-ok', text: '✓ Aplicado' }) : null,
+            x.applied && x.undo ? el('button', { class: 'btn sm', text: '↶ Desfazer', onclick: () => { if (TextFix.undo(x)) { delete x.applied; App.touch(s); paintSwap(p, x, row); } } }) : null,
+            !x.applied && where ? el('button', { class: 'btn sm primary', text: '✓ Aplicar no texto', onclick: () => { const txt = nova.textContent.replace(/\s*\n\s*/g, ' ').trim(); const u = TextFix.apply(x.trecho, txt); if (!u) return UI.toast('Não achei o trecho (o texto mudou?).'); x.applied = true; x.undo = u; x.novo = txt; App.touch(s); paintSwap(p, x, row); } }) : null,
+            !x.applied && where ? el('button', { class: 'btn sm', text: '👁 Ver no texto', onclick: () => TextFix.show(x.trecho) }) : null,
+            !x.applied && s === App.cur && !where ? el('span', { class: 'muted small', text: '⚠ Trecho não encontrado igualzinho no texto (a IA citou diferente ou você já mudou). Use 👁 nas outras ou ajuste à mão.' }) : null,
+            !x.applied ? el('button', { class: 'btn link sm', text: 'Copiar', onclick: () => navigator.clipboard?.writeText(nova.textContent).then(() => UI.toast('Copiado')) }) : null));
+      };
+      for (const [p, x] of swaps) { const row = el('div', { class: 'rv-swap' + (x.applied ? ' done' : '') }); box.append(row); paintSwap(p, x, row); }
+      const pend = () => swaps.filter(([, x]) => !x.applied && s === App.cur && TextFix.find(x.trecho));
+      if (pend().length > 1) box.prepend(el('div', { class: 'row-btns', style: { justifyContent: 'flex-end' } }, el('button', { class: 'btn sm', text: '✓ Aplicar todas', title: 'Aplica as trocas encontradas no texto (dá para desfazer uma a uma)', onclick: () => { let n = 0; for (const [, x] of pend()) { const u = TextFix.apply(x.trecho, x.novo); if (u) { x.applied = true; x.undo = u; n++; } } App.touch(s); UI.toast(`${n} troca(s) aplicada(s)`); this.render(body, rev, s, back); } })));
+    }
     // Critérios lado a lado
     if (ok.length) {
       const tbl = el('table', { class: 'rv-tbl' });
@@ -5319,7 +5353,7 @@ Notas de 0 a 10.`;
         body.append(el('h4', { text: title }), el('ul', { class: 'rv-list' }, items.map(([p, x]) => el('li', {}, el('span', { class: 'pill', text: name(p) }), ' ', fmt(x), ' ', q(p, `${title}: ${plain(x)}`)))));
       };
       list('melhorias_prioritarias', 'O que mais melhoraria o texto', x => x);
-      list('riscos', 'Pontos de atenção', x => el('span', {}, x.trecho ? el('i', { text: `“${x.trecho}” — ` }) : null, x.problema || '', x.sugestao ? el('div', { class: 'rv-sug', text: '→ ' + x.sugestao }) : null));
+      list('riscos', 'Pontos de atenção', x => el('span', {}, x.trecho ? el('i', { text: `“${x.trecho}” — ` }) : null, x.trecho && s === App.cur && TextFix.find(x.trecho) ? el('button', { class: 'btn link sm', text: '👁', title: 'Ver no texto', onclick: () => TextFix.show(x.trecho) }) : null, x.problema || '', x.sugestao ? el('div', { class: 'rv-sug', text: '→ ' + x.sugestao }) : null));
       list('pontos_fortes', 'Pontos fortes', x => x);
       list('perguntas_ouvinte_cetico', 'Perguntas de um ouvinte crítico', x => x);
     }
@@ -5379,6 +5413,69 @@ Como responder:
       log, provBox, quoteBox, ta, el('div', { class: 'row-btns' }, btn, el('span', { class: 'muted small', text: 'Ctrl+Enter envia' })));
     return { el: box, quote: (p, t) => { if (ok.includes(p)) { prov = p; paintProv(); } setQuote(t); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => ta.focus(), 300); } };
   }
+};
+
+
+/* ===== Achar e trocar um trecho citado pela IA no texto da página aberta (mantendo a formatação) ===== */
+const TextFix = {
+  /* normaliza espaços, aspas e travessões para achar a citação mesmo com pequenas diferenças */
+  norm(t) {
+    const out = [], idx = [];
+    for (let i = 0; i < t.length; i++) {
+      let c = t[i];
+      if (/\s/.test(c)) { if (out.length && out[out.length - 1] === ' ') continue; c = ' '; }
+      else if (/[“”„"«»]/.test(c)) c = '"'; else if (/[‘’‚']/.test(c)) c = "'"; else if (/[–—]/.test(c)) c = '-';
+      out.push(c); idx.push(i);
+    }
+    return { s: out.join(''), idx };
+  },
+  clean(q) { return (q || '').replace(/^[\s“”"'‘’.…]+|[\s“”"'‘’…]+$/g, '').replace(/\.\.\.$/, '').trim(); },
+  find(q) {
+    q = this.clean(q); if (q.length < 3) return null;
+    const nq = this.norm(q).s;
+    for (const w of document.querySelectorAll('#blocks .block')) {
+      const b = App.cur?.blocks.find(x => x.id === w.dataset.id); if (!b || b.type === 'verse') continue;
+      for (const body of w.querySelectorAll('.b-body[contenteditable]')) {
+        const { nodes, text } = Spell.scan(body); const N = this.norm(text);
+        let i = N.s.indexOf(nq);
+        if (i < 0) { const lo = N.s.toLowerCase(); i = lo.indexOf(nq.toLowerCase()); }
+        if (i < 0) continue;
+        const off = N.idx[i], end = N.idx[i + nq.length - 1] + 1;
+        return { b, body, nodes, text, off, len: end - off };
+      }
+    }
+    return null;
+  },
+  show(q) {
+    const f = this.find(q); if (!f) return UI.toast('Não achei esse trecho no texto.');
+    const r = Spell.range(f.nodes, f.off, f.len); if (!r) return;
+    if (window.CSS?.highlights) { CSS.highlights.set('ss-find', new Highlight(r)); clearTimeout(this._t); this._t = setTimeout(() => CSS.highlights.delete('ss-find'), 6000); }
+    const rect = r.getBoundingClientRect(), ed = $('#editor'); if (ed) ed.scrollBy({ top: rect.top - ed.getBoundingClientRect().top - ed.clientHeight / 3, behavior: 'smooth' });
+    UI.toast('Trecho destacado no texto.');
+  },
+  apply(q, rep) {
+    const f = this.find(q); if (!f) return null;
+    if (f.text.substr(f.off, f.len).includes('\n')) { UI.toast('Esse trecho atravessa parágrafos — ajuste à mão.'); return null; }
+    const before = f.b.html;
+    let off = f.off, left = f.len, first = true;
+    for (const { n, start } of f.nodes) {
+      const s0 = start, s1 = start + n.data.length; if (s1 <= off || left <= 0) continue;
+      const a = off - s0, take = Math.min(left, s1 - off);
+      if (first) { n.replaceData(a, take, rep); first = false; } else n.deleteData(a, take);
+      left -= take; off += take;
+    }
+    if (first) return null;
+    f.body.querySelectorAll('b,strong,i,em,u,s,span,font,mark').forEach(e => { if (!e.textContent && !e.querySelector('img,br')) e.remove(); });
+    f.b.html = f.body.innerHTML;
+    return { block: f.b.id, before, after: f.b.html };
+  },
+  /* desfaz: se o bloco não mudou desde a troca, volta o HTML exato; senão troca o texto novo de volta pelo original */
+  undo(x) {
+    const u = x.undo; if (!u || !App.cur) return false; const b = App.cur.blocks.find(y => y.id === u.block);
+    if (b && b.html === u.after) { b.html = u.before; delete x.undo; App.renderBlocks(); return true; }
+    if (this.apply(x.novo, this.clean(x.trecho))) { delete x.undo; return true; }
+    UI.toast('Não achei mais o texto trocado — desfaça à mão (🕘 Versões).'); return false;
+  },
 };
 
 /* ===== Pós-culto: tempo por ponto, transcrição ao vivo e análise "planejado x pregado" ===== */
@@ -5799,16 +5896,33 @@ const Share = {
   /* ---------- Link de leitura (Supabase: tabela shares + função get_share) ---------- */
   viewerURL(id) { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'ler.html?id=' + id; },
   token() { const a = crypto.getRandomValues(new Uint8Array(16)); return b64url(a.buffer).slice(0, 22); },
-  async publish(s, { id, allowCopy, days }) {
+  async publish(s, { id, allowCopy, days, live = true, expires: keepExp }) {
     if (!Cloud.configured() || !Cloud.session) throw new Error('Entre na sua conta (☁) para criar links.');
     id ||= this.token();
-    const expires = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+    const expires = keepExp !== undefined ? keepExp : days ? new Date(Date.now() + days * 86400000).toISOString() : null;
     const data = { title: s.title, date: s.date, passage: s.passage, html: this.html(s), author: Cloud.session.user?.email ? '' : '' };
     const body = { id, user_id: Cloud.uid(), sermon_id: s.id, data, allow_copy: !!allowCopy, revoked: false, expires_at: expires, updated_at: new Date().toISOString() };
     await Cloud.rest('/rest/v1/shares?on_conflict=id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(body) });
-    s.shares = (s.shares || []).filter(x => x.id !== id); s.shares.unshift({ id, at: Date.now(), allowCopy: !!allowCopy, expires }); App.touch(s);
+    const prev = (s.shares || []).find(x => x.id === id);
+    const rec = { id, at: prev?.at || Date.now(), upd: Date.now(), allowCopy: !!allowCopy, expires, live: !!live };
+    s.shares = (s.shares || []).filter(x => x.id !== id); s.shares.unshift(rec); this._quiet = true; App.touch(s); this._quiet = false;
     return id;
   },
+  /* links “ao vivo”: republica sozinho uns 15 s depois que você para de escrever */
+  isLive(sh) { return sh.live !== false && !(sh.expires && new Date(sh.expires) < new Date()); },
+  changed(s) {
+    if (this._quiet || !s?.shares?.some(x => this.isLive(x))) return;
+    (this._t ||= {}); clearTimeout(this._t[s.id]);
+    this._t[s.id] = setTimeout(() => this.pushLive(s), 15000);
+  },
+  async pushLive(s) {
+    if (!Cloud.configured?.() || !Cloud.session) return;
+    for (const sh of (s.shares || []).filter(x => this.isLive(x))) {
+      try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, expires: sh.expires || null, live: true }); }
+      catch (e) { clearTimeout(this._t[s.id]); this._t[s.id] = setTimeout(() => this.pushLive(s), 60000); return; }   // sem internet: tenta de novo depois
+    }
+  },
+  flushLive() { for (const id of Object.keys(this._t || {})) { clearTimeout(this._t[id]); const s = App.sermons.get(id); if (s) this.pushLive(s); } this._t = {}; },
   async revoke(s, id) {
     await Cloud.rest(`/rest/v1/shares?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ revoked: true, updated_at: new Date().toISOString() }) });
     s.shares = (s.shares || []).filter(x => x.id !== id); App.touch(s);
@@ -5826,19 +5940,21 @@ const Share = {
       const allow = el('input', { type: 'checkbox' }); const days = el('select', { class: 'inp', style: { width: 'auto' } }, el('option', { value: '0', text: 'Sem prazo' }), el('option', { value: '1', text: '1 dia' }), el('option', { value: '7', text: '7 dias' }), el('option', { value: '30', text: '30 dias' }));
       const out = el('div');
       const card = el('div', { class: 'imp-card' }, el('h4', { text: 'Link de leitura online' }),
-        el('p', { class: 'muted small', text: 'Cria uma página só de leitura (celular, tablet ou computador). Por padrão, copiar, imprimir e o botão direito ficam bloqueados — isso dificulta, mas não impede, prints de tela. O link mostra uma foto da ministração no momento em que foi criado; use “Atualizar” depois de editar.' }),
+        el('p', { class: 'muted small', text: 'Cria uma página só de leitura (celular, tablet ou computador). Por padrão, copiar, imprimir e o botão direito ficam bloqueados — isso dificulta, mas não impede, prints de tela. O link é AO VIVO: acompanha suas alterações (atualiza uns 15 s depois que você para de escrever) e quem estiver lendo vê a mudança sozinho. Se preferir congelar, marque o link como 📌 Fixo; use “Atualizar” depois de editar.' }),
         el('div', { class: 'row-btns', style: { flexWrap: 'wrap', alignItems: 'center' } }, el('label', { class: 'on-check' }, allow, ' Permitir copiar o texto'), el('span', { class: 'muted small', text: 'Validade:' }), days,
           el('button', { class: 'btn primary', text: '🔗 Criar link', onclick: async e => { e.target.disabled = true; try { const id = await this.publish(s, { allowCopy: allow.checked, days: +days.value }); await this.copyLink(id); draw(); } catch (er) { UI.toast(er.message); e.target.disabled = false; } } })), out);
       if (!Cloud.session) out.append(el('p', { class: 'on-log', text: 'Para criar links, entre na sua conta (☁ no topo).' }));
       for (const sh of s.shares || []) {
         const url = this.viewerURL(sh.id);
+        const live = this.isLive(sh);
         out.append(el('div', { class: 'sh-row' },
-          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `Criado ${new Date(sh.at).toLocaleString('pt-BR')} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString('pt-BR') : ''}` })),
+          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `${live ? '🔴 Ao vivo' : '📌 Fixo'} · criado ${new Date(sh.at).toLocaleString('pt-BR')}${sh.upd ? ' · atualizado ' + new Date(sh.upd).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString('pt-BR') : ''}` })),
           el('div', { class: 'row-btns', style: { flexWrap: 'wrap' } },
             el('button', { class: 'btn sm', text: 'Copiar link', onclick: () => this.copyLink(sh.id) }),
             el('a', { class: 'btn sm', href: 'https://wa.me/?text=' + encodeURIComponent(`${s.title}\n${url}`), target: '_blank', rel: 'noopener', text: 'Enviar no WhatsApp' }),
             el('a', { class: 'btn sm', href: url, target: '_blank', rel: 'noopener', text: 'Abrir' }),
-            el('button', { class: 'btn sm', text: '↻ Atualizar', title: 'Publicar o conteúdo atual no mesmo link', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, days: sh.expires ? Math.max(1, Math.round((new Date(sh.expires) - Date.now()) / 86400000)) : 0 }); UI.toast('Link atualizado com o conteúdo atual'); draw(); } catch (er) { UI.toast(er.message); } } }),
+            el('button', { class: 'btn sm', text: live ? '📌 Congelar' : '🔴 Deixar ao vivo', title: live ? 'Parar de atualizar: o link fica com o conteúdo de agora' : 'Voltar a acompanhar as alterações', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, expires: sh.expires || null, live: !live }); UI.toast(live ? 'Link congelado no conteúdo atual' : 'Link ao vivo de novo'); draw(); } catch (er) { UI.toast(er.message); } } }),
+            el('button', { class: 'btn sm', text: '↻ Atualizar agora', title: 'Publicar o conteúdo atual no mesmo link', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, live, days: sh.expires ? Math.max(1, Math.round((new Date(sh.expires) - Date.now()) / 86400000)) : 0 }); UI.toast('Link atualizado com o conteúdo atual'); draw(); } catch (er) { UI.toast(er.message); } } }),
             el('button', { class: 'btn sm danger-text', text: 'Revogar', onclick: async () => { if (!await UI.confirm('Revogar link', 'Quem tiver o link não vai mais conseguir abrir. Continuar?', 'Revogar')) return; try { await this.revoke(s, sh.id); UI.toast('Link revogado'); draw(); } catch (er) { UI.toast(er.message); } } }))));
       }
       body.append(card);

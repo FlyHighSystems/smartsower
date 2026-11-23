@@ -2,6 +2,14 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.26 — 22/11/2026
+- **Revisão com IA: trocas prontas.** A revisão agora traz a seção **Trocas sugeridas**: o trecho riscado e a reescrita. Cada troca tem:
+  - **✓ Aplicar no texto**, que troca na hora e mantém a formatação em volta;
+  - **👁 Ver no texto**;
+  - **↶ Desfazer**.
+- Também dá para ajustar a reescrita antes de aplicar e usar **Aplicar todas**. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.
+- **Link de leitura ao vivo:** o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. **📌 Congelar** fixa o conteúdo; **🔴 Deixar ao vivo** volta. Os links antigos passam a ser ao vivo.
+
 ## 3.12.25 — 22/11/2026
 - **🕘 Páginas recentes:** pelo botão 🕘 ao lado de “＋ Página” ou com **Ctrl+K** de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”.
   - Ao digitar, a lista busca em todas as páginas.

@@ -60,6 +60,7 @@ const App = {
     });
     const saveAll = () => { this.flush(); DB.put('kv', 'meta', this.meta); };
     window.addEventListener('beforeunload', saveAll); window.addEventListener('pagehide', saveAll);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) Share.flushLive?.(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden) saveAll(); });
   },
   seedMeta() {
@@ -134,7 +135,7 @@ const App = {
 
   /* ---- persistência ---- */
   pending: new Set(),
-  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); },
+  touch(s = this.cur) { if (!s) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(s)) return; if (Date.now() - (this.bootT || 0) > 2000) this._typed = true; s.updated = Date.now(); this.pending.add(s.id); this._save(); if (s === this.cur) { this._est(); if (Book.is(s)) Book.updateCount(); } History.tick(s); Cloud.schedule(); typeof Share !== 'undefined' && Share.changed(s); },
   _est: debounce(() => App.updateEstimate(), 400),
   updateEstimate() {
     const E = $('#s-est'); if (!E || !this.cur) return; const e = Estimate.sermon(this.cur);

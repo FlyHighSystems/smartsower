@@ -61,16 +61,33 @@ const Share = {
   /* ---------- Link de leitura (Supabase: tabela shares + função get_share) ---------- */
   viewerURL(id) { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'ler.html?id=' + id; },
   token() { const a = crypto.getRandomValues(new Uint8Array(16)); return b64url(a.buffer).slice(0, 22); },
-  async publish(s, { id, allowCopy, days }) {
+  async publish(s, { id, allowCopy, days, live = true, expires: keepExp }) {
     if (!Cloud.configured() || !Cloud.session) throw new Error('Entre na sua conta (☁) para criar links.');
     id ||= this.token();
-    const expires = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+    const expires = keepExp !== undefined ? keepExp : days ? new Date(Date.now() + days * 86400000).toISOString() : null;
     const data = { title: s.title, date: s.date, passage: s.passage, html: this.html(s), author: Cloud.session.user?.email ? '' : '' };
     const body = { id, user_id: Cloud.uid(), sermon_id: s.id, data, allow_copy: !!allowCopy, revoked: false, expires_at: expires, updated_at: new Date().toISOString() };
     await Cloud.rest('/rest/v1/shares?on_conflict=id', { method: 'POST', headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(body) });
-    s.shares = (s.shares || []).filter(x => x.id !== id); s.shares.unshift({ id, at: Date.now(), allowCopy: !!allowCopy, expires }); App.touch(s);
+    const prev = (s.shares || []).find(x => x.id === id);
+    const rec = { id, at: prev?.at || Date.now(), upd: Date.now(), allowCopy: !!allowCopy, expires, live: !!live };
+    s.shares = (s.shares || []).filter(x => x.id !== id); s.shares.unshift(rec); this._quiet = true; App.touch(s); this._quiet = false;
     return id;
   },
+  /* links “ao vivo”: republica sozinho uns 15 s depois que você para de escrever */
+  isLive(sh) { return sh.live !== false && !(sh.expires && new Date(sh.expires) < new Date()); },
+  changed(s) {
+    if (this._quiet || !s?.shares?.some(x => this.isLive(x))) return;
+    (this._t ||= {}); clearTimeout(this._t[s.id]);
+    this._t[s.id] = setTimeout(() => this.pushLive(s), 15000);
+  },
+  async pushLive(s) {
+    if (!Cloud.configured?.() || !Cloud.session) return;
+    for (const sh of (s.shares || []).filter(x => this.isLive(x))) {
+      try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, expires: sh.expires || null, live: true }); }
+      catch (e) { clearTimeout(this._t[s.id]); this._t[s.id] = setTimeout(() => this.pushLive(s), 60000); return; }   // sem internet: tenta de novo depois
+    }
+  },
+  flushLive() { for (const id of Object.keys(this._t || {})) { clearTimeout(this._t[id]); const s = App.sermons.get(id); if (s) this.pushLive(s); } this._t = {}; },
   async revoke(s, id) {
     await Cloud.rest(`/rest/v1/shares?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ revoked: true, updated_at: new Date().toISOString() }) });
     s.shares = (s.shares || []).filter(x => x.id !== id); App.touch(s);
@@ -88,19 +105,21 @@ const Share = {
       const allow = el('input', { type: 'checkbox' }); const days = el('select', { class: 'inp', style: { width: 'auto' } }, el('option', { value: '0', text: 'Sem prazo' }), el('option', { value: '1', text: '1 dia' }), el('option', { value: '7', text: '7 dias' }), el('option', { value: '30', text: '30 dias' }));
       const out = el('div');
       const card = el('div', { class: 'imp-card' }, el('h4', { text: 'Link de leitura online' }),
-        el('p', { class: 'muted small', text: 'Cria uma página só de leitura (celular, tablet ou computador). Por padrão, copiar, imprimir e o botão direito ficam bloqueados — isso dificulta, mas não impede, prints de tela. O link mostra uma foto da ministração no momento em que foi criado; use “Atualizar” depois de editar.' }),
+        el('p', { class: 'muted small', text: 'Cria uma página só de leitura (celular, tablet ou computador). Por padrão, copiar, imprimir e o botão direito ficam bloqueados — isso dificulta, mas não impede, prints de tela. O link é AO VIVO: acompanha suas alterações (atualiza uns 15 s depois que você para de escrever) e quem estiver lendo vê a mudança sozinho. Se preferir congelar, marque o link como 📌 Fixo; use “Atualizar” depois de editar.' }),
         el('div', { class: 'row-btns', style: { flexWrap: 'wrap', alignItems: 'center' } }, el('label', { class: 'on-check' }, allow, ' Permitir copiar o texto'), el('span', { class: 'muted small', text: 'Validade:' }), days,
           el('button', { class: 'btn primary', text: '🔗 Criar link', onclick: async e => { e.target.disabled = true; try { const id = await this.publish(s, { allowCopy: allow.checked, days: +days.value }); await this.copyLink(id); draw(); } catch (er) { UI.toast(er.message); e.target.disabled = false; } } })), out);
       if (!Cloud.session) out.append(el('p', { class: 'on-log', text: 'Para criar links, entre na sua conta (☁ no topo).' }));
       for (const sh of s.shares || []) {
         const url = this.viewerURL(sh.id);
+        const live = this.isLive(sh);
         out.append(el('div', { class: 'sh-row' },
-          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `Criado ${new Date(sh.at).toLocaleString('pt-BR')} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString('pt-BR') : ''}` })),
+          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `${live ? '🔴 Ao vivo' : '📌 Fixo'} · criado ${new Date(sh.at).toLocaleString('pt-BR')}${sh.upd ? ' · atualizado ' + new Date(sh.upd).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString('pt-BR') : ''}` })),
           el('div', { class: 'row-btns', style: { flexWrap: 'wrap' } },
             el('button', { class: 'btn sm', text: 'Copiar link', onclick: () => this.copyLink(sh.id) }),
             el('a', { class: 'btn sm', href: 'https://wa.me/?text=' + encodeURIComponent(`${s.title}\n${url}`), target: '_blank', rel: 'noopener', text: 'Enviar no WhatsApp' }),
             el('a', { class: 'btn sm', href: url, target: '_blank', rel: 'noopener', text: 'Abrir' }),
-            el('button', { class: 'btn sm', text: '↻ Atualizar', title: 'Publicar o conteúdo atual no mesmo link', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, days: sh.expires ? Math.max(1, Math.round((new Date(sh.expires) - Date.now()) / 86400000)) : 0 }); UI.toast('Link atualizado com o conteúdo atual'); draw(); } catch (er) { UI.toast(er.message); } } }),
+            el('button', { class: 'btn sm', text: live ? '📌 Congelar' : '🔴 Deixar ao vivo', title: live ? 'Parar de atualizar: o link fica com o conteúdo de agora' : 'Voltar a acompanhar as alterações', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, expires: sh.expires || null, live: !live }); UI.toast(live ? 'Link congelado no conteúdo atual' : 'Link ao vivo de novo'); draw(); } catch (er) { UI.toast(er.message); } } }),
+            el('button', { class: 'btn sm', text: '↻ Atualizar agora', title: 'Publicar o conteúdo atual no mesmo link', onclick: async () => { try { await this.publish(s, { id: sh.id, allowCopy: sh.allowCopy, live, days: sh.expires ? Math.max(1, Math.round((new Date(sh.expires) - Date.now()) / 86400000)) : 0 }); UI.toast('Link atualizado com o conteúdo atual'); draw(); } catch (er) { UI.toast(er.message); } } }),
             el('button', { class: 'btn sm danger-text', text: 'Revogar', onclick: async () => { if (!await UI.confirm('Revogar link', 'Quem tiver o link não vai mais conseguir abrir. Continuar?', 'Revogar')) return; try { await this.revoke(s, sh.id); UI.toast('Link revogado'); draw(); } catch (er) { UI.toast(er.message); } } }))));
       }
       body.append(card);

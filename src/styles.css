@@ -828,3 +828,10 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .rc-h{padding:2px 4px 6px}.rc-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer}
 .rc-item.on{background:var(--accent-l)}.rc-main{flex:1;min-width:0;display:flex;flex-direction:column}.rc-main b,.rc-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rc-t{white-space:nowrap}.rc-side{opacity:.6}.rc-item:hover .rc-side{opacity:1}.rc-tip{margin:8px 0 0}
+/* Revisão: trocas prontas */
+.rv-swaps{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.rv-swap{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.rv-swap.done{opacity:.75}
+.rv-old{text-decoration:line-through;color:#b42318;background:rgba(209,52,56,.07);border-radius:6px;padding:4px 8px;margin:6px 0 4px}
+.rv-new{color:#107c10;background:rgba(16,124,16,.08);border-radius:6px;padding:4px 8px;outline:none;white-space:pre-wrap}
+.rv-new:focus{box-shadow:0 0 0 2px var(--accent-l)}
+.rv-sw-a{margin-top:6px;flex-wrap:wrap;align-items:center}.rv-ok{color:#107c10;font-weight:600}
