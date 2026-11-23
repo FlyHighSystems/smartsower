@@ -821,3 +821,5 @@ body.focus-mode #split-pane{display:flex}body.focus-mode #split-pane[hidden]{dis
 @media print{#split-pane{display:none!important}}
 body.focus-mode #split-pane .split-head{margin-top:52px}
 @media (max-width:600px){body.focus-mode #split-pane .split-head{margin-top:0}}
+.spa-f{padding:10px 14px 4px;display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--line)}.spa-q{width:100%}
+.spa-list{padding-top:10px}.spa-src{display:block;margin-top:4px;padding:0;font-size:12px;text-align:left}

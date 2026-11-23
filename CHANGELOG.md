@@ -2,6 +2,14 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.24 — 22/11/2026
+- **📚 Do acervo, lado a lado:** no livro, o botão agora abre o acervo de sermões no **painel da direita**, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:
+  - procura por tema ou palavra;
+  - usa **⇠ Trazer** em cada bloco (o Ponto vira Intertítulo, e a Ilustração ou Aplicação vira Texto);
+  - vê **✓ já neste capítulo** no que já trouxe;
+  - abre o sermão inteiro ao lado (↗) e volta com 📚.
+- A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑.
+
 ## 3.12.23 — 22/11/2026
 - **Tela dividida (◫ Lado a lado):** abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo.
   - Onde fica: na aba **Exibir** e no mostrador do modo foco. No ⋯ de qualquer página, use **◫ Abrir ao lado**.

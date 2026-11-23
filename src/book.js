@@ -506,9 +506,19 @@ const Refs = {
 
 /* ===================== ACERVO: do sermão ao capítulo ===================== */
 const Archive = {
-  open(target) {
+  /* blocos de todos os sermões (não-livro), com a marca 📚 “Para o livro” */
+  pool() {
     const pool = [];
     for (const s of App.sermons.values()) { if (Book.is(s)) continue; s.blocks.forEach(b => { if (b.type === 'ink' || b.type === 'image') return; const t = (b.ref ? b.ref + ' — ' : '') + htmlToText(b.html || ''); if (t.trim()) pool.push({ s, b, t, n: Search.norm(t), mk: b.marks?.includes('book') }); }); }
+    return pool;
+  },
+  /* como um bloco de sermão entra num capítulo de livro */
+  adapt(b) { const nb = structuredClone(b); nb.id = uid(); delete nb.marks; delete nb.usedIn; if (nb.type === 'point') nb.type = 'subhead'; else if (!['text', 'verse', 'quote', 'subhead', 'image', 'ink'].includes(nb.type)) nb.type = 'text'; return nb; },
+  markUsed(src, b, target) { (b.usedIn ||= []).includes(target.id) || b.usedIn.push(target.id); App.touch(src); },
+  open(target) { Split.openArchive(); },
+  /* versão em janela: marcar vários e inserir de uma vez */
+  modal(target) {
+    const pool = this.pool();
     const sel = new Set(); const list = el('div', { class: 'ar-list' }); const q = el('input', { class: 'inp', placeholder: 'Procurar em todos os sermões (tema, palavra, ilustração…)' });
     const only = el('input', { type: 'checkbox', checked: true });
     const paint = () => {
@@ -532,10 +542,7 @@ const Archive = {
       if (!sel.size) { UI.toast('Selecione pelo menos um bloco.'); return false; }
       const at = target.blocks.findIndex(b => b.id === App.focusId); let pos = at >= 0 ? at + 1 : target.blocks.length;
       for (const x of [...sel]) {
-        const nb = structuredClone(x.b); nb.id = uid(); delete nb.marks; delete nb.usedIn;
-        if (nb.type === 'point') nb.type = 'subhead'; else if (!['text', 'verse', 'quote', 'subhead'].includes(nb.type)) nb.type = 'text';
-        target.blocks.splice(pos++, 0, nb);
-        (x.b.usedIn ||= []).includes(target.id) || x.b.usedIn.push(target.id); App.touch(x.s);
+        target.blocks.splice(pos++, 0, this.adapt(x.b)); this.markUsed(x.s, x.b, target);
       }
       App.touch(target); App.renderEditor(); UI.toast(`${sel.size} bloco(s) trazido(s). Agora é reescrever para a linguagem do livro.`);
     } }] });
