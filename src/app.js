@@ -165,7 +165,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -396,7 +396,7 @@ const App = {
     if (typeof FindView !== 'undefined') { if (FindView.active) { FindView.active = false; $$('.rtab').forEach(x => x.classList.toggle('on', x.dataset.tab === 'home')); $$('.rpanel').forEach(p => p.hidden = p.dataset.panel !== 'home'); } if (!FindView._opening) FindView.ran = false; }
     this.flush();
     const s = this.sermons.get(id); if (!s) return;
-    this.cur = s; this.meta.currentSermon = id;
+    this.cur = s; this.meta.currentSermon = id; Recent.add(id);
     const sec = this.meta.sections.find(x => x.id === s.sec);
     if (sec && !boot) { const L = this.meta.lastOpen ||= {}, e = { id, t: Date.now() }; L[sec.id] = e; L[sec.nb] = e; L.__cur = e; if (this.meta.follow && typeof Cloud !== 'undefined') { Cloud.followDirty = true; Cloud.schedule(4000); } }
     if (sec && sec.id !== this.meta.currentSec) { this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.renderNav(); }

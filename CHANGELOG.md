@@ -2,6 +2,12 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.25 — 22/11/2026
+- **🕘 Páginas recentes:** pelo botão 🕘 ao lado de “＋ Página” ou com **Ctrl+K** de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”.
+  - Ao digitar, a lista busca em todas as páginas.
+  - ↑↓ escolhe e Enter abre.
+  - **Shift+Enter** ou **◫** abre a página ao lado.
+
 ## 3.12.24 — 22/11/2026
 - **📚 Do acervo, lado a lado:** no livro, o botão agora abre o acervo de sermões no **painel da direita**, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:
   - procura por tema ou palavra;

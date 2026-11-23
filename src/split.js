@@ -134,3 +134,54 @@ const Split = {
   /* a página da direita foi apagada ou é a mesma da esquerda */
   afterOpen() { if (!this.on || this._swapping) return; if (this.mode === 'archive') { this.renderArchive(); return; } if (this.id === App.cur?.id || !App.sermons.get(this.id)) { this.close(); UI.toast('A tela dividida foi fechada (era a mesma página).'); } },
 };
+
+/* ===== Páginas recentes: histórico das páginas abertas neste aparelho + troca rápida (Ctrl+K) ===== */
+const Recent = {
+  MAX: 40,
+  list() { try { return JSON.parse(localStorage.getItem('ss-recent') || '[]'); } catch (e) { return []; } },
+  add(id) {
+    if (!id) return; const L = this.list().filter(x => x.id !== id); L.unshift({ id, t: Date.now() });
+    try { localStorage.setItem('ss-recent', JSON.stringify(L.slice(0, this.MAX))); } catch (e) { }
+  },
+  ago(t) {
+    const m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return 'agora'; if (m < 60) return `há ${m} min`; const h = Math.round(m / 60); if (h < 24) return `há ${h} h`;
+    const d = Math.round(h / 24); return d === 1 ? 'ontem' : d < 7 ? `há ${d} dias` : new Date(t).toLocaleDateString('pt-BR');
+  },
+  init() {
+    const add = $('#page-add');
+    if (add && !$('#page-recent')) add.before(el('button', { id: 'page-recent', class: 'btn sm', title: 'Páginas recentes (Ctrl+K)', text: '🕘', onclick: () => this.open() }));
+    document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); this.open(); } });
+  },
+  open() {
+    if (this.m) return;
+    const norm = t => (t || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+    const q = el('input', { type: 'search', class: 'inp rc-q', placeholder: 'Digite para buscar em todas as páginas…' });
+    const list = el('div', { class: 'rc-list' }); let items = [], sel = 0;
+    const go = (s, side) => { m.close(); side ? Split.open(s.id) : App.open(s.id); };
+    const paint = () => {
+      const k = norm(q.value).split(/\s+/).filter(Boolean);
+      if (k.length) items = [...App.sermons.values()].filter(s => { if (s.id === App.cur?.id) return false; const h = norm((s.title || '') + ' ' + Split.where(s)); return k.every(w => h.includes(w)); })
+        .sort((a, b) => (b.updated || 0) - (a.updated || 0)).slice(0, 40).map(s => ({ s, t: null }));
+      else items = this.list().map(x => ({ s: App.sermons.get(x.id), t: x.t })).filter(x => x.s && x.s.id !== App.cur?.id);
+      sel = Math.min(sel, Math.max(0, items.length - 1)); list.innerHTML = '';
+      list.append(el('div', { class: 'rc-h muted small', text: k.length ? `${items.length} página(s)` : 'Abertas recentemente neste aparelho' }));
+      if (!items.length) list.append(el('p', { class: 'muted', text: k.length ? 'Nenhuma página com esse nome.' : 'Ainda não há páginas recentes.' }));
+      items.forEach((x, i) => {
+        const side = el('button', { class: 'icon-btn sm rc-side', title: 'Abrir ao lado (tela dividida)', text: '◫', onclick: e => { e.stopPropagation(); go(x.s, true); } });
+        const row = el('div', { class: 'rc-item' + (i === sel ? ' on' : ''), onclick: () => go(x.s), onmouseenter: () => { sel = i; list.querySelectorAll('.rc-item').forEach((r, j) => r.classList.toggle('on', j === i)); } },
+          el('div', { class: 'rc-main' }, el('b', { text: x.s.title || 'Sem título' }), el('span', { class: 'muted small', text: Split.where(x.s) })),
+          x.t ? el('span', { class: 'muted small rc-t', text: this.ago(x.t) }) : null, side);
+        list.append(row);
+      });
+    };
+    q.oninput = () => { sel = 0; paint(); };
+    q.onkeydown = e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % Math.max(1, items.length); paint(); list.querySelector('.rc-item.on')?.scrollIntoView({ block: 'nearest' }); }
+      else if (e.key === 'Enter' && items[sel]) { e.preventDefault(); go(items[sel].s, e.shiftKey); }
+      else if (e.key === 'Escape') { e.preventDefault(); m.close(); }
+    };
+    const m = this.m = UI.modal({ title: '🕘 Páginas recentes', body: el('div', { class: 'rc' }, q, list, el('p', { class: 'muted small rc-tip', text: '↑↓ escolhe · Enter abre · Shift+Enter ou ◫ abre ao lado · Ctrl+K de qualquer lugar' })), onClose: () => { this.m = null; } });
+    paint(); setTimeout(() => q.focus(), 50);
+  },
+};
