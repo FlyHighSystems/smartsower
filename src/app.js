@@ -163,7 +163,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -475,12 +475,12 @@ const App = {
     ed.append(el('div', { id: 'blocks' }));
     this.updateEstimate();
     const add = Book.is(s) ? Book.addBar(s) : el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
-      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'image'].map(t => el('button', { class: 'chip t-' + t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
+      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
       el('button', { class: 'chip', text: '⚙ Tipos…', title: 'Criar ou editar seus próprios tipos de bloco', onclick: () => TypeManager.open() }));
     ed.append(add);
     this.renderBlocks();
     if (Book.is(s)) Footnotes.renderList();
-    Shared.decorate(s);
+    Shared.decorate(s); AddFloat.update();
   },
   renderBlocks() {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];

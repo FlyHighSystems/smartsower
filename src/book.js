@@ -302,7 +302,7 @@ Regras: 1 ou 2 frases, no máximo 45 palavras. Diga do que o capítulo trata e a
   addBar(s) {
     return el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
       ...[['text', 'Texto'], ['subhead', 'Intertítulo'], ['verse', 'Versículo'], ['quote', 'Destaque'], ['image', 'Imagem'], ['ink', 'Desenho']].map(([t, l]) =>
-        el('button', { class: 'chip t-' + t, text: '+ ' + l, onclick: () => App.insertBlock(t) })),
+        el('button', { class: 'chip t-' + t, 'data-t': t, text: '+ ' + l, onclick: () => App.insertBlock(t) })),
       el('button', { class: 'chip', text: '¹ Nota de rodapé', title: 'Inserir nota no ponto do cursor (Ctrl+Alt+N)', onmousedown: e => e.preventDefault(), onclick: () => Footnotes.insert() }),
       el('button', { class: 'chip bk-arch', text: '📚 Do acervo', title: 'Trazer blocos dos seus sermões para este capítulo', onclick: () => Archive.open(s) }),
       this.kind(s) === 'roteiro' ? el('button', { class: 'chip primary-chip', text: '➜ Criar capítulos a partir do roteiro', title: 'Cada item da lista “Capítulos” (Título — resumo) vira uma página de capítulo', onclick: () => this.fromOutline(s) }) : null);

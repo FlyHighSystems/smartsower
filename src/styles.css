@@ -747,3 +747,12 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .sp-pop{--sc:#d13438;position:fixed;z-index:9500;max-width:min(340px,calc(100vw - 16px));background:var(--panel,#fff);color:var(--text);border:1px solid var(--line);border-top:3px solid var(--sc);border-radius:10px;box-shadow:0 12px 36px #0004;padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:14px}
 .sp-pop-h{display:flex;align-items:center;gap:8px}.sp-pop-h b{text-decoration:line-through;text-decoration-color:var(--sc)}.sp-pop-h .sp-type{font-size:11px;color:var(--sc);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .sp-pop-m{font-size:12.5px;color:var(--muted)}.sp-pop-r{display:flex;flex-wrap:wrap;gap:4px}.sp-pop-r .chip{font-weight:600}.sp-pop-a{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:4px}
+
+/* botão + flutuante (Adicionar) */
+.add-float{position:fixed;z-index:60;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--accent);font-size:22px;line-height:1;font-weight:600;box-shadow:0 3px 12px rgba(0,0,0,.18);cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;transition:top .12s ease,transform .12s}
+.add-float.show{display:flex}.add-float:hover{transform:scale(1.08)}.add-float.on{background:var(--accent);color:#fff;transform:rotate(45deg)}
+.add-float-menu{position:fixed;z-index:61;display:flex;flex-direction:column;gap:4px;padding:8px;min-width:190px;max-width:260px;max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.add-float-menu .afm-h{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:2px 4px 4px}
+.add-float-menu .afm-i{justify-content:flex-start;text-align:left;width:100%}
+body.page-ro .add-float{display:none!important}
+@media print{.add-float,.add-float-menu{display:none!important}}

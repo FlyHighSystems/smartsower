@@ -821,3 +821,81 @@ const FloatBar = {
     });
   }
 };
+
+
+/* ---------- Barra "Adicionar" flutuante: quando a barra do fim da página sai da tela,
+   um botão + aparece ao lado do frame, na altura do cursor, e insere logo abaixo do bloco atual ---------- */
+const AddFloat = {
+  init() {
+    this.btn = el('button', { id: 'add-float', class: 'add-float', title: 'Adicionar bloco aqui (abaixo do cursor)', text: '+' });
+    this.btn.addEventListener('pointerdown', e => e.preventDefault());
+    this.btn.onclick = () => this.menu ? this.close() : this.openMenu();
+    document.body.append(this.btn);
+    const q = () => { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.update(); }); };
+    $('#editor')?.addEventListener('scroll', q, { passive: true });
+    document.addEventListener('selectionchange', q); document.addEventListener('focusin', q);
+    window.addEventListener('resize', q); window.visualViewport?.addEventListener('resize', q); window.visualViewport?.addEventListener('scroll', q);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.menu) this.close(); });
+    document.addEventListener('pointerdown', e => { if (this.menu && !this.menu.contains(e.target) && e.target !== this.btn) this.close(); }, true);
+  },
+  bar() { return $('#editor-inner > .add-bar'); },
+  /* ponto de referência vertical: o cursor dentro dos blocos; senão o bloco focado */
+  anchorY() {
+    const sel = getSelection(), host = $('#blocks');
+    if (sel.rangeCount && host?.contains(sel.anchorNode)) {
+      const r = sel.getRangeAt(0).cloneRange(); r.collapse(true);
+      let b = r.getClientRects()[0] || r.getBoundingClientRect();
+      if (!b || (!b.height && !b.top)) { const n = sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement; b = n?.getBoundingClientRect(); }
+      if (b && (b.height || b.top)) return b.top + (b.height || 20) / 2;
+    }
+    const f = App.focusId && $(`#blocks .block[data-id="${App.focusId}"]`);
+    if (f) { const b = f.getBoundingClientRect(); return b.top + Math.min(b.height, 60) / 2; }
+    return null;
+  },
+  update() {
+    const btn = this.btn; if (!btn) return;
+    const bar = this.bar(), ed = $('#editor'), inner = $('#editor-inner');
+    const hide = () => { btn.classList.remove('show'); this.close(); };
+    if (!bar || !ed || !inner || !ed.offsetParent || document.body.classList.contains('page-ro') || $('.modal-back')) return hide();
+    const er = ed.getBoundingClientRect(), br = bar.getBoundingClientRect(), vv = window.visualViewport;
+    const vTop = Math.max(er.top, vv ? vv.offsetTop : 0), vBot = Math.min(er.bottom, vv ? vv.offsetTop + vv.height : innerHeight);
+    if (br.top < vBot - 10 && br.bottom > vTop) return hide();   // a barra do fim está visível: não precisa
+    let y = this.anchorY(); if (y == null) y = (vTop + vBot) / 2;
+    if (y < vTop + 8 || y > vBot - 8) y = clamp(y, vTop + 26, vBot - 26);
+    const frame = ($('#blocks') || inner).getBoundingClientRect();
+    const edgeR = er.left + ed.clientLeft + ed.clientWidth;          // borda útil (sem a barra de rolagem)
+    const gut = edgeR - frame.right;                                  // margem livre depois do frame do texto
+    const S = gut >= 50 ? 38 : gut >= 32 ? 30 : 32;
+    let x = gut >= 50 ? frame.right + 10 : gut >= 32 ? frame.right + (gut - S) / 2 : edgeR - S - 2;
+    btn.style.width = btn.style.height = S + 'px'; btn.style.fontSize = (S > 32 ? 22 : 19) + 'px';
+    btn.style.left = Math.round(x) + 'px'; btn.style.top = Math.round(y - S / 2) + 'px';
+    btn.classList.add('show');
+    if (this.menu) this.place();
+  },
+  openMenu() {
+    const bar = this.bar(); if (!bar) return;
+    const m = el('div', { class: 'add-float-menu' }, el('div', { class: 'afm-h', text: 'Adicionar abaixo do cursor' }));
+    m.addEventListener('pointerdown', e => { if (e.target.closest('button')) e.preventDefault(); });
+    for (const c of bar.querySelectorAll('button')) {
+      const t = c.dataset.t;
+      const b = el('button', { class: c.className.replace(/\bprimary-chip\b/, '') + ' afm-i', style: c.getAttribute('style') || '', text: c.textContent, title: c.title || '' });
+      b.onclick = () => {
+        this.close();
+        if (t === 'image') Ribbon.insertImage();
+        else if (t) App.insertBlock(t);
+        else c.click();
+      };
+      m.append(b);
+    }
+    document.body.append(m); this.menu = m; this.btn.classList.add('on'); this.place();
+  },
+  place() {
+    const m = this.menu, b = this.btn.getBoundingClientRect(); if (!m) return;
+    const W = m.offsetWidth, H = m.offsetHeight, vv = window.visualViewport;
+    const vh = vv ? vv.offsetTop + vv.height : innerHeight, vt = vv ? vv.offsetTop : 0;
+    let left = b.left - W - 8; if (left < 6) left = Math.max(6, Math.min(innerWidth - W - 6, b.left));
+    let top = b.top + b.height / 2 - 24; top = clamp(top, vt + 6, Math.max(vt + 6, vh - H - 6));
+    m.style.left = Math.round(left) + 'px'; m.style.top = Math.round(top) + 'px';
+  },
+  close() { this.menu?.remove(); this.menu = null; this.btn?.classList.remove('on'); },
+};
