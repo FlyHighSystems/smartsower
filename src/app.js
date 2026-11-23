@@ -486,7 +486,7 @@ const App = {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints(); Shared.afterBlocks(this.cur);
+    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.();
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },

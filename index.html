@@ -754,6 +754,10 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .fb-al{display:inline-flex;align-items:center;gap:1px}.fb-al small{font-size:9px;opacity:.7}
 .al-menu .al-item{display:flex;align-items:center;gap:10px}.al-menu .al-item.on{background:var(--hover,#7719aa18);font-weight:600}
 .bk-syn-row{display:flex;gap:8px;align-items:flex-start}.bk-syn-row .bk-syn{flex:1}.bk-syn-ai{flex:0 0 auto;margin-top:2px;white-space:nowrap}
+
+.sp-pop{--sc:#d13438;position:fixed;z-index:9500;max-width:min(340px,calc(100vw - 16px));background:var(--panel,#fff);color:var(--text);border:1px solid var(--line);border-top:3px solid var(--sc);border-radius:10px;box-shadow:0 12px 36px #0004;padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sp-pop-h{display:flex;align-items:center;gap:8px}.sp-pop-h b{text-decoration:line-through;text-decoration-color:var(--sc)}.sp-pop-h .sp-type{font-size:11px;color:var(--sc);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.sp-pop-m{font-size:12.5px;color:var(--muted)}.sp-pop-r{display:flex;flex-wrap:wrap;gap:4px}.sp-pop-r .chip{font-weight:600}.sp-pop-a{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:4px}
 </style>
 </head>
 <body>
@@ -956,7 +960,7 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.16", "code": "e3f8ad", "at": "22/11 20:17", "notes": [{"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}]};
+<script>window.SS_BUILD = {"version": "3.12.17", "code": "c8e108", "at": "22/11 20:20", "notes": [{"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2142,7 +2146,7 @@ const App = {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints(); Shared.afterBlocks(this.cur);
+    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.();
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },
@@ -6329,7 +6333,7 @@ const Spell = {
     return null;
   },
   paint(list) {
-    this.last = list;
+    this.last = list; this.lastPage = App.cur?.id;
     if (!window.CSS?.highlights) return;
     for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t);
     const by = {}; for (const it of list) { if (it.done) continue; const L = this.locate(it); const r = L && this.range(L.nodes, L.off, it.len); if (r) (by[it.type] ||= []).push(r); }
@@ -6344,7 +6348,34 @@ const Spell = {
     }
     return null;
   },
-  clear() { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); },
+  clear(forget) { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); if (forget) { this.last = null; this.lastPage = null; } this.pop?.remove(); },
+  // as marcas ficam no texto depois de fechar a verificação; somem ao trocar de página
+  repaint() { if (this.last?.length && this.lastPage && App.cur?.id === this.lastPage) this.paint(this.last); else if (this.last) this.clear(true); },
+  /* menu de correção: ao clicar/tocar numa palavra marcada */
+  issueFromPoint(x, y) {
+    let node = null, off = 0; const cp = document.caretPositionFromPoint?.(x, y); if (cp) { node = cp.offsetNode; off = cp.offset; } else { const cr = document.caretRangeFromPoint?.(x, y); if (cr) { node = cr.startContainer; off = cr.startOffset; } }
+    if (!node || node.nodeType !== 3) return null; const body = node.parentElement?.closest('#blocks .b-body[contenteditable="true"]'); if (!body) return null;
+    if (!this.last?.length) return null; const { nodes } = this.scan(body); const e = nodes.find(q => q.n === node); if (!e) return null; const pos = e.start + off;
+    for (const it of this.last) { if (it.done || it.sg.b.id !== body.closest('.block')?.dataset.id) continue; const L = this.locate(it); if (L && L.body === body && pos >= L.off && pos <= L.off + it.len) return it; }
+    return null;
+  },
+  popover(it, x, y) {
+    this.pop?.remove(); FloatBar.hide?.(); FloatBar.suppress = Date.now() + 800;
+    const [label, color] = this.TYPES[it.type] || ['Sugestão', '#d13438'];
+    const close = () => { this.pop?.remove(); this.pop = null; };
+    const Bt = (txt, cls, fn, title = '') => { const b = el('button', { class: cls, text: txt, title }); b.addEventListener('pointerdown', e => e.preventDefault()); b.addEventListener('mousedown', e => e.preventDefault()); b.onclick = e => { e.preventDefault(); fn(); }; return b; };
+    const box = this.pop = el('div', { class: 'sp-pop', style: { '--sc': color }, role: 'dialog', 'aria-label': 'Correção' },
+      el('div', { class: 'sp-pop-h' }, el('b', { text: it.word }), el('span', { class: 'sp-type', text: label })),
+      (() => { const t = [it.msg, it.long].find(x => x && x.trim().toLowerCase() !== label.toLowerCase()); return t ? el('div', { class: 'sp-pop-m', text: t, title: it.long || '' }) : null; })(),
+      it.reps.length ? el('div', { class: 'sp-pop-r' }, ...it.reps.slice(0, 6).map(r => Bt(r || '(apagar)', 'chip sp-rep', () => { if (this.apply(it, r, this.last)) this.paint(this.last); close(); }))) : el('div', { class: 'muted small', text: 'Sem sugestão automática — ajuste à mão.' }),
+      el('div', { class: 'sp-pop-a' },
+        Bt('Ignorar', 'btn link sm', () => { it.done = true; this.paint(this.last); close(); }, 'Não marcar mais aqui'),
+        it.type === 'misspelling' ? Bt('+ Dicionário', 'btn link sm', () => { this.addWord(it.word); this.last.forEach(o => { if (o.word.toLowerCase() === it.word.toLowerCase()) o.done = true; }); this.paint(this.last); close(); UI.toast(`“${it.word}” no seu dicionário`); }, 'Nunca mais marcar esta palavra') : null));
+    document.body.append(box);
+    const W = box.offsetWidth, H = box.offsetHeight, vh = window.visualViewport?.height || innerHeight;
+    box.style.left = Math.max(8, Math.min(innerWidth - W - 8, x - 20)) + 'px'; box.style.top = (y + 18 + H > vh - 8 ? Math.max(8, y - H - 14) : y + 18) + 'px';
+    setTimeout(() => { const off = e => { if (!box.contains(e.target)) { close(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+  },
   apply(it, rep, list = []) {
     const L = this.locate(it);
     /* posições atuais das outras sugestões do mesmo bloco, para atualizá-las depois */
@@ -6374,7 +6405,7 @@ const Spell = {
   async open() {
     if (!App.cur) { UI.toast('Abra uma ministração.'); return; }
     const body = el('div', { class: 'sp' }, el('p', { class: 'muted', text: 'Verificando ortografia e gramática…' }));
-    const m = UI.modal({ title: 'Abc ✓ Ortografia e gramática', body, wide: true, onClose: () => this.clear() });
+    const m = UI.modal({ title: 'Abc ✓ Ortografia e gramática', body, wide: true, onClose: () => { if (this.last?.some(i => !i.done)) UI.toast('As palavras marcadas continuam sublinhadas — toque nelas para ver as sugestões.'); } });
     let list;
     try { list = await this.run(); } catch (e) { body.innerHTML = ''; body.append(el('p', { class: 'on-log', text: e.message.includes('fetch') ? 'Sem conexão com o verificador (LanguageTool).' : e.message })); return; }
     const render = () => {
@@ -6402,7 +6433,8 @@ const Spell = {
   live() { try { return localStorage.getItem('ss-livespell') === '1'; } catch (e) { return false; } },
   setLive(v) { try { localStorage.setItem('ss-livespell', v ? '1' : '0'); } catch (e) { } if (App.cur) { App.flush(); App.renderEditor(); } },
   init() {
-    document.addEventListener('keydown', e => { if (e.key === 'F7' && !e.ctrlKey && !e.altKey) { e.preventDefault(); this.open(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'F7' && !e.ctrlKey && !e.altKey) { e.preventDefault(); this.open(); } if (e.key === 'Escape') this.pop?.remove(); else if (this.pop && !e.ctrlKey && !e.metaKey && e.key.length === 1) { this.pop.remove(); this.pop = null; } });
+    document.addEventListener('click', e => { if (e.button !== 0 || !this.last?.length || e.shiftKey || e.ctrlKey) return; if (!getSelection().isCollapsed) return; const it = this.issueFromPoint(e.clientX, e.clientY); if (it) this.popover(it, e.clientX, e.clientY); }, true);
     const rb = $('#rb-spell'); if (rb) rb.onclick = () => this.open();
     for (const [id, d] of [['#rb-in', 1], ['#rb-out', -1]]) { const x = $(id); if (x) { x.onmousedown = e => e.preventDefault(); x.onclick = () => indentSel(d); } }
     const lv = $('#rb-live'); if (lv) { const paint = () => lv.classList.toggle('on', this.live()); paint();
@@ -6513,6 +6545,7 @@ const FloatBar = {
   },
   update() {
     if (this.bar?.classList.contains('ctx')) return; // menu do clique direito aberto
+    if (Date.now() < (this.suppress || 0)) return this.hide(); // menu de correção aberto
     const s = getSelection();
     if (!Emoji.isField(document.activeElement)) this.bar?.classList.remove('mini');
     if (Emoji.isField(document.activeElement) || !s.rangeCount || s.isCollapsed) return this.caretUpdate();

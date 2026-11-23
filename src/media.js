@@ -572,7 +572,7 @@ const Spell = {
     return null;
   },
   paint(list) {
-    this.last = list;
+    this.last = list; this.lastPage = App.cur?.id;
     if (!window.CSS?.highlights) return;
     for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t);
     const by = {}; for (const it of list) { if (it.done) continue; const L = this.locate(it); const r = L && this.range(L.nodes, L.off, it.len); if (r) (by[it.type] ||= []).push(r); }
@@ -587,7 +587,34 @@ const Spell = {
     }
     return null;
   },
-  clear() { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); },
+  clear(forget) { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); if (forget) { this.last = null; this.lastPage = null; } this.pop?.remove(); },
+  // as marcas ficam no texto depois de fechar a verificação; somem ao trocar de página
+  repaint() { if (this.last?.length && this.lastPage && App.cur?.id === this.lastPage) this.paint(this.last); else if (this.last) this.clear(true); },
+  /* menu de correção: ao clicar/tocar numa palavra marcada */
+  issueFromPoint(x, y) {
+    let node = null, off = 0; const cp = document.caretPositionFromPoint?.(x, y); if (cp) { node = cp.offsetNode; off = cp.offset; } else { const cr = document.caretRangeFromPoint?.(x, y); if (cr) { node = cr.startContainer; off = cr.startOffset; } }
+    if (!node || node.nodeType !== 3) return null; const body = node.parentElement?.closest('#blocks .b-body[contenteditable="true"]'); if (!body) return null;
+    if (!this.last?.length) return null; const { nodes } = this.scan(body); const e = nodes.find(q => q.n === node); if (!e) return null; const pos = e.start + off;
+    for (const it of this.last) { if (it.done || it.sg.b.id !== body.closest('.block')?.dataset.id) continue; const L = this.locate(it); if (L && L.body === body && pos >= L.off && pos <= L.off + it.len) return it; }
+    return null;
+  },
+  popover(it, x, y) {
+    this.pop?.remove(); FloatBar.hide?.(); FloatBar.suppress = Date.now() + 800;
+    const [label, color] = this.TYPES[it.type] || ['Sugestão', '#d13438'];
+    const close = () => { this.pop?.remove(); this.pop = null; };
+    const Bt = (txt, cls, fn, title = '') => { const b = el('button', { class: cls, text: txt, title }); b.addEventListener('pointerdown', e => e.preventDefault()); b.addEventListener('mousedown', e => e.preventDefault()); b.onclick = e => { e.preventDefault(); fn(); }; return b; };
+    const box = this.pop = el('div', { class: 'sp-pop', style: { '--sc': color }, role: 'dialog', 'aria-label': 'Correção' },
+      el('div', { class: 'sp-pop-h' }, el('b', { text: it.word }), el('span', { class: 'sp-type', text: label })),
+      (() => { const t = [it.msg, it.long].find(x => x && x.trim().toLowerCase() !== label.toLowerCase()); return t ? el('div', { class: 'sp-pop-m', text: t, title: it.long || '' }) : null; })(),
+      it.reps.length ? el('div', { class: 'sp-pop-r' }, ...it.reps.slice(0, 6).map(r => Bt(r || '(apagar)', 'chip sp-rep', () => { if (this.apply(it, r, this.last)) this.paint(this.last); close(); }))) : el('div', { class: 'muted small', text: 'Sem sugestão automática — ajuste à mão.' }),
+      el('div', { class: 'sp-pop-a' },
+        Bt('Ignorar', 'btn link sm', () => { it.done = true; this.paint(this.last); close(); }, 'Não marcar mais aqui'),
+        it.type === 'misspelling' ? Bt('+ Dicionário', 'btn link sm', () => { this.addWord(it.word); this.last.forEach(o => { if (o.word.toLowerCase() === it.word.toLowerCase()) o.done = true; }); this.paint(this.last); close(); UI.toast(`“${it.word}” no seu dicionário`); }, 'Nunca mais marcar esta palavra') : null));
+    document.body.append(box);
+    const W = box.offsetWidth, H = box.offsetHeight, vh = window.visualViewport?.height || innerHeight;
+    box.style.left = Math.max(8, Math.min(innerWidth - W - 8, x - 20)) + 'px'; box.style.top = (y + 18 + H > vh - 8 ? Math.max(8, y - H - 14) : y + 18) + 'px';
+    setTimeout(() => { const off = e => { if (!box.contains(e.target)) { close(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+  },
   apply(it, rep, list = []) {
     const L = this.locate(it);
     /* posições atuais das outras sugestões do mesmo bloco, para atualizá-las depois */
@@ -617,7 +644,7 @@ const Spell = {
   async open() {
     if (!App.cur) { UI.toast('Abra uma ministração.'); return; }
     const body = el('div', { class: 'sp' }, el('p', { class: 'muted', text: 'Verificando ortografia e gramática…' }));
-    const m = UI.modal({ title: 'Abc ✓ Ortografia e gramática', body, wide: true, onClose: () => this.clear() });
+    const m = UI.modal({ title: 'Abc ✓ Ortografia e gramática', body, wide: true, onClose: () => { if (this.last?.some(i => !i.done)) UI.toast('As palavras marcadas continuam sublinhadas — toque nelas para ver as sugestões.'); } });
     let list;
     try { list = await this.run(); } catch (e) { body.innerHTML = ''; body.append(el('p', { class: 'on-log', text: e.message.includes('fetch') ? 'Sem conexão com o verificador (LanguageTool).' : e.message })); return; }
     const render = () => {
@@ -645,7 +672,8 @@ const Spell = {
   live() { try { return localStorage.getItem('ss-livespell') === '1'; } catch (e) { return false; } },
   setLive(v) { try { localStorage.setItem('ss-livespell', v ? '1' : '0'); } catch (e) { } if (App.cur) { App.flush(); App.renderEditor(); } },
   init() {
-    document.addEventListener('keydown', e => { if (e.key === 'F7' && !e.ctrlKey && !e.altKey) { e.preventDefault(); this.open(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'F7' && !e.ctrlKey && !e.altKey) { e.preventDefault(); this.open(); } if (e.key === 'Escape') this.pop?.remove(); else if (this.pop && !e.ctrlKey && !e.metaKey && e.key.length === 1) { this.pop.remove(); this.pop = null; } });
+    document.addEventListener('click', e => { if (e.button !== 0 || !this.last?.length || e.shiftKey || e.ctrlKey) return; if (!getSelection().isCollapsed) return; const it = this.issueFromPoint(e.clientX, e.clientY); if (it) this.popover(it, e.clientX, e.clientY); }, true);
     const rb = $('#rb-spell'); if (rb) rb.onclick = () => this.open();
     for (const [id, d] of [['#rb-in', 1], ['#rb-out', -1]]) { const x = $(id); if (x) { x.onmousedown = e => e.preventDefault(); x.onclick = () => indentSel(d); } }
     const lv = $('#rb-live'); if (lv) { const paint = () => lv.classList.toggle('on', this.live()); paint();
@@ -756,6 +784,7 @@ const FloatBar = {
   },
   update() {
     if (this.bar?.classList.contains('ctx')) return; // menu do clique direito aberto
+    if (Date.now() < (this.suppress || 0)) return this.hide(); // menu de correção aberto
     const s = getSelection();
     if (!Emoji.isField(document.activeElement)) this.bar?.classList.remove('mini');
     if (Emoji.isField(document.activeElement) || !s.rangeCount || s.isCollapsed) return this.caretUpdate();
