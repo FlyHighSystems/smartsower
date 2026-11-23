@@ -80,6 +80,27 @@ const Book = {
     }
     App.newSermon(data);
   },
+  /* ✦ resumo do capítulo pela IA (quando você terminar de escrever) */
+  async aiSynopsis(s, syn, fit, btn) {
+    const prov = AI.has('claude') ? 'claude' : AI.has('gemini') ? 'gemini' : null;
+    if (!prov) return UI.toast('Configure a chave da IA em ✦ Revisar › ⚙ Chaves e modelos.');
+    const text = s.blocks.filter(b => b.type !== 'ink' && b.type !== 'image').map(b => (b.type === 'subhead' ? '## ' : b.type === 'verse' ? '> ' : '') + htmlToText(b.html || '') + (b.type === 'verse' && b.ref ? ` (${b.ref})` : '')).filter(x => x.trim()).join('\n\n');
+    const words = text.split(/\s+/).filter(Boolean).length;
+    if (words < 60) return UI.toast('Escreva um pouco mais do capítulo antes de gerar o resumo.');
+    const old = syn.value; if (old.trim() && !await UI.confirm('Gerar resumo', 'O resumo atual será trocado pelo da IA (dá para desfazer).', 'Gerar')) return;
+    const nb = this.nbOf(s.sec), part = App.meta.sections.find(x => x.id === s.sec);
+    const sys = `Você escreve a sinopse de um capítulo de livro cristão, em português do Brasil.
+Regras: 1 ou 2 frases, no máximo 45 palavras. Diga do que o capítulo trata e aonde ele leva o leitor (a verdade central e o movimento do capítulo). Fiel ao texto: não invente nada que não esteja nele. Tom do autor, sem adjetivos de propaganda, sem "Neste capítulo" no início, sem aspas, sem markdown. Responda só com a sinopse.`;
+    const user = `Livro: ${this.info(nb).title || nb.name}${part ? `\nParte: ${part.name}` : ''}\nCapítulo: ${s.title || ''}\n\nTexto do capítulo:\n${text.slice(0, 16000)}`;
+    btn.disabled = true; const lbl = btn.textContent; btn.textContent = '✦ Gerando…';
+    try {
+      let out = String(await AI.ask(prov, sys, user, { json: false, maxTokens: 400 })).trim().replace(/^["“”']+|["“”']+$/g, '').replace(/^(sinopse|resumo)\s*:\s*/i, '').replace(/\s+/g, ' ');
+      if (!out) throw new Error('A IA não respondeu');
+      syn.value = out; this.meta(s).synopsis = out; fit(); App.touch(s);
+      UI.toast('✦ Resumo gerado — ajuste à vontade', { label: 'Desfazer', fn: () => { syn.value = old; this.meta(s).synopsis = old; fit(); App.touch(s); } });
+    } catch (e) { UI.toast('Não consegui gerar o resumo: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = lbl; }
+  },
   /* ===== Roteiro → partes e capítulos =====
      Lê o roteiro como árvore (Parte → Capítulo → tópicos), mostra uma prévia para você ajustar
      e cria uma parte do livro para cada Parte, com os capítulos em ordem e os tópicos dentro. */
@@ -235,7 +256,7 @@ const Book = {
     head.innerHTML = `
       <div class="bk-kicker">${num ? 'Capítulo ' + num : !(s.level > 0) || this.kind(s) !== 'capitulo' ? this.kindLabel(s) : 'Trecho'} · ${esc(nb.name)}${this.kind(s) === 'roteiro' ? ' · não entra no manuscrito' : ''}</div>
       <input id="s-title" class="s-title" value="${esc(s.title)}" placeholder="Título">
-      <textarea id="bk-syn" class="bk-syn" rows="1" placeholder="Resumo do capítulo em uma ou duas linhas (aparece no quadro e ajuda a IA)">${esc(m.synopsis)}</textarea>
+      <div class="bk-syn-row"><textarea id="bk-syn" class="bk-syn" rows="1" placeholder="Resumo do capítulo em uma ou duas linhas (aparece no quadro e ajuda a IA)">${esc(m.synopsis)}</textarea>${this.kind(s) === 'roteiro' ? '' : '<button class="btn sm bk-syn-ai" id="bk-syn-ai" title="A IA lê o capítulo e escreve o resumo em uma ou duas linhas">✦ Gerar resumo</button>'}</div>
       <div class="s-meta">
         <label>Tipo <select id="bk-kind">${BOOK_KINDS.map(([id, l]) => `<option value="${id}" ${this.kind(s) === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label>Situação <select id="bk-status">${BOOK_STATUS.map(([id, l]) => `<option value="${id}" ${m.status === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
@@ -255,6 +276,7 @@ const Book = {
     ed.append(head);
     const syn = $('#bk-syn'); const fit = () => { syn.style.height = 'auto'; syn.style.height = syn.scrollHeight + 'px'; }; setTimeout(fit, 0);
     syn.oninput = () => { m.synopsis = syn.value; fit(); App.touch(); };
+    const sai = $('#bk-syn-ai'); if (sai) sai.onclick = () => this.aiSynopsis(s, syn, fit, sai);
     $('#s-title').oninput = e => { s.title = e.target.value; App.touch(); const p = $(`#page-list .page[data-id="${s.id}"] .page-title`); if (p) p.textContent = s.title || 'Sem título'; };
     $('#s-title').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = $('#blocks .b-body'); f && f.focus(); } };
     $('#bk-status').onchange = e => { m.status = e.target.value; App.touch(); App.renderPages(); };
@@ -621,7 +643,7 @@ const BookExport = {
     const fnRef = text => { notes.push(text); return `<w:r><w:rPr><w:rStyle w:val="FootnoteReference"/></w:rPr><w:footnoteReference w:id="${notes.length}"/></w:r>`; };
     const inline = (html, base = {}) => {
       const d = document.createElement('div'); d.innerHTML = html || ''; const paras = []; let runs = '';
-      const end = st => { if (runs.trim()) paras.push([runs, st]); runs = ''; };
+      const end = (st, jc) => { if (runs.trim()) paras.push([runs, st, jc]); runs = ''; };
       const walk = (n, f) => { for (const c of n.childNodes) {
         if (c.nodeType === 3) { if (c.nodeValue) runs += run(c.nodeValue.replace(/\s+/g, ' '), f); continue; } if (c.nodeType !== 1) continue;
         const t = c.tagName, nf = { ...f };
@@ -630,7 +652,7 @@ const BookExport = {
         if (t === 'B' || t === 'STRONG') nf.b = 1; if (t === 'I' || t === 'EM') nf.i = 1; if (t === 'U') nf.u = 1; if (t === 'SUP') nf.sup = 1;
         const st = c.getAttribute('style') || ''; if (/bold|[6-9]00/.test(st)) nf.b = 1; if (/italic/.test(st)) nf.i = 1;
         if (t === 'UL' || t === 'OL') { end(); let k = 0; for (const li of c.children) { runs = run(t === 'OL' ? `${++k}. ` : '•  ', nf); walk(li, nf); end('Lista'); } continue; }
-        if (t === 'DIV' || t === 'P' || t === 'LI') { end(); walk(c, nf); end(); continue; }
+        if (t === 'DIV' || t === 'P' || t === 'LI') { end(); walk(c, nf); const al = (c.style?.textAlign || '').toLowerCase(); end(undefined, { center: 'center', right: 'right', justify: 'both', left: 'left' }[al]); continue; }
         walk(c, nf);
       } };
       walk(d, base); end(); return paras;
@@ -665,7 +687,7 @@ const BookExport = {
         if (it.k === 'h') { body += P(run(htmlToText(it.html)), 'Intertitulo'); first = true; continue; }
         const st = it.k === 'verse' || it.k === 'q' ? 'Citacao' : first ? 'PrimeiroParagrafo' : 'Normal';
         const paras = inline(it.html, it.k === 'q' ? { i: 1 } : {});
-        paras.forEach(([r, s2], i) => { const isLast = i === paras.length - 1; body += P(r + (it.k === 'verse' && isLast && it.ref ? run(` (${it.ref})`) : ''), s2 || st); });
+        paras.forEach(([r, s2, jc], i) => { const isLast = i === paras.length - 1; body += P(r + (it.k === 'verse' && isLast && it.ref ? run(` (${it.ref})`) : ''), s2 || st, jc ? `<w:ind w:firstLine="0"/><w:jc w:val="${jc}"/>` : ''); });
         first = it.k !== 'p';
       }
     }
@@ -791,7 +813,7 @@ sup a{text-decoration:none}.notas{margin-top:2.5em;border-top:1px solid #999;pad
     return `${prefix}{font-family:Georgia,"Times New Roman",serif;font-size:${G.fs};line-height:1.5;color:#111}${prefix} .pb{break-before:page}${prefix} .nonum{page:nonum}
 ${prefix} .toc h1{margin-top:0}${prefix} .toc-part{font-weight:bold;margin:1em 0 .3em;text-indent:0;display:flex;gap:.4em}${prefix} .toc-i{display:flex;align-items:baseline;gap:.4em;margin:.25em 0;text-indent:0;text-align:left}
 ${prefix} .toc-i .t{flex:0 1 auto}${prefix} .toc-i .lead{flex:1 1 auto;border-bottom:1px dotted #777;transform:translateY(-.25em);min-width:1em}${prefix} .toc-i .n,${prefix} .toc-part .n{flex:0 0 auto;min-width:1.6em;text-align:right}${prefix} .toc-part .lead{flex:1}
-${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
+${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} [style*="text-align"]{text-indent:0!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
 ${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => prefix + ' ' + x.trim()).join(',') + '{')}`;
   },
   async pdf(nb, o) {

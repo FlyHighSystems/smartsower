@@ -679,7 +679,15 @@ const PaneResize = {
 };
 
 /* ===== Barra de formatação flutuante: aparece ao selecionar texto no editor ===== */
+const ALIGN_ICONS = { L: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h8M2 9.6h12M2 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', C: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M4 6.3h8M2 9.6h12M4 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', R: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M6 6.3h8M2 9.6h12M6 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', J: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h12M2 9.6h12M2 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' };
 const FloatBar = {
+  alignMenu(btn) {
+    $('.mk-menu')?.remove(); const r = btn.getBoundingClientRect();
+    const it = (k, cmd, label) => { const x = el('button', { class: 'mk-item al-item' + (document.queryCommandState(cmd) ? ' on' : ''), onclick: () => { document.execCommand(cmd); box.remove(); this.paintState?.(); } }); x.innerHTML = ALIGN_ICONS[k] + '<span>' + label + '</span>'; x.addEventListener('mousedown', e => e.preventDefault()); x.addEventListener('pointerdown', e => e.preventDefault()); return x; };
+    const box = el('div', { class: 'mk-menu al-menu' }, it('L', 'justifyLeft', 'Alinhar à esquerda'), it('C', 'justifyCenter', 'Centralizar'), it('R', 'justifyRight', 'Alinhar à direita'), it('J', 'justifyFull', 'Justificar'));
+    document.body.append(box); box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = (r.bottom + 4 + box.offsetHeight > innerHeight ? r.top - box.offsetHeight - 4 : r.bottom + 4) + 'px';
+    setTimeout(() => { const off = e => { if (!box.contains(e.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+  },
   HL: ['#fff100', '#7fff7f', '#7fdcff', '#ffb3e6'],
   COL: ['#201f1e', '#c50f1f', '#0f6cbd', '#107c10', '#7719aa'],
   touch: false,
@@ -689,6 +697,7 @@ const FloatBar = {
     const sep = () => el('span', { class: 'fb-sep' });
     const bar = el('div', { class: 'fbar', role: 'toolbar', 'aria-label': 'Formatação' },
       B('😊', 'Emoji (Ctrl+Shift+E)', () => { const a = document.activeElement; if (!Emoji.isField(a)) { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }, 'fb-emoji'), sep(),
+      (() => { const b = B('≡', 'Alinhamento', () => FloatBar.alignMenu(b), 'fb-al'); b.innerHTML = ALIGN_ICONS.L + '<small>▾</small>'; return b; })(),
       B('📖', 'Transformar o trecho selecionado em bloco de versículo', () => { this.hide(); Verseify.toVerse(); }, 'fb-verse'),
       B('<b>N</b>', 'Negrito (Ctrl+B)', () => this.exec('bold'), 'st-bold'), B('<i>I</i>', 'Itálico (Ctrl+I)', () => this.exec('italic'), 'st-italic'),
       B('<u>S</u>', 'Sublinhado (Ctrl+U)', () => this.exec('underline'), 'st-underline'), B('<s>ab</s>', 'Tachado', () => this.exec('strikeThrough'), 'st-strikeThrough'), sep(),

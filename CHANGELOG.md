@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.16 — 22/11/2026
+- **Alinhamento do texto**: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).
+- **✦ Gerar resumo** ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer.
+
 ## 3.12.15 — 22/11/2026
 - **Versículo no meio do texto vira bloco de versículo**: selecione o trecho e toque em 📖 (barra de seleção) ou "📖 Virar versículo" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.
 - **✂ Dividir aqui / Separar em bloco** no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio.

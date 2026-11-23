@@ -738,6 +738,7 @@ function sanitizeHTML(html, inlineOnly = false) {
       const keep = {};
       const color = st.match(/(?:^|;)\s*color:\s*([^;]+)/i), bg = st.match(/background(?:-color)?:\s*([^;]+)/i);
       const fnNote = c.tagName === 'SUP' && c.classList.contains('fn') ? c.getAttribute('data-note') : null;
+      const align = /^(DIV|P|LI|H[1-6]|BLOCKQUOTE)$/.test(c.tagName) && (st.match(/text-align:\s*(center|right|justify)/i) || [])[1];
       [...c.attributes].forEach(a => c.removeAttribute(a.name));
       if (fnNote != null) { c.className = 'fn'; c.setAttribute('data-note', fnNote); c.setAttribute('contenteditable', 'false'); c.textContent = ''; }
       if (c.tagName === 'SPAN' || c.tagName === 'MARK') {
@@ -745,7 +746,8 @@ function sanitizeHTML(html, inlineOnly = false) {
         if (bg && !/white|transparent|#fff|initial/i.test(bg[1])) keep['background-color'] = bg[1];
         const css = Object.entries(keep).map(([k, v]) => `${k}:${v.trim()}`).join(';'); if (css) c.setAttribute('style', css);
       }
-      if (c.tagName === 'P') { const d = document.createElement('div'); d.append(...c.childNodes); c.replaceWith(d); }
+      if (align) c.setAttribute('style', 'text-align:' + align.toLowerCase());
+      if (c.tagName === 'P') { const d = document.createElement('div'); d.append(...c.childNodes); if (align) d.setAttribute('style', 'text-align:' + align.toLowerCase()); c.replaceWith(d); }
     }
   };
   walk(doc.body);

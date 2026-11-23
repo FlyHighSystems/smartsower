@@ -749,6 +749,11 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .ol-row.part{background:color-mix(in srgb,var(--accent) 9%,transparent)}.ol-as{flex:0 0 96px;font:inherit;font-size:12.5px;padding:2px 4px}
 .ol-t{flex:1;min-width:0}.ol-dup{color:#a4262c;font-size:12px}.ol-skip{text-decoration:line-through}.ol-sum{font-size:13.5px;margin:6px 0 10px}
 .fbar.mini > .fb-verse{display:none}.fbar:not(.has-sel) .fb-verse{display:none}.block.flash{animation:flashb 1.2s ease}@keyframes flashb{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+
+.rb-al svg,.fb-al svg,.al-item svg{display:block}.rb-al{padding:4px 7px}.rb-sep{width:1px;align-self:stretch;background:var(--line);margin:4px 4px}
+.fb-al{display:inline-flex;align-items:center;gap:1px}.fb-al small{font-size:9px;opacity:.7}
+.al-menu .al-item{display:flex;align-items:center;gap:10px}.al-menu .al-item.on{background:var(--hover,#7719aa18);font-weight:600}
+.bk-syn-row{display:flex;gap:8px;align-items:flex-start}.bk-syn-row .bk-syn{flex:1}.bk-syn-ai{flex:0 0 auto;margin-top:2px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -801,6 +806,11 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
       <button data-cmd="insertOrderedList" class="rb" title="Numeração">1. Lista</button>
       <button id="rb-out" class="rb" title="Diminuir recuo (Shift+Tab)">⇤</button>
       <button id="rb-in" class="rb" title="Aumentar recuo / subitem (Tab)">⇥</button>
+      <span class="rb-sep"></span>
+      <button data-cmd="justifyLeft" class="rb rb-al" title="Alinhar à esquerda"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h8M2 9.6h12M2 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <button data-cmd="justifyCenter" class="rb rb-al" title="Centralizar"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M4 6.3h8M2 9.6h12M4 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <button data-cmd="justifyRight" class="rb rb-al" title="Alinhar à direita"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M6 6.3h8M2 9.6h12M6 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <button data-cmd="justifyFull" class="rb rb-al" title="Justificar"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h12M2 9.6h12M2 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <button data-cmd="removeFormat" class="rb" title="Limpar formatação">Limpar</button>
     </div>
     <div class="rgroup">
@@ -946,7 +956,7 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.15", "code": "99fe04", "at": "22/11 20:09", "notes": [{"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}]};
+<script>window.SS_BUILD = {"version": "3.12.16", "code": "e3f8ad", "at": "22/11 20:17", "notes": [{"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2384,6 +2394,7 @@ function sanitizeHTML(html, inlineOnly = false) {
       const keep = {};
       const color = st.match(/(?:^|;)\s*color:\s*([^;]+)/i), bg = st.match(/background(?:-color)?:\s*([^;]+)/i);
       const fnNote = c.tagName === 'SUP' && c.classList.contains('fn') ? c.getAttribute('data-note') : null;
+      const align = /^(DIV|P|LI|H[1-6]|BLOCKQUOTE)$/.test(c.tagName) && (st.match(/text-align:\s*(center|right|justify)/i) || [])[1];
       [...c.attributes].forEach(a => c.removeAttribute(a.name));
       if (fnNote != null) { c.className = 'fn'; c.setAttribute('data-note', fnNote); c.setAttribute('contenteditable', 'false'); c.textContent = ''; }
       if (c.tagName === 'SPAN' || c.tagName === 'MARK') {
@@ -2391,7 +2402,8 @@ function sanitizeHTML(html, inlineOnly = false) {
         if (bg && !/white|transparent|#fff|initial/i.test(bg[1])) keep['background-color'] = bg[1];
         const css = Object.entries(keep).map(([k, v]) => `${k}:${v.trim()}`).join(';'); if (css) c.setAttribute('style', css);
       }
-      if (c.tagName === 'P') { const d = document.createElement('div'); d.append(...c.childNodes); c.replaceWith(d); }
+      if (align) c.setAttribute('style', 'text-align:' + align.toLowerCase());
+      if (c.tagName === 'P') { const d = document.createElement('div'); d.append(...c.childNodes); if (align) d.setAttribute('style', 'text-align:' + align.toLowerCase()); c.replaceWith(d); }
     }
   };
   walk(doc.body);
@@ -6424,7 +6436,15 @@ const PaneResize = {
 };
 
 /* ===== Barra de formatação flutuante: aparece ao selecionar texto no editor ===== */
+const ALIGN_ICONS = { L: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h8M2 9.6h12M2 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', C: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M4 6.3h8M2 9.6h12M4 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', R: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M6 6.3h8M2 9.6h12M6 13h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>', J: '<svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 3h12M2 6.3h12M2 9.6h12M2 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' };
 const FloatBar = {
+  alignMenu(btn) {
+    $('.mk-menu')?.remove(); const r = btn.getBoundingClientRect();
+    const it = (k, cmd, label) => { const x = el('button', { class: 'mk-item al-item' + (document.queryCommandState(cmd) ? ' on' : ''), onclick: () => { document.execCommand(cmd); box.remove(); this.paintState?.(); } }); x.innerHTML = ALIGN_ICONS[k] + '<span>' + label + '</span>'; x.addEventListener('mousedown', e => e.preventDefault()); x.addEventListener('pointerdown', e => e.preventDefault()); return x; };
+    const box = el('div', { class: 'mk-menu al-menu' }, it('L', 'justifyLeft', 'Alinhar à esquerda'), it('C', 'justifyCenter', 'Centralizar'), it('R', 'justifyRight', 'Alinhar à direita'), it('J', 'justifyFull', 'Justificar'));
+    document.body.append(box); box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = (r.bottom + 4 + box.offsetHeight > innerHeight ? r.top - box.offsetHeight - 4 : r.bottom + 4) + 'px';
+    setTimeout(() => { const off = e => { if (!box.contains(e.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
+  },
   HL: ['#fff100', '#7fff7f', '#7fdcff', '#ffb3e6'],
   COL: ['#201f1e', '#c50f1f', '#0f6cbd', '#107c10', '#7719aa'],
   touch: false,
@@ -6434,6 +6454,7 @@ const FloatBar = {
     const sep = () => el('span', { class: 'fb-sep' });
     const bar = el('div', { class: 'fbar', role: 'toolbar', 'aria-label': 'Formatação' },
       B('😊', 'Emoji (Ctrl+Shift+E)', () => { const a = document.activeElement; if (!Emoji.isField(a)) { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }, 'fb-emoji'), sep(),
+      (() => { const b = B('≡', 'Alinhamento', () => FloatBar.alignMenu(b), 'fb-al'); b.innerHTML = ALIGN_ICONS.L + '<small>▾</small>'; return b; })(),
       B('📖', 'Transformar o trecho selecionado em bloco de versículo', () => { this.hide(); Verseify.toVerse(); }, 'fb-verse'),
       B('<b>N</b>', 'Negrito (Ctrl+B)', () => this.exec('bold'), 'st-bold'), B('<i>I</i>', 'Itálico (Ctrl+I)', () => this.exec('italic'), 'st-italic'),
       B('<u>S</u>', 'Sublinhado (Ctrl+U)', () => this.exec('underline'), 'st-underline'), B('<s>ab</s>', 'Tachado', () => this.exec('strikeThrough'), 'st-strikeThrough'), sep(),
@@ -6805,6 +6826,27 @@ const Book = {
     }
     App.newSermon(data);
   },
+  /* ✦ resumo do capítulo pela IA (quando você terminar de escrever) */
+  async aiSynopsis(s, syn, fit, btn) {
+    const prov = AI.has('claude') ? 'claude' : AI.has('gemini') ? 'gemini' : null;
+    if (!prov) return UI.toast('Configure a chave da IA em ✦ Revisar › ⚙ Chaves e modelos.');
+    const text = s.blocks.filter(b => b.type !== 'ink' && b.type !== 'image').map(b => (b.type === 'subhead' ? '## ' : b.type === 'verse' ? '> ' : '') + htmlToText(b.html || '') + (b.type === 'verse' && b.ref ? ` (${b.ref})` : '')).filter(x => x.trim()).join('\n\n');
+    const words = text.split(/\s+/).filter(Boolean).length;
+    if (words < 60) return UI.toast('Escreva um pouco mais do capítulo antes de gerar o resumo.');
+    const old = syn.value; if (old.trim() && !await UI.confirm('Gerar resumo', 'O resumo atual será trocado pelo da IA (dá para desfazer).', 'Gerar')) return;
+    const nb = this.nbOf(s.sec), part = App.meta.sections.find(x => x.id === s.sec);
+    const sys = `Você escreve a sinopse de um capítulo de livro cristão, em português do Brasil.
+Regras: 1 ou 2 frases, no máximo 45 palavras. Diga do que o capítulo trata e aonde ele leva o leitor (a verdade central e o movimento do capítulo). Fiel ao texto: não invente nada que não esteja nele. Tom do autor, sem adjetivos de propaganda, sem "Neste capítulo" no início, sem aspas, sem markdown. Responda só com a sinopse.`;
+    const user = `Livro: ${this.info(nb).title || nb.name}${part ? `\nParte: ${part.name}` : ''}\nCapítulo: ${s.title || ''}\n\nTexto do capítulo:\n${text.slice(0, 16000)}`;
+    btn.disabled = true; const lbl = btn.textContent; btn.textContent = '✦ Gerando…';
+    try {
+      let out = String(await AI.ask(prov, sys, user, { json: false, maxTokens: 400 })).trim().replace(/^["“”']+|["“”']+$/g, '').replace(/^(sinopse|resumo)\s*:\s*/i, '').replace(/\s+/g, ' ');
+      if (!out) throw new Error('A IA não respondeu');
+      syn.value = out; this.meta(s).synopsis = out; fit(); App.touch(s);
+      UI.toast('✦ Resumo gerado — ajuste à vontade', { label: 'Desfazer', fn: () => { syn.value = old; this.meta(s).synopsis = old; fit(); App.touch(s); } });
+    } catch (e) { UI.toast('Não consegui gerar o resumo: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = lbl; }
+  },
   /* ===== Roteiro → partes e capítulos =====
      Lê o roteiro como árvore (Parte → Capítulo → tópicos), mostra uma prévia para você ajustar
      e cria uma parte do livro para cada Parte, com os capítulos em ordem e os tópicos dentro. */
@@ -6960,7 +7002,7 @@ const Book = {
     head.innerHTML = `
       <div class="bk-kicker">${num ? 'Capítulo ' + num : !(s.level > 0) || this.kind(s) !== 'capitulo' ? this.kindLabel(s) : 'Trecho'} · ${esc(nb.name)}${this.kind(s) === 'roteiro' ? ' · não entra no manuscrito' : ''}</div>
       <input id="s-title" class="s-title" value="${esc(s.title)}" placeholder="Título">
-      <textarea id="bk-syn" class="bk-syn" rows="1" placeholder="Resumo do capítulo em uma ou duas linhas (aparece no quadro e ajuda a IA)">${esc(m.synopsis)}</textarea>
+      <div class="bk-syn-row"><textarea id="bk-syn" class="bk-syn" rows="1" placeholder="Resumo do capítulo em uma ou duas linhas (aparece no quadro e ajuda a IA)">${esc(m.synopsis)}</textarea>${this.kind(s) === 'roteiro' ? '' : '<button class="btn sm bk-syn-ai" id="bk-syn-ai" title="A IA lê o capítulo e escreve o resumo em uma ou duas linhas">✦ Gerar resumo</button>'}</div>
       <div class="s-meta">
         <label>Tipo <select id="bk-kind">${BOOK_KINDS.map(([id, l]) => `<option value="${id}" ${this.kind(s) === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <label>Situação <select id="bk-status">${BOOK_STATUS.map(([id, l]) => `<option value="${id}" ${m.status === id ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
@@ -6980,6 +7022,7 @@ const Book = {
     ed.append(head);
     const syn = $('#bk-syn'); const fit = () => { syn.style.height = 'auto'; syn.style.height = syn.scrollHeight + 'px'; }; setTimeout(fit, 0);
     syn.oninput = () => { m.synopsis = syn.value; fit(); App.touch(); };
+    const sai = $('#bk-syn-ai'); if (sai) sai.onclick = () => this.aiSynopsis(s, syn, fit, sai);
     $('#s-title').oninput = e => { s.title = e.target.value; App.touch(); const p = $(`#page-list .page[data-id="${s.id}"] .page-title`); if (p) p.textContent = s.title || 'Sem título'; };
     $('#s-title').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = $('#blocks .b-body'); f && f.focus(); } };
     $('#bk-status').onchange = e => { m.status = e.target.value; App.touch(); App.renderPages(); };
@@ -7346,7 +7389,7 @@ const BookExport = {
     const fnRef = text => { notes.push(text); return `<w:r><w:rPr><w:rStyle w:val="FootnoteReference"/></w:rPr><w:footnoteReference w:id="${notes.length}"/></w:r>`; };
     const inline = (html, base = {}) => {
       const d = document.createElement('div'); d.innerHTML = html || ''; const paras = []; let runs = '';
-      const end = st => { if (runs.trim()) paras.push([runs, st]); runs = ''; };
+      const end = (st, jc) => { if (runs.trim()) paras.push([runs, st, jc]); runs = ''; };
       const walk = (n, f) => { for (const c of n.childNodes) {
         if (c.nodeType === 3) { if (c.nodeValue) runs += run(c.nodeValue.replace(/\s+/g, ' '), f); continue; } if (c.nodeType !== 1) continue;
         const t = c.tagName, nf = { ...f };
@@ -7355,7 +7398,7 @@ const BookExport = {
         if (t === 'B' || t === 'STRONG') nf.b = 1; if (t === 'I' || t === 'EM') nf.i = 1; if (t === 'U') nf.u = 1; if (t === 'SUP') nf.sup = 1;
         const st = c.getAttribute('style') || ''; if (/bold|[6-9]00/.test(st)) nf.b = 1; if (/italic/.test(st)) nf.i = 1;
         if (t === 'UL' || t === 'OL') { end(); let k = 0; for (const li of c.children) { runs = run(t === 'OL' ? `${++k}. ` : '•  ', nf); walk(li, nf); end('Lista'); } continue; }
-        if (t === 'DIV' || t === 'P' || t === 'LI') { end(); walk(c, nf); end(); continue; }
+        if (t === 'DIV' || t === 'P' || t === 'LI') { end(); walk(c, nf); const al = (c.style?.textAlign || '').toLowerCase(); end(undefined, { center: 'center', right: 'right', justify: 'both', left: 'left' }[al]); continue; }
         walk(c, nf);
       } };
       walk(d, base); end(); return paras;
@@ -7390,7 +7433,7 @@ const BookExport = {
         if (it.k === 'h') { body += P(run(htmlToText(it.html)), 'Intertitulo'); first = true; continue; }
         const st = it.k === 'verse' || it.k === 'q' ? 'Citacao' : first ? 'PrimeiroParagrafo' : 'Normal';
         const paras = inline(it.html, it.k === 'q' ? { i: 1 } : {});
-        paras.forEach(([r, s2], i) => { const isLast = i === paras.length - 1; body += P(r + (it.k === 'verse' && isLast && it.ref ? run(` (${it.ref})`) : ''), s2 || st); });
+        paras.forEach(([r, s2, jc], i) => { const isLast = i === paras.length - 1; body += P(r + (it.k === 'verse' && isLast && it.ref ? run(` (${it.ref})`) : ''), s2 || st, jc ? `<w:ind w:firstLine="0"/><w:jc w:val="${jc}"/>` : ''); });
         first = it.k !== 'p';
       }
     }
@@ -7516,7 +7559,7 @@ sup a{text-decoration:none}.notas{margin-top:2.5em;border-top:1px solid #999;pad
     return `${prefix}{font-family:Georgia,"Times New Roman",serif;font-size:${G.fs};line-height:1.5;color:#111}${prefix} .pb{break-before:page}${prefix} .nonum{page:nonum}
 ${prefix} .toc h1{margin-top:0}${prefix} .toc-part{font-weight:bold;margin:1em 0 .3em;text-indent:0;display:flex;gap:.4em}${prefix} .toc-i{display:flex;align-items:baseline;gap:.4em;margin:.25em 0;text-indent:0;text-align:left}
 ${prefix} .toc-i .t{flex:0 1 auto}${prefix} .toc-i .lead{flex:1 1 auto;border-bottom:1px dotted #777;transform:translateY(-.25em);min-width:1em}${prefix} .toc-i .n,${prefix} .toc-part .n{flex:0 0 auto;min-width:1.6em;text-align:right}${prefix} .toc-part .lead{flex:1}
-${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
+${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} [style*="text-align"]{text-indent:0!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
 ${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => prefix + ' ' + x.trim()).join(',') + '{')}`;
   },
   async pdf(nb, o) {
