@@ -795,3 +795,29 @@ body.focus-mode .bk-syn-row, body.focus-mode .bk-kicker{display:none!important}
 .fb-ctx .fb-sp.loading{opacity:.7}
 .fb-ctx .fb-sp-w{color:#d13438;text-decoration:underline wavy #d13438;text-underline-offset:3px;font-weight:600;margin-right:4px}
 .fb-ctx .fb-rep{font-weight:600;color:var(--accent)}
+
+/* ===== Tela dividida ===== */
+#split-pane{width:var(--split-w,42%);flex-shrink:0;position:relative;display:flex;flex-direction:column;min-width:0;border-left:1px solid var(--line);background:var(--bg,var(--panel))}
+#split-pane[hidden]{display:none}
+.split-grip{position:absolute;left:-4px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:5}
+.split-grip:hover{background:var(--accent-l)}
+.split-head{display:flex;align-items:center;gap:4px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel)}
+.split-t{flex:1;min-width:0;display:flex;flex-direction:column}.split-t b,.split-t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.split-body{flex:1;overflow:auto;padding:16px 22px 80px;font-size:calc(16px*var(--ez,1));line-height:1.65}
+.spl-b{position:relative;margin:0 0 14px;padding:6px 10px;border-radius:8px}
+.spl-b:hover{background:var(--hover,rgba(0,0,0,.04))}
+.spl-tag{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);user-select:none}
+.spl-call{border-left:3px solid var(--bc);background:color-mix(in srgb,var(--bc) 8%,transparent)}
+.spl-verse{border-left:3px solid var(--c-verse,#0f6cbd)}.spl-ref{font-weight:600;color:var(--c-verse,#0f6cbd);font-size:.9em}.spl-vt{font-family:Georgia,serif;font-style:italic}
+.spl-point>div:last-child{font-size:1.25em;font-weight:600}.spl-subhead>div:last-child{font-size:1.15em;font-weight:700}
+.spl-b img{max-width:100%;border-radius:6px}
+.spl-bring{position:absolute;top:4px;right:6px;opacity:0;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;color:var(--accent)}
+.spl-b:hover .spl-bring{opacity:1}@media (hover:none){.spl-bring{opacity:.8}}
+.spl-tip{margin-top:24px}
+.split-pick .sp-q{width:100%;margin-bottom:8px}.split-list{max-height:55vh;overflow:auto;display:flex;flex-direction:column;gap:2px}
+body.split-on.focus-mode #editor-inner{max-width:calc(860px*var(--ez))}
+body.focus-mode #split-pane{display:flex}body.focus-mode #split-pane[hidden]{display:none}
+@media (max-width:900px){#split-pane{position:fixed;inset:0;width:auto;z-index:80;border-left:0}.split-grip{display:none}}
+@media print{#split-pane{display:none!important}}
+body.focus-mode #split-pane .split-head{margin-top:52px}
+@media (max-width:600px){body.focus-mode #split-pane .split-head{margin-top:0}}

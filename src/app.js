@@ -46,6 +46,7 @@ const App = {
     if (Gate.need()) await Gate.wait();
     const first = this.sermons.get(this.meta.currentSermon) || this.sectionSermons(this.meta.currentSec)[0] || [...this.sermons.values()][0];
     first ? this.open(first.id, true) : this.renderEditor();
+    Split.restore();
     if (DB.volatile) UI.toast('Atenção: armazenamento local indisponível aqui. Faça backup (Exportar › Backup).');
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); this.flush(); UI.toast('Salvo'); }
@@ -126,6 +127,7 @@ const App = {
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, 1); } }, el('b', { text: '→ Tornar subpágina' }), el('span', { class: 'muted small', text: 'Fica recuada debaixo da página de cima' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, -1); } }, el('b', { text: '← Promover' }), el('span', { class: 'muted small', text: 'Volta um nível' })),
       el('button', { class: 'on-item', onclick: async () => { m.close(); const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) this.moveSermons([s.id], r.sec, r.copy); } }, el('b', { text: '⇢ Mover / Copiar para outra seção' })),
+      s.id !== this.cur?.id ? el('button', { class: 'on-item', onclick: () => { m.close(); Split.open(s.id); } }, el('b', { text: '◫ Abrir ao lado' }), el('span', { class: 'muted small', text: 'Consulta esta página enquanto escreve na atual' })) : null,
       el('button', { class: 'on-item', onclick: () => { m.close(); this.startSelect([s.id]); } }, el('b', { text: '☑ Selecionar várias' }), el('span', { class: 'muted small', text: 'Para mover, copiar ou excluir várias de uma vez' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.open(s.id); this.deleteSermon(); } }, el('b', { class: 'danger-text', text: 'Excluir' }))) });
   },
@@ -163,7 +165,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -480,7 +482,7 @@ const App = {
     ed.append(add);
     this.renderBlocks();
     if (Book.is(s)) Footnotes.renderList();
-    Shared.decorate(s); AddFloat.update();
+    Shared.decorate(s); AddFloat.update(); Split.afterOpen?.();
   },
   renderBlocks() {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];

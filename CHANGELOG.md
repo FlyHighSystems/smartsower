@@ -2,6 +2,13 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.23 — 22/11/2026
+- **Tela dividida (◫ Lado a lado):** abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo.
+  - Onde fica: na aba **Exibir** e no mostrador do modo foco. No ⋯ de qualquer página, use **◫ Abrir ao lado**.
+  - No painel da direita: selecione e arraste (ou copie) trechos para o texto, ou use **⇠ Trazer** para copiar o bloco inteiro para baixo do cursor. A página de origem não muda.
+  - Botões: ⇄ escolhe outra página, ⇆ troca de lado e ✕ fecha. A divisória pode ser arrastada.
+  - O app lembra a divisão ao reabrir. Em tela estreita, a página abre por cima.
+
 ## 3.12.22 — 22/11/2026
 - **Correção com o botão direito:** em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as **sugestões de correção no topo**, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.
 - Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre **só o menu de correção**, sem a formatação.

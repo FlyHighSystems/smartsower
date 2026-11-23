@@ -806,6 +806,32 @@ body.focus-mode .bk-syn-row, body.focus-mode .bk-kicker{display:none!important}
 .fb-ctx .fb-sp.loading{opacity:.7}
 .fb-ctx .fb-sp-w{color:#d13438;text-decoration:underline wavy #d13438;text-underline-offset:3px;font-weight:600;margin-right:4px}
 .fb-ctx .fb-rep{font-weight:600;color:var(--accent)}
+
+/* ===== Tela dividida ===== */
+#split-pane{width:var(--split-w,42%);flex-shrink:0;position:relative;display:flex;flex-direction:column;min-width:0;border-left:1px solid var(--line);background:var(--bg,var(--panel))}
+#split-pane[hidden]{display:none}
+.split-grip{position:absolute;left:-4px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:5}
+.split-grip:hover{background:var(--accent-l)}
+.split-head{display:flex;align-items:center;gap:4px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel)}
+.split-t{flex:1;min-width:0;display:flex;flex-direction:column}.split-t b,.split-t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.split-body{flex:1;overflow:auto;padding:16px 22px 80px;font-size:calc(16px*var(--ez,1));line-height:1.65}
+.spl-b{position:relative;margin:0 0 14px;padding:6px 10px;border-radius:8px}
+.spl-b:hover{background:var(--hover,rgba(0,0,0,.04))}
+.spl-tag{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);user-select:none}
+.spl-call{border-left:3px solid var(--bc);background:color-mix(in srgb,var(--bc) 8%,transparent)}
+.spl-verse{border-left:3px solid var(--c-verse,#0f6cbd)}.spl-ref{font-weight:600;color:var(--c-verse,#0f6cbd);font-size:.9em}.spl-vt{font-family:Georgia,serif;font-style:italic}
+.spl-point>div:last-child{font-size:1.25em;font-weight:600}.spl-subhead>div:last-child{font-size:1.15em;font-weight:700}
+.spl-b img{max-width:100%;border-radius:6px}
+.spl-bring{position:absolute;top:4px;right:6px;opacity:0;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;color:var(--accent)}
+.spl-b:hover .spl-bring{opacity:1}@media (hover:none){.spl-bring{opacity:.8}}
+.spl-tip{margin-top:24px}
+.split-pick .sp-q{width:100%;margin-bottom:8px}.split-list{max-height:55vh;overflow:auto;display:flex;flex-direction:column;gap:2px}
+body.split-on.focus-mode #editor-inner{max-width:calc(860px*var(--ez))}
+body.focus-mode #split-pane{display:flex}body.focus-mode #split-pane[hidden]{display:none}
+@media (max-width:900px){#split-pane{position:fixed;inset:0;width:auto;z-index:80;border-left:0}.split-grip{display:none}}
+@media print{#split-pane{display:none!important}}
+body.focus-mode #split-pane .split-head{margin-top:52px}
+@media (max-width:600px){body.focus-mode #split-pane .split-head{margin-top:0}}
 </style>
 </head>
 <body>
@@ -1010,7 +1036,7 @@ body.focus-mode .bk-syn-row, body.focus-mode .bk-kicker{display:none!important}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.22", "code": "3dd816", "at": "22/11 21:00", "notes": [{"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}]};
+<script>window.SS_BUILD = {"version": "3.12.23", "code": "a93270", "at": "22/11 21:55", "notes": [{"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1757,6 +1783,7 @@ const App = {
     if (Gate.need()) await Gate.wait();
     const first = this.sermons.get(this.meta.currentSermon) || this.sectionSermons(this.meta.currentSec)[0] || [...this.sermons.values()][0];
     first ? this.open(first.id, true) : this.renderEditor();
+    Split.restore();
     if (DB.volatile) UI.toast('Atenção: armazenamento local indisponível aqui. Faça backup (Exportar › Backup).');
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); this.flush(); UI.toast('Salvo'); }
@@ -1837,6 +1864,7 @@ const App = {
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, 1); } }, el('b', { text: '→ Tornar subpágina' }), el('span', { class: 'muted small', text: 'Fica recuada debaixo da página de cima' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, -1); } }, el('b', { text: '← Promover' }), el('span', { class: 'muted small', text: 'Volta um nível' })),
       el('button', { class: 'on-item', onclick: async () => { m.close(); const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) this.moveSermons([s.id], r.sec, r.copy); } }, el('b', { text: '⇢ Mover / Copiar para outra seção' })),
+      s.id !== this.cur?.id ? el('button', { class: 'on-item', onclick: () => { m.close(); Split.open(s.id); } }, el('b', { text: '◫ Abrir ao lado' }), el('span', { class: 'muted small', text: 'Consulta esta página enquanto escreve na atual' })) : null,
       el('button', { class: 'on-item', onclick: () => { m.close(); this.startSelect([s.id]); } }, el('b', { text: '☑ Selecionar várias' }), el('span', { class: 'muted small', text: 'Para mover, copiar ou excluir várias de uma vez' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.open(s.id); this.deleteSermon(); } }, el('b', { class: 'danger-text', text: 'Excluir' }))) });
   },
@@ -1874,7 +1902,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -2191,7 +2219,7 @@ const App = {
     ed.append(add);
     this.renderBlocks();
     if (Book.is(s)) Footnotes.renderList();
-    Shared.decorate(s); AddFloat.update();
+    Shared.decorate(s); AddFloat.update(); Split.afterOpen?.();
   },
   renderBlocks() {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
@@ -6810,7 +6838,8 @@ const Focus = {
     const W = EditorView.WIDTHS.map(([id, ic, t]) => { const b = el('button', { class: 'fc-b fc-w', title: { normal: 'Coluna normal', wide: 'Coluna ampla', full: 'Tela toda' }[id], text: ic }); b.dataset.w = id; b.onclick = () => { EditorView.set({ w: id }); this.syncHud(); }; return b; });
     this.zb = el('button', { class: 'fc-b fc-z', title: 'Voltar para 100%', onclick: () => { EditorView.set({ ez: 1 }); this.syncHud(); } });
     const Z = d => el('button', { class: 'fc-b', title: d > 0 ? 'Letra maior (Ctrl+Alt+=)' : 'Letra menor (Ctrl+Alt+−)', text: d > 0 ? 'A+' : 'A−', onclick: () => { EditorView.zoom(d); this.syncHud(); } });
-    this.box = el('div', { class: 'focus-hud' }, this.st, el('span', { class: 'fc-sep' }), ...W, el('span', { class: 'fc-sep' }), Z(-0.1), this.zb, Z(0.1), el('span', { class: 'fc-sep' }),
+    this.sb = el('button', { class: 'fc-b', title: 'Tela dividida: outra página ao lado', text: '◫ Lado a lado', onclick: () => { Split.toggle(); this.syncHud(); } });
+    this.box = el('div', { class: 'focus-hud' }, this.st, el('span', { class: 'fc-sep' }), this.sb, el('span', { class: 'fc-sep' }), ...W, el('span', { class: 'fc-sep' }), Z(-0.1), this.zb, Z(0.1), el('span', { class: 'fc-sep' }),
       el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
     this.box.addEventListener('pointerdown', e => e.preventDefault());
     document.body.append(this.box); this.syncHud();
@@ -6819,6 +6848,7 @@ const Focus = {
     if (!this.box) return; const v = EditorView.get();
     this.box.querySelectorAll('.fc-w').forEach(b => b.classList.toggle('on', b.dataset.w === v.w));
     if (this.zb) this.zb.textContent = Math.round(v.ez * 100) + '%';
+    this.sb?.classList.toggle('on', !!Split.on);
     AddFloat.update?.();
   },
   stats: debounce(() => {
@@ -6846,6 +6876,7 @@ const ViewTab = {
     P.append(
       g('Foco', rb('◎ Modo foco', 'Só a página: esconde barras, painéis e dados da página (Ctrl+Alt+F)', () => Focus.toggle(), 'focus'),
         rb('⤢ Tela cheia', 'Tela cheia do navegador, sem esconder nada do app', () => document.fullscreenElement ? document.exitFullscreen().catch(() => { }) : document.documentElement.requestFullscreen?.().catch(() => UI.toast('Este navegador não permite tela cheia aqui.')), 'fs')),
+      g('Lado a lado', rb('◫ Tela dividida', 'Abrir outra página ao lado para consultar e trazer trechos', () => Split.toggle(), 'split'), rb('⇄ Outra página', 'Escolher qual página fica ao lado', () => Split.pick())),
       g('Largura', ...EditorView.WIDTHS.map(([id, ic, t]) => rb(ic + ' ' + { normal: 'Normal', wide: 'Ampla', full: 'Tela toda' }[id], t, () => EditorView.setWidth(id), 'w:' + id))),
       g('Letra', rb('A−', 'Diminuir (Ctrl+Alt+−)', () => EditorView.zoom(-0.1)), this.zv, rb('A+', 'Aumentar (Ctrl+Alt+=)', () => EditorView.zoom(0.1))),
       g('Mostrar', ck('nav', 'Cadernos e páginas', 'Painéis da esquerda (☰)'), ck('meta', 'Dados da página', 'Linha com tipo, data, passagem, situação e botões da página'), ck('tags', 'Nomes dos blocos', 'Rótulos como TEXTO, VERSÍCULO, ILUSTRAÇÃO acima de cada bloco')),
@@ -6857,7 +6888,7 @@ const ViewTab = {
   sync() {
     const P = $('.rpanel[data-panel="view"]'); if (!P || !P.childElementCount) return;
     const v = EditorView.get(), B = document.body.classList;
-    const on = k => k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
+    const on = k => k === 'split' ? Split.on : k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
     P.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', on(b.dataset.v)));
     const ch = { nav: !B.contains('nav-collapsed'), meta: v.meta !== false, tags: v.tags !== false };
     P.querySelectorAll('input[data-v]').forEach(i => { i.checked = ch[i.dataset.v]; });
@@ -8258,6 +8289,95 @@ const FindView = {
     const label = st.q ? `“${st.q}”` : (PageKinds.get(st.kind)?.[1] || 'pesquisa');
     return el('div', { class: 'fv-back' }, el('button', { class: 'btn sm', text: `← Resultados de ${label}`, onclick: () => this.show() }), el('button', { class: 'icon-btn sm', text: '✕', title: 'Esconder', onclick: e => { this.ran = false; CSS.highlights?.delete('ss-find'); e.currentTarget.parentElement.remove(); } }));
   }
+};
+
+/* ===== Tela dividida: a página atual à esquerda (editando) e outra página à direita para consultar.
+   Do lado direito dá para selecionar e copiar/arrastar texto, ou trazer um bloco inteiro para onde está o cursor. ===== */
+const Split = {
+  on: false, id: null,
+  load() { try { return JSON.parse(localStorage.getItem('ss-split') || '{}'); } catch (e) { return {}; } },
+  save() { try { localStorage.setItem('ss-split', JSON.stringify({ on: this.on, id: this.id, w: this.w })); } catch (e) { } },
+  init() {
+    const v = this.load(); this.w = v.w || 42; this.id = v.id || null;
+    this.pane = el('section', { id: 'split-pane', hidden: true });
+    $('#editor')?.after(this.pane);
+    document.documentElement.style.setProperty('--split-w', this.w + '%');
+    this._restore = !!v.on;
+  },
+  restore() { if (this._restore && this.id && App.sermons.get(this.id) && this.id !== App.cur?.id) this.open(this.id, true); this._restore = false; },
+  toggle() { if (this.on) this.close(); else if (this.id && App.sermons.get(this.id) && this.id !== App.cur?.id) this.open(this.id); else this.pick(); },
+  close() { this.on = false; this.pane.hidden = true; document.body.classList.remove('split-on'); this.save(); this.sync(); },
+  open(id, quiet) {
+    const s = App.sermons.get(id); if (!s) return;
+    this.on = true; this.id = id; this.pane.hidden = false; document.body.classList.add('split-on'); this.save();
+    if (!quiet && innerWidth < 1700 && innerWidth >= 900) document.body.classList.add('nav-collapsed');   // dá espaço para as duas páginas
+    this.render(); this.sync(); AddFloat.update?.();
+    if (!quiet && innerWidth < 900) UI.toast('Tela estreita: a página abre por cima. Use ✕ para voltar.');
+  },
+  sync() { typeof ViewTab !== 'undefined' && ViewTab.sync(); typeof Focus !== 'undefined' && Focus.syncHud?.(); },
+  where(s) { const sec = App.meta.sections.find(x => x.id === s.sec), nb = sec && App.meta.notebooks.find(n => n.id === sec.nb); return [nb?.name, sec?.name].filter(Boolean).join(' › '); },
+  /* escolher a página: busca por título em todos os cadernos, recentes primeiro */
+  pick() {
+    const q = el('input', { type: 'search', class: 'sp-q', placeholder: 'Buscar página pelo título ou caderno…' });
+    const list = el('div', { class: 'split-list' });
+    const all = [...App.sermons.values()].filter(s => !s.deleted && s.id !== App.cur?.id).sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    const norm = t => (t || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+    const paint = () => {
+      const k = norm(q.value).split(/\s+/).filter(Boolean); list.innerHTML = '';
+      const hits = all.filter(s => { const h = norm((s.title || '') + ' ' + this.where(s)); return k.every(w => h.includes(w)); }).slice(0, 60);
+      if (!hits.length) list.append(el('p', { class: 'muted', text: 'Nenhuma página encontrada.' }));
+      for (const s of hits) list.append(el('button', { class: 'on-item', onclick: () => { m.close(); this.open(s.id); } }, el('b', { text: s.title || 'Sem título' }), el('span', { class: 'muted small', text: this.where(s) })));
+    };
+    q.oninput = paint;
+    const m = UI.modal({ title: '◫ Abrir uma página ao lado', body: el('div', { class: 'split-pick' }, q, list) });
+    paint(); setTimeout(() => q.focus(), 50);
+  },
+  blockEl(b) {
+    const T = BLOCK_TYPES[b.type] || BLOCK_TYPES.text;
+    let body;
+    if (b.type === 'image') body = el('img', { src: b.src, alt: '' });
+    else if (b.type === 'ink') body = el('div', { class: 'muted small', text: '✎ Desenho' });
+    else if (b.type === 'verse') { body = el('div', {}, el('div', { class: 'spl-ref', text: [b.ref, b.version ? Bible.info(b.version)?.short : b.verLabel].filter(Boolean).join(' · ') }), el('div', { class: 'spl-vt', html: b.html || '' })); }
+    else body = el('div', { html: b.html || '' });
+    const bring = el('button', { class: 'spl-bring', title: 'Trazer este bloco para a página da esquerda, logo abaixo do cursor', text: '⇠ Trazer' });
+    bring.addEventListener('pointerdown', e => e.preventDefault());
+    bring.onclick = () => this.bring(b);
+    return el('div', { class: `spl-b spl-${b.type}${isCallout(b.type) ? ' spl-call' : ''}`, style: isCallout(b.type) ? { '--bc': blockColor(b.type) } : null },
+      el('div', { class: 'spl-tag', text: T.label }), bring, body);
+  },
+  render() {
+    const s = App.sermons.get(this.id); const P = this.pane; P.innerHTML = '';
+    if (!s) { this.close(); return; }
+    const grip = el('div', { class: 'split-grip', title: 'Arraste para ajustar · duplo clique volta ao padrão' });
+    grip.addEventListener('dblclick', () => { this.w = 42; document.documentElement.style.setProperty('--split-w', '42%'); this.save(); });
+    grip.addEventListener('pointerdown', e => {
+      e.preventDefault(); grip.setPointerCapture(e.pointerId); const main = $('.main').getBoundingClientRect();
+      const mv = ev => { this.w = clamp(Math.round((main.right - ev.clientX) / main.width * 100), 22, 70); document.documentElement.style.setProperty('--split-w', this.w + '%'); AddFloat.update?.(); };
+      const up = () => { grip.removeEventListener('pointermove', mv); grip.removeEventListener('pointerup', up); this.save(); };
+      grip.addEventListener('pointermove', mv); grip.addEventListener('pointerup', up);
+    });
+    const head = el('div', { class: 'split-head' },
+      el('div', { class: 'split-t' }, el('b', { text: s.title || 'Sem título' }), el('span', { class: 'muted small', text: this.where(s) })),
+      el('button', { class: 'icon-btn sm', title: 'Escolher outra página', text: '⇄', onclick: () => this.pick() }),
+      el('button', { class: 'icon-btn sm', title: 'Trocar de lado: editar esta e consultar a outra', text: '⇆', onclick: () => this.swap() }),
+      el('button', { class: 'icon-btn sm', title: 'Atualizar', text: '⟳', onclick: () => this.render() }),
+      el('button', { class: 'icon-btn sm', title: 'Fechar a tela dividida', text: '✕', onclick: () => this.close() }));
+    const body = el('div', { class: 'split-body' });
+    if (s.passage) body.append(el('div', { class: 'spl-pass muted small', text: '📖 ' + s.passage }));
+    (s.blocks || []).forEach(b => body.append(this.blockEl(b)));
+    if (!(s.blocks || []).length) body.append(el('p', { class: 'muted', text: 'Página vazia.' }));
+    body.append(el('p', { class: 'muted small spl-tip', text: 'Dica: selecione um trecho e arraste para o texto da esquerda, ou copie (Ctrl+C). “⇠ Trazer” copia o bloco inteiro para baixo do cursor.' }));
+    P.append(grip, head, body);
+  },
+  bring(b) {
+    if (!App.cur) return; if (typeof Shared !== 'undefined' && !Shared.canEdit(App.cur)) return UI.toast('A página da esquerda é somente leitura.');
+    const c = structuredClone(b); delete c.id; delete c.marks;
+    const nb = App.insertBlock(c.type, c);
+    if (nb) UI.toast(`Bloco “${(BLOCK_TYPES[b.type] || BLOCK_TYPES.text).label}” trazido para “${App.cur.title || 'esta página'}”.`);
+  },
+  swap() { const other = this.id, cur = App.cur?.id; if (!cur) return; App.flush(); this._swapping = true; App.open(other); this._swapping = false; this.id = cur; this.save(); this.render(); },
+  /* a página da direita foi apagada ou é a mesma da esquerda */
+  afterOpen() { if (!this.on || this._swapping) return; if (this.id === App.cur?.id || !App.sermons.get(this.id)) { this.close(); UI.toast('A tela dividida foi fechada (era a mesma página).'); } },
 };
 
 /* ===== Traduzir a página para inglês ou espanhol =====

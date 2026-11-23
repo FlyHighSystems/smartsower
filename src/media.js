@@ -995,7 +995,8 @@ const Focus = {
     const W = EditorView.WIDTHS.map(([id, ic, t]) => { const b = el('button', { class: 'fc-b fc-w', title: { normal: 'Coluna normal', wide: 'Coluna ampla', full: 'Tela toda' }[id], text: ic }); b.dataset.w = id; b.onclick = () => { EditorView.set({ w: id }); this.syncHud(); }; return b; });
     this.zb = el('button', { class: 'fc-b fc-z', title: 'Voltar para 100%', onclick: () => { EditorView.set({ ez: 1 }); this.syncHud(); } });
     const Z = d => el('button', { class: 'fc-b', title: d > 0 ? 'Letra maior (Ctrl+Alt+=)' : 'Letra menor (Ctrl+Alt+−)', text: d > 0 ? 'A+' : 'A−', onclick: () => { EditorView.zoom(d); this.syncHud(); } });
-    this.box = el('div', { class: 'focus-hud' }, this.st, el('span', { class: 'fc-sep' }), ...W, el('span', { class: 'fc-sep' }), Z(-0.1), this.zb, Z(0.1), el('span', { class: 'fc-sep' }),
+    this.sb = el('button', { class: 'fc-b', title: 'Tela dividida: outra página ao lado', text: '◫ Lado a lado', onclick: () => { Split.toggle(); this.syncHud(); } });
+    this.box = el('div', { class: 'focus-hud' }, this.st, el('span', { class: 'fc-sep' }), this.sb, el('span', { class: 'fc-sep' }), ...W, el('span', { class: 'fc-sep' }), Z(-0.1), this.zb, Z(0.1), el('span', { class: 'fc-sep' }),
       el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
     this.box.addEventListener('pointerdown', e => e.preventDefault());
     document.body.append(this.box); this.syncHud();
@@ -1004,6 +1005,7 @@ const Focus = {
     if (!this.box) return; const v = EditorView.get();
     this.box.querySelectorAll('.fc-w').forEach(b => b.classList.toggle('on', b.dataset.w === v.w));
     if (this.zb) this.zb.textContent = Math.round(v.ez * 100) + '%';
+    this.sb?.classList.toggle('on', !!Split.on);
     AddFloat.update?.();
   },
   stats: debounce(() => {
@@ -1031,6 +1033,7 @@ const ViewTab = {
     P.append(
       g('Foco', rb('◎ Modo foco', 'Só a página: esconde barras, painéis e dados da página (Ctrl+Alt+F)', () => Focus.toggle(), 'focus'),
         rb('⤢ Tela cheia', 'Tela cheia do navegador, sem esconder nada do app', () => document.fullscreenElement ? document.exitFullscreen().catch(() => { }) : document.documentElement.requestFullscreen?.().catch(() => UI.toast('Este navegador não permite tela cheia aqui.')), 'fs')),
+      g('Lado a lado', rb('◫ Tela dividida', 'Abrir outra página ao lado para consultar e trazer trechos', () => Split.toggle(), 'split'), rb('⇄ Outra página', 'Escolher qual página fica ao lado', () => Split.pick())),
       g('Largura', ...EditorView.WIDTHS.map(([id, ic, t]) => rb(ic + ' ' + { normal: 'Normal', wide: 'Ampla', full: 'Tela toda' }[id], t, () => EditorView.setWidth(id), 'w:' + id))),
       g('Letra', rb('A−', 'Diminuir (Ctrl+Alt+−)', () => EditorView.zoom(-0.1)), this.zv, rb('A+', 'Aumentar (Ctrl+Alt+=)', () => EditorView.zoom(0.1))),
       g('Mostrar', ck('nav', 'Cadernos e páginas', 'Painéis da esquerda (☰)'), ck('meta', 'Dados da página', 'Linha com tipo, data, passagem, situação e botões da página'), ck('tags', 'Nomes dos blocos', 'Rótulos como TEXTO, VERSÍCULO, ILUSTRAÇÃO acima de cada bloco')),
@@ -1042,7 +1045,7 @@ const ViewTab = {
   sync() {
     const P = $('.rpanel[data-panel="view"]'); if (!P || !P.childElementCount) return;
     const v = EditorView.get(), B = document.body.classList;
-    const on = k => k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
+    const on = k => k === 'split' ? Split.on : k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
     P.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', on(b.dataset.v)));
     const ch = { nav: !B.contains('nav-collapsed'), meta: v.meta !== false, tags: v.tags !== false };
     P.querySelectorAll('input[data-v]').forEach(i => { i.checked = ch[i.dataset.v]; });
