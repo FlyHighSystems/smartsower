@@ -19,12 +19,12 @@
     <button class="rtab on" data-tab="home">Formatação</button>
     <button class="rtab" data-tab="insert">Inserir</button>
     <button class="rtab" data-tab="draw">Desenhar</button>
+    <button class="rtab" data-tab="view">Exibir</button>
     <button class="rtab" data-tab="find">Pesquisar</button>
     <button class="rtab" data-tab="team" hidden>Equipe</button>
   </nav>
   <div class="top-right">
     <button class="btn ghost cloud-btn" id="btn-cloud" title="Nuvem">☁ Entrar</button>
-    <button class="icon-btn focus-btn" id="btn-focus" title="Modo foco — só o texto (Ctrl+Alt+F)" onclick="Focus.toggle()">◎</button>
     <button class="icon-btn reload-btn" id="btn-reload" title="Recarregar o app (pega a versão mais nova)">⟳</button>
     <button class="icon-btn theme-btn" id="btn-theme" title="Tema do app"></button>
     <button class="btn ghost tb" id="btn-import" title="Importar (OneNote, Word, backup)"><span class="tb-i">⇪</span><span class="tb-l">Importar</span></button>
@@ -131,6 +131,7 @@
       <button data-insert="ink" class="rb t-ink">+ Novo desenho</button>
     </div>
   </div>
+  <div class="rpanel" data-panel="view" hidden></div>
   <div class="rpanel" data-panel="find" hidden>
     <div class="rgroup"><span class="rlabel">Procure em todos os cadernos e livros: palavras, "frase exata" entre aspas, tipo de página, caderno e período. Os resultados aparecem abaixo.</span></div>
   </div>

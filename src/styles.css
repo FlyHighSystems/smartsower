@@ -772,8 +772,6 @@ body.focus-mode .block{border-color:transparent;transition:opacity .25s}
 body.focus-mode .add-bar{opacity:.45;transition:opacity .2s}body.focus-mode .add-bar:hover{opacity:1}
 body.focus-mode .ed-view{opacity:0;transition:opacity .3s}body.focus-mode .ed-view:hover{opacity:1}
 body.focus-mode.focus-typing .add-float{opacity:.25}
-body.focus-dim #blocks .block:not(.focus){opacity:.32}
-body.focus-dim #blocks .block:not(.focus):hover{opacity:.7}
 .focus-hud{position:fixed;top:10px;right:14px;z-index:70;display:flex;gap:6px;align-items:center;padding:4px 6px 4px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08);font-size:12.5px;transition:opacity .4s}
 .focus-hud.idle{opacity:0}.focus-hud:hover{opacity:1}
 .focus-hud .fc-st{color:var(--muted);margin-right:4px;white-space:nowrap}
@@ -783,3 +781,9 @@ body.focus-dim #blocks .block:not(.focus):hover{opacity:.7}
 @media (max-width:600px){.focus-hud{top:auto;bottom:calc(10px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%)}.focus-hud .fc-st{display:none}
   body.focus-mode #editor-inner{padding-top:5vh}}
 @media print{.focus-hud{display:none!important}}
+
+/* Exibir: o que mostrar */
+body.hide-meta .s-meta, body.hide-meta .bk-syn-row{display:none!important}
+body.hide-tags #blocks .b-tag{display:none}
+body.focus-mode .bk-syn-row, body.focus-mode .bk-kicker{display:none!important}
+.rpanel[data-panel="view"] .rgroup{gap:2px}

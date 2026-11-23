@@ -2,6 +2,16 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.20 — 22/11/2026
+- **Nova aba Exibir** (como a do OneNote), reunindo:
+  - **Foco:** Modo foco e Tela cheia.
+  - **Largura:** Normal, Ampla ou Tela toda.
+  - **Letra:** A−, 100% e A+.
+  - **Mostrar:** liga e desliga Cadernos e páginas, Dados da página e Nomes dos blocos.
+  - **Tema:** Automático, Claro ou Escuro.
+- As escolhas ficam salvas no aparelho.
+- O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F).
+
 ## 3.12.19 — 22/11/2026
 - **Modo foco** (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção **Destacar trecho atual** esmaece os outros blocos. Esc sai.
 

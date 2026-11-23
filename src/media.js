@@ -905,8 +905,6 @@ const AddFloat = {
    ao selecionar; o ＋ flutuante continua para adicionar blocos. Esc ou Ctrl+Alt+F sai. ---------- */
 const Focus = {
   on: false,
-  get dim() { try { return localStorage.getItem('ss-focus-dim') === '1'; } catch (e) { return false; } },
-  set dim(v) { try { localStorage.setItem('ss-focus-dim', v ? '1' : '0'); } catch (e) { } document.body.classList.toggle('focus-dim', !!v && this.on); },
   init() {
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.altKey && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); this.toggle(); return; }
@@ -920,7 +918,7 @@ const Focus = {
   toggle(v = !this.on) {
     if (v && !App.cur) return;
     this.on = v; const B = document.body.classList;
-    B.toggle('focus-mode', v); B.toggle('focus-dim', v && this.dim);
+    B.toggle('focus-mode', v);
     if (v) {
       this._nav = B.contains('nav-collapsed'); B.add('nav-collapsed');
       this.hud(); this.stats(); this.wake();
@@ -937,14 +935,12 @@ const Focus = {
       if (document.fullscreenElement && this._fs) document.exitFullscreen().catch(() => { });
       this._fs = false;
     }
-    AddFloat.update?.();
+    AddFloat.update?.(); ViewTab.sync();
   },
   hud() {
     this.box?.remove();
     this.st = el('span', { class: 'fc-st' });
-    const dimB = el('button', { class: 'fc-b' + (this.dim ? ' on' : ''), title: 'Esmaecer o que não é o bloco em que você está', text: 'Destacar trecho atual' });
-    dimB.onclick = () => { this.dim = !this.dim; dimB.classList.toggle('on', this.dim); };
-    this.box = el('div', { class: 'focus-hud' }, this.st, dimB,
+    this.box = el('div', { class: 'focus-hud' }, this.st,
       el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
     this.box.addEventListener('pointerdown', e => e.preventDefault());
     document.body.append(this.box);
@@ -959,5 +955,36 @@ const Focus = {
   wake() {
     if (!this.box) return; this.box.classList.remove('idle'); document.body.classList.remove('focus-typing');
     clearTimeout(this._t); this._t = setTimeout(() => this.box?.classList.add('idle'), 2500);
+  },
+};
+
+
+/* ---------- Aba Exibir (como a “Exibir” do OneNote): foco, tela cheia, largura, letra, o que mostrar e tema ---------- */
+const ViewTab = {
+  init() {
+    const P = $('.rpanel[data-panel="view"]'); if (!P) return;
+    const rb = (txt, title, fn, key) => { const b = el('button', { class: 'rb', text: txt, title, onclick: () => { fn(); this.sync(); } }); if (key) b.dataset.v = key; b.addEventListener('pointerdown', e => e.preventDefault()); return b; };
+    const ck = (key, label, title) => { const i = el('input', { type: 'checkbox' }); i.dataset.v = key; i.onchange = () => { EditorView.set({ [key]: i.checked }); this.sync(); }; return el('label', { class: 'rcheck', title }, i, ' ' + label); };
+    const g = (label, ...kids) => el('div', { class: 'rgroup' }, el('span', { class: 'rlabel', text: label }), ...kids);
+    this.zv = el('button', { class: 'rb', title: 'Voltar para 100%', onclick: () => { EditorView.set({ ez: 1 }); this.sync(); } });
+    P.append(
+      g('Foco', rb('◎ Modo foco', 'Só a página: esconde barras, painéis e dados da página (Ctrl+Alt+F)', () => Focus.toggle(), 'focus'),
+        rb('⤢ Tela cheia', 'Tela cheia do navegador, sem esconder nada do app', () => document.fullscreenElement ? document.exitFullscreen().catch(() => { }) : document.documentElement.requestFullscreen?.().catch(() => UI.toast('Este navegador não permite tela cheia aqui.')), 'fs')),
+      g('Largura', ...EditorView.WIDTHS.map(([id, ic, t]) => rb(ic + ' ' + { normal: 'Normal', wide: 'Ampla', full: 'Tela toda' }[id], t, () => EditorView.setWidth(id), 'w:' + id))),
+      g('Letra', rb('A−', 'Diminuir (Ctrl+Alt+−)', () => EditorView.zoom(-0.1)), this.zv, rb('A+', 'Aumentar (Ctrl+Alt+=)', () => EditorView.zoom(0.1))),
+      g('Mostrar', ck('nav', 'Cadernos e páginas', 'Painéis da esquerda (☰)'), ck('meta', 'Dados da página', 'Linha com tipo, data, passagem, situação e botões da página'), ck('tags', 'Nomes dos blocos', 'Rótulos como TEXTO, VERSÍCULO, ILUSTRAÇÃO acima de cada bloco')),
+      g('Tema', ...[['auto', '◐ Automático'], ['light', '☀ Claro'], ['dark', '☾ Escuro']].map(([id, l]) => rb(l, 'Tema do app', () => { App.meta.theme = id; App.saveMeta(); Theme.apply(); }, 't:' + id))));
+    document.addEventListener('fullscreenchange', () => this.sync());
+    new MutationObserver(() => this.sync()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    this.sync();
+  },
+  sync() {
+    const P = $('.rpanel[data-panel="view"]'); if (!P || !P.childElementCount) return;
+    const v = EditorView.get(), B = document.body.classList;
+    const on = k => k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
+    P.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', on(b.dataset.v)));
+    const ch = { nav: !B.contains('nav-collapsed'), meta: v.meta !== false, tags: v.tags !== false };
+    P.querySelectorAll('input[data-v]').forEach(i => { i.checked = ch[i.dataset.v]; });
+    if (this.zv) this.zv.textContent = Math.round(v.ez * 100) + '%';
   },
 };

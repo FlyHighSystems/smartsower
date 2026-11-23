@@ -16,6 +16,7 @@ const Theme = {
     const b = $('#btn-theme'); if (b) { b.textContent = this.LABEL[this.mode()]; b.title = `Tema: ${{ auto: 'Automático (segue o Windows)', light: 'Claro', dark: 'Escuro' }[this.mode()]} — clique para trocar`; }
     App.inkSurfaces.forEach(s => { s.theme = t; s.redraw(); });
     if (Reader.active) { Reader.applyLook(); Reader.render(); }
+    typeof ViewTab !== 'undefined' && ViewTab.sync();
   },
   cycle() {
     const order = ['auto', 'light', 'dark']; App.meta.theme = order[(order.indexOf(this.mode()) + 1) % 3]; App.saveMeta(); this.apply();

@@ -163,7 +163,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -875,16 +875,18 @@ const EditorView = {
   WIDTHS: [['normal', '▭', 'Largura normal'], ['wide', '▬', 'Largura ampla'], ['full', '⛶', 'Tela toda (esconde os painéis)']],
   MIN: 0.8, MAX: 2.5,
   get() { try { return { ez: 1, w: 'normal', ...JSON.parse(localStorage.getItem('ss-view') || '{}') }; } catch (e) { return { ez: 1, w: 'normal' }; } },
-  set(p) { const v = { ...this.get(), ...p }; try { localStorage.setItem('ss-view', JSON.stringify(v)); } catch (e) { } this.apply(v); },
+  set(p) { if ('nav' in p) { const q = { ...p }; delete q.nav; document.body.classList.toggle('nav-collapsed', !p.nav); p = q; } const v = { ...this.get(), ...p }; try { localStorage.setItem('ss-view', JSON.stringify(v)); } catch (e) { } this.apply(v); },
   apply(v = this.get()) {
     const inner = $('#editor-inner'); if (inner) inner.style.setProperty('--ez', v.ez);
     document.body.classList.toggle('ed-wide', v.w === 'wide'); document.body.classList.toggle('ed-full', v.w === 'full');
+    document.body.classList.toggle('hide-meta', v.meta === false); document.body.classList.toggle('hide-tags', v.tags === false);
+    typeof ViewTab !== 'undefined' && ViewTab.sync();
     if (this.val) this.val.textContent = Math.round(v.ez * 100) + '%';
     if (this.wb) { const w = this.WIDTHS.find(x => x[0] === v.w) || this.WIDTHS[0]; this.wb.textContent = w[1]; this.wb.title = w[2] + ' — clique para alternar'; }
   },
   zoom(d) { const ez = Math.round(Math.min(this.MAX, Math.max(this.MIN, this.get().ez + d)) * 100) / 100; this.set({ ez }); },
-  cycleWidth() {
-    const i = this.WIDTHS.findIndex(x => x[0] === this.get().w); const w = this.WIDTHS[(i + 1) % this.WIDTHS.length][0];
+  cycleWidth() { const i = this.WIDTHS.findIndex(x => x[0] === this.get().w); this.setWidth(this.WIDTHS[(i + 1) % this.WIDTHS.length][0]); },
+  setWidth(w) {
     if (w === 'full') document.body.classList.add('nav-collapsed'); else if (this.get().w === 'full') document.body.classList.remove('nav-collapsed');
     this.set({ w });
   },
