@@ -899,3 +899,65 @@ const AddFloat = {
   },
   close() { this.menu?.remove(); this.menu = null; this.btn?.classList.remove('on'); },
 };
+
+
+/* ---------- Modo foco: só o texto. Esconde barras e painéis; a formatação vem pela barra que aparece
+   ao selecionar; o ＋ flutuante continua para adicionar blocos. Esc ou Ctrl+Alt+F sai. ---------- */
+const Focus = {
+  on: false,
+  get dim() { try { return localStorage.getItem('ss-focus-dim') === '1'; } catch (e) { return false; } },
+  set dim(v) { try { localStorage.setItem('ss-focus-dim', v ? '1' : '0'); } catch (e) { } document.body.classList.toggle('focus-dim', !!v && this.on); },
+  init() {
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.altKey && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); this.toggle(); return; }
+      if (e.key === 'Escape' && this.on && !document.fullscreenElement && !$('.modal-back, .sp-pop, .add-float-menu, .em-pop, .fb-ctx')) { this.toggle(false); }
+      if (this.on && !e.ctrlKey && !e.altKey && !e.metaKey && e.key.length === 1) this.quiet();
+    }, true);
+    document.addEventListener('fullscreenchange', () => { if (this.on && this._fs && !document.fullscreenElement) this.toggle(false); });
+    document.addEventListener('mousemove', () => this.on && this.wake(), { passive: true });
+    document.addEventListener('input', () => this.on && this.stats(), true);
+  },
+  toggle(v = !this.on) {
+    if (v && !App.cur) return;
+    this.on = v; const B = document.body.classList;
+    B.toggle('focus-mode', v); B.toggle('focus-dim', v && this.dim);
+    if (v) {
+      this._nav = B.contains('nav-collapsed'); B.add('nav-collapsed');
+      this.hud(); this.stats(); this.wake();
+      this._fs = false;
+      const de = document.documentElement;
+      if (de.requestFullscreen && !document.fullscreenElement) de.requestFullscreen({ navigationUI: 'hide' }).then(() => { this._fs = true; }).catch(() => { });
+      const f = (App.focusId && $(`#blocks .block[data-id="${App.focusId}"] .b-body`)) || $('#blocks .b-body');
+      if (f && !$('#blocks')?.contains(document.activeElement)) { f.focus(); placeCaretEnd?.(f); }
+      setTimeout(() => $(`#blocks .block[data-id="${App.focusId}"]`)?.scrollIntoView({ block: 'center' }), 60);
+      UI.toast('Modo foco — Esc ou Ctrl+Alt+F para sair. Selecione um trecho para formatar.');
+    } else {
+      if (!this._nav) B.remove('nav-collapsed');
+      this.box?.remove(); this.box = null;
+      if (document.fullscreenElement && this._fs) document.exitFullscreen().catch(() => { });
+      this._fs = false;
+    }
+    AddFloat.update?.();
+  },
+  hud() {
+    this.box?.remove();
+    this.st = el('span', { class: 'fc-st' });
+    const dimB = el('button', { class: 'fc-b' + (this.dim ? ' on' : ''), title: 'Esmaecer o que não é o bloco em que você está', text: 'Destacar trecho atual' });
+    dimB.onclick = () => { this.dim = !this.dim; dimB.classList.toggle('on', this.dim); };
+    this.box = el('div', { class: 'focus-hud' }, this.st, dimB,
+      el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
+    this.box.addEventListener('pointerdown', e => e.preventDefault());
+    document.body.append(this.box);
+  },
+  stats: debounce(() => {
+    const s = App.cur, F = Focus; if (!F.on || !F.st || !s) return;
+    const w = Book.is(s) ? Book.words(s) : Estimate.sermon(s).words;
+    const est = !Book.is(s) && $('#s-est')?.textContent;
+    F.st.textContent = fmtN(w) + ' palavras' + (est && !/palavras/.test(est) ? ' · ' + est : '');
+  }, 300),
+  quiet() { if (!this.box) return; clearTimeout(this._t); this.box.classList.add('idle'); document.body.classList.add('focus-typing'); },
+  wake() {
+    if (!this.box) return; this.box.classList.remove('idle'); document.body.classList.remove('focus-typing');
+    clearTimeout(this._t); this._t = setTimeout(() => this.box?.classList.add('idle'), 2500);
+  },
+};

@@ -756,3 +756,30 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .add-float-menu .afm-i{justify-content:flex-start;text-align:left;width:100%}
 body.page-ro .add-float{display:none!important}
 @media print{.add-float,.add-float-menu{display:none!important}}
+
+/* ===== Modo foco ===== */
+body.focus-mode .topbar, body.focus-mode .ribbon-body, body.focus-mode #nb-pane, body.focus-mode #pages-pane,
+body.focus-mode .s-meta, body.focus-mode .pk-ask, body.focus-mode .shr-head, body.focus-mode .pane-resize{display:none!important}
+body.focus-mode #editor{background:var(--bg,var(--panel))}
+body.focus-mode #editor-inner{max-width:760px;padding-top:9vh;padding-bottom:45vh}
+body.focus-mode.ed-wide #editor-inner, body.focus-mode.ed-full #editor-inner{max-width:760px}
+body.focus-mode .s-title{font-size:calc(30px*var(--ez));border-color:transparent}
+body.focus-mode .b-tag{opacity:.35;transition:opacity .2s}
+body.focus-mode .block.focus .b-tag, body.focus-mode .block:hover .b-tag{opacity:.8}
+body.focus-mode .b-tools{opacity:0!important}
+body.focus-mode .block.focus .b-tools{opacity:.6!important}
+body.focus-mode .block{border-color:transparent;transition:opacity .25s}
+body.focus-mode .add-bar{opacity:.45;transition:opacity .2s}body.focus-mode .add-bar:hover{opacity:1}
+body.focus-mode .ed-view{opacity:0;transition:opacity .3s}body.focus-mode .ed-view:hover{opacity:1}
+body.focus-mode.focus-typing .add-float{opacity:.25}
+body.focus-dim #blocks .block:not(.focus){opacity:.32}
+body.focus-dim #blocks .block:not(.focus):hover{opacity:.7}
+.focus-hud{position:fixed;top:10px;right:14px;z-index:70;display:flex;gap:6px;align-items:center;padding:4px 6px 4px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08);font-size:12.5px;transition:opacity .4s}
+.focus-hud.idle{opacity:0}.focus-hud:hover{opacity:1}
+.focus-hud .fc-st{color:var(--muted);margin-right:4px;white-space:nowrap}
+.focus-hud .fc-b{border:0;background:transparent;color:var(--fg,inherit);padding:5px 9px;border-radius:14px;cursor:pointer;font:inherit;white-space:nowrap}
+.focus-hud .fc-b:hover{background:var(--hover,rgba(0,0,0,.06))}.focus-hud .fc-b.on{background:var(--accent);color:#fff}
+@media (hover:none){.focus-hud.idle{opacity:.55}}
+@media (max-width:600px){.focus-hud{top:auto;bottom:calc(10px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%)}.focus-hud .fc-st{display:none}
+  body.focus-mode #editor-inner{padding-top:5vh}}
+@media print{.focus-hud{display:none!important}}

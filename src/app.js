@@ -163,7 +163,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -894,7 +894,8 @@ const EditorView = {
     this.wb = el('button', { onclick: () => this.cycleWidth() });
     this.bar = el('div', { class: 'ed-view', role: 'toolbar', 'aria-label': 'Visualização do editor' },
       el('button', { text: 'A−', title: 'Diminuir letra (Ctrl+Alt+−)', onclick: () => this.zoom(-0.1) }), this.val,
-      el('button', { text: 'A+', title: 'Aumentar letra (Ctrl+Alt+=)', onclick: () => this.zoom(0.1) }), this.wb);
+      el('button', { text: 'A+', title: 'Aumentar letra (Ctrl+Alt+=)', onclick: () => this.zoom(0.1) }), this.wb,
+      el('button', { class: 'ev-focus', text: '◎', title: 'Modo foco — só o texto (Ctrl+Alt+F)', onclick: () => Focus.toggle() }));
     ed.append(this.bar);
     if (this.get().w === 'full') document.body.classList.add('nav-collapsed');
     this.apply();

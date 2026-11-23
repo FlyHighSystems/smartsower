@@ -767,6 +767,33 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .add-float-menu .afm-i{justify-content:flex-start;text-align:left;width:100%}
 body.page-ro .add-float{display:none!important}
 @media print{.add-float,.add-float-menu{display:none!important}}
+
+/* ===== Modo foco ===== */
+body.focus-mode .topbar, body.focus-mode .ribbon-body, body.focus-mode #nb-pane, body.focus-mode #pages-pane,
+body.focus-mode .s-meta, body.focus-mode .pk-ask, body.focus-mode .shr-head, body.focus-mode .pane-resize{display:none!important}
+body.focus-mode #editor{background:var(--bg,var(--panel))}
+body.focus-mode #editor-inner{max-width:760px;padding-top:9vh;padding-bottom:45vh}
+body.focus-mode.ed-wide #editor-inner, body.focus-mode.ed-full #editor-inner{max-width:760px}
+body.focus-mode .s-title{font-size:calc(30px*var(--ez));border-color:transparent}
+body.focus-mode .b-tag{opacity:.35;transition:opacity .2s}
+body.focus-mode .block.focus .b-tag, body.focus-mode .block:hover .b-tag{opacity:.8}
+body.focus-mode .b-tools{opacity:0!important}
+body.focus-mode .block.focus .b-tools{opacity:.6!important}
+body.focus-mode .block{border-color:transparent;transition:opacity .25s}
+body.focus-mode .add-bar{opacity:.45;transition:opacity .2s}body.focus-mode .add-bar:hover{opacity:1}
+body.focus-mode .ed-view{opacity:0;transition:opacity .3s}body.focus-mode .ed-view:hover{opacity:1}
+body.focus-mode.focus-typing .add-float{opacity:.25}
+body.focus-dim #blocks .block:not(.focus){opacity:.32}
+body.focus-dim #blocks .block:not(.focus):hover{opacity:.7}
+.focus-hud{position:fixed;top:10px;right:14px;z-index:70;display:flex;gap:6px;align-items:center;padding:4px 6px 4px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08);font-size:12.5px;transition:opacity .4s}
+.focus-hud.idle{opacity:0}.focus-hud:hover{opacity:1}
+.focus-hud .fc-st{color:var(--muted);margin-right:4px;white-space:nowrap}
+.focus-hud .fc-b{border:0;background:transparent;color:var(--fg,inherit);padding:5px 9px;border-radius:14px;cursor:pointer;font:inherit;white-space:nowrap}
+.focus-hud .fc-b:hover{background:var(--hover,rgba(0,0,0,.06))}.focus-hud .fc-b.on{background:var(--accent);color:#fff}
+@media (hover:none){.focus-hud.idle{opacity:.55}}
+@media (max-width:600px){.focus-hud{top:auto;bottom:calc(10px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%)}.focus-hud .fc-st{display:none}
+  body.focus-mode #editor-inner{padding-top:5vh}}
+@media print{.focus-hud{display:none!important}}
 </style>
 </head>
 <body>
@@ -782,6 +809,7 @@ body.page-ro .add-float{display:none!important}
   </nav>
   <div class="top-right">
     <button class="btn ghost cloud-btn" id="btn-cloud" title="Nuvem">☁ Entrar</button>
+    <button class="icon-btn focus-btn" id="btn-focus" title="Modo foco — só o texto (Ctrl+Alt+F)" onclick="Focus.toggle()">◎</button>
     <button class="icon-btn reload-btn" id="btn-reload" title="Recarregar o app (pega a versão mais nova)">⟳</button>
     <button class="icon-btn theme-btn" id="btn-theme" title="Tema do app"></button>
     <button class="btn ghost tb" id="btn-import" title="Importar (OneNote, Word, backup)"><span class="tb-i">⇪</span><span class="tb-l">Importar</span></button>
@@ -969,7 +997,7 @@ body.page-ro .add-float{display:none!important}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.18", "code": "045e74", "at": "22/11 20:34", "notes": [{"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}]};
+<script>window.SS_BUILD = {"version": "3.12.19", "code": "0cdd18", "at": "22/11 20:38", "notes": [{"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1832,7 +1860,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -2563,7 +2591,8 @@ const EditorView = {
     this.wb = el('button', { onclick: () => this.cycleWidth() });
     this.bar = el('div', { class: 'ed-view', role: 'toolbar', 'aria-label': 'Visualização do editor' },
       el('button', { text: 'A−', title: 'Diminuir letra (Ctrl+Alt+−)', onclick: () => this.zoom(-0.1) }), this.val,
-      el('button', { text: 'A+', title: 'Aumentar letra (Ctrl+Alt+=)', onclick: () => this.zoom(0.1) }), this.wb);
+      el('button', { text: 'A+', title: 'Aumentar letra (Ctrl+Alt+=)', onclick: () => this.zoom(0.1) }), this.wb,
+      el('button', { class: 'ev-focus', text: '◎', title: 'Modo foco — só o texto (Ctrl+Alt+F)', onclick: () => Focus.toggle() }));
     ed.append(this.bar);
     if (this.get().w === 'full') document.body.classList.add('nav-collapsed');
     this.apply();
@@ -6668,6 +6697,68 @@ const AddFloat = {
     m.style.left = Math.round(left) + 'px'; m.style.top = Math.round(top) + 'px';
   },
   close() { this.menu?.remove(); this.menu = null; this.btn?.classList.remove('on'); },
+};
+
+
+/* ---------- Modo foco: só o texto. Esconde barras e painéis; a formatação vem pela barra que aparece
+   ao selecionar; o ＋ flutuante continua para adicionar blocos. Esc ou Ctrl+Alt+F sai. ---------- */
+const Focus = {
+  on: false,
+  get dim() { try { return localStorage.getItem('ss-focus-dim') === '1'; } catch (e) { return false; } },
+  set dim(v) { try { localStorage.setItem('ss-focus-dim', v ? '1' : '0'); } catch (e) { } document.body.classList.toggle('focus-dim', !!v && this.on); },
+  init() {
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.altKey && (e.key === 'f' || e.key === 'F')) { e.preventDefault(); this.toggle(); return; }
+      if (e.key === 'Escape' && this.on && !document.fullscreenElement && !$('.modal-back, .sp-pop, .add-float-menu, .em-pop, .fb-ctx')) { this.toggle(false); }
+      if (this.on && !e.ctrlKey && !e.altKey && !e.metaKey && e.key.length === 1) this.quiet();
+    }, true);
+    document.addEventListener('fullscreenchange', () => { if (this.on && this._fs && !document.fullscreenElement) this.toggle(false); });
+    document.addEventListener('mousemove', () => this.on && this.wake(), { passive: true });
+    document.addEventListener('input', () => this.on && this.stats(), true);
+  },
+  toggle(v = !this.on) {
+    if (v && !App.cur) return;
+    this.on = v; const B = document.body.classList;
+    B.toggle('focus-mode', v); B.toggle('focus-dim', v && this.dim);
+    if (v) {
+      this._nav = B.contains('nav-collapsed'); B.add('nav-collapsed');
+      this.hud(); this.stats(); this.wake();
+      this._fs = false;
+      const de = document.documentElement;
+      if (de.requestFullscreen && !document.fullscreenElement) de.requestFullscreen({ navigationUI: 'hide' }).then(() => { this._fs = true; }).catch(() => { });
+      const f = (App.focusId && $(`#blocks .block[data-id="${App.focusId}"] .b-body`)) || $('#blocks .b-body');
+      if (f && !$('#blocks')?.contains(document.activeElement)) { f.focus(); placeCaretEnd?.(f); }
+      setTimeout(() => $(`#blocks .block[data-id="${App.focusId}"]`)?.scrollIntoView({ block: 'center' }), 60);
+      UI.toast('Modo foco — Esc ou Ctrl+Alt+F para sair. Selecione um trecho para formatar.');
+    } else {
+      if (!this._nav) B.remove('nav-collapsed');
+      this.box?.remove(); this.box = null;
+      if (document.fullscreenElement && this._fs) document.exitFullscreen().catch(() => { });
+      this._fs = false;
+    }
+    AddFloat.update?.();
+  },
+  hud() {
+    this.box?.remove();
+    this.st = el('span', { class: 'fc-st' });
+    const dimB = el('button', { class: 'fc-b' + (this.dim ? ' on' : ''), title: 'Esmaecer o que não é o bloco em que você está', text: 'Destacar trecho atual' });
+    dimB.onclick = () => { this.dim = !this.dim; dimB.classList.toggle('on', this.dim); };
+    this.box = el('div', { class: 'focus-hud' }, this.st, dimB,
+      el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
+    this.box.addEventListener('pointerdown', e => e.preventDefault());
+    document.body.append(this.box);
+  },
+  stats: debounce(() => {
+    const s = App.cur, F = Focus; if (!F.on || !F.st || !s) return;
+    const w = Book.is(s) ? Book.words(s) : Estimate.sermon(s).words;
+    const est = !Book.is(s) && $('#s-est')?.textContent;
+    F.st.textContent = fmtN(w) + ' palavras' + (est && !/palavras/.test(est) ? ' · ' + est : '');
+  }, 300),
+  quiet() { if (!this.box) return; clearTimeout(this._t); this.box.classList.add('idle'); document.body.classList.add('focus-typing'); },
+  wake() {
+    if (!this.box) return; this.box.classList.remove('idle'); document.body.classList.remove('focus-typing');
+    clearTimeout(this._t); this._t = setTimeout(() => this.box?.classList.add('idle'), 2500);
+  },
 };
 
 /* ===== Emojis no editor: botão 😊 na Formatação, na barra flutuante e Ctrl+Shift+E ===== */
