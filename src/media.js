@@ -587,6 +587,34 @@ const Spell = {
     }
     return null;
   },
+  /* botão direito numa palavra qualquer: consulta o corretor só para a linha em que ela está
+     (o sublinhado do navegador não deixa o site ler as sugestões dele) */
+  wordAt(body, node, off) {
+    if (!node || node.nodeType !== 3) return null;
+    const { nodes, text } = this.scan(body); const e = nodes.find(q => q.n === node); if (!e) return null;
+    const pos = e.start + off, W = /[\p{L}\p{M}'’-]/u;
+    let a = pos, z = pos; while (a > 0 && W.test(text[a - 1])) a--; while (z < text.length && W.test(text[z])) z++;
+    const word = text.slice(a, z).replace(/^['’-]+|['’-]+$/g, ''); if (word.length < 2 || !/\p{L}/u.test(word)) return null;
+    a = text.indexOf(word, a);
+    return { text, a, word, pos };
+  },
+  async suggestFor(body, node, off) {
+    const W = this.wordAt(body, node, off); if (!W) return null;
+    if (this.dict().has(W.word.toLowerCase())) return { ok: true, word: W.word };
+    const ls = W.text.lastIndexOf('\n', W.a - 1) + 1, le = (i => i < 0 ? W.text.length : i)(W.text.indexOf('\n', W.a));
+    const line = W.text.slice(ls, le);
+    this._cache ||= new Map(); let ms = this._cache.get(line);
+    if (!ms) { ms = await this.check(line); this._cache.set(line, ms); if (this._cache.size > 60) this._cache.delete(this._cache.keys().next().value); }
+    const rel = W.a - ls;
+    const mt = ms.find(m => m.offset <= rel && m.offset + m.length >= rel + W.word.length - 0 && m.offset + m.length > rel && (m.replacements || []).length && m.length <= W.word.length + 25 && !/\n/.test(line.substr(m.offset, m.length)))
+      || ms.find(m => m.offset < rel + W.word.length && m.offset + m.length > rel && (m.replacements || []).length);
+    if (!mt) return { ok: true, word: W.word };
+    const wrap = body.closest('.block'), b = App.cur?.blocks.find(x => x.id === wrap?.dataset.id); if (!b) return null;
+    const bi = [...wrap.querySelectorAll('.b-body[contenteditable]')].indexOf(body);
+    const o = ls + mt.offset, word = W.text.substr(o, mt.length);
+    return { sg: { b, bi, body, text: W.text }, off: o, len: mt.length, word, before: W.text.slice(Math.max(0, o - 30), o), after: W.text.substr(o + mt.length, 30),
+      msg: mt.shortMessage || mt.message, long: mt.message, reps: (mt.replacements || []).slice(0, 6).map(r => r.value), type: this.TYPES[mt.rule?.issueType] ? mt.rule.issueType : 'other', ctx: W.text, live: true };
+  },
   clear(forget) { if (window.CSS?.highlights) for (const t of Object.keys(this.TYPES)) CSS.highlights.delete('ss-sp-' + t); if (forget) { this.last = null; this.lastPage = null; } this.pop?.remove(); },
   // as marcas ficam no texto depois de fechar a verificação; somem ao trocar de página
   repaint() { if (this.last?.length && this.lastPage && App.cur?.id === this.lastPage) this.paint(this.last); else if (this.last) this.clear(true); },
@@ -606,10 +634,10 @@ const Spell = {
     const box = this.pop = el('div', { class: 'sp-pop', style: { '--sc': color }, role: 'dialog', 'aria-label': 'Correção' },
       el('div', { class: 'sp-pop-h' }, el('b', { text: it.word }), el('span', { class: 'sp-type', text: label })),
       (() => { const t = [it.msg, it.long].find(x => x && x.trim().toLowerCase() !== label.toLowerCase()); return t ? el('div', { class: 'sp-pop-m', text: t, title: it.long || '' }) : null; })(),
-      it.reps.length ? el('div', { class: 'sp-pop-r' }, ...it.reps.slice(0, 6).map(r => Bt(r || '(apagar)', 'chip sp-rep', () => { if (this.apply(it, r, this.last)) this.paint(this.last); close(); }))) : el('div', { class: 'muted small', text: 'Sem sugestão automática — ajuste à mão.' }),
+      it.reps.length ? el('div', { class: 'sp-pop-r' }, ...it.reps.slice(0, 6).map(r => Bt(r || '(apagar)', 'chip sp-rep', () => { if (this.apply(it, r, this.last || [])) { this._cache?.clear(); if (this.last) this.paint(this.last); } close(); }))) : el('div', { class: 'muted small', text: 'Sem sugestão automática — ajuste à mão.' }),
       el('div', { class: 'sp-pop-a' },
-        Bt('Ignorar', 'btn link sm', () => { it.done = true; this.paint(this.last); close(); }, 'Não marcar mais aqui'),
-        it.type === 'misspelling' ? Bt('+ Dicionário', 'btn link sm', () => { this.addWord(it.word); this.last.forEach(o => { if (o.word.toLowerCase() === it.word.toLowerCase()) o.done = true; }); this.paint(this.last); close(); UI.toast(`“${it.word}” no seu dicionário`); }, 'Nunca mais marcar esta palavra') : null));
+        it.live ? null : Bt('Ignorar', 'btn link sm', () => { it.done = true; this.paint(this.last); close(); }, 'Não marcar mais aqui'),
+        it.type === 'misspelling' ? Bt('+ Dicionário', 'btn link sm', () => { this.addWord(it.word); (this.last || []).forEach(o => { if (o.word.toLowerCase() === it.word.toLowerCase()) o.done = true; }); if (this.last) this.paint(this.last); close(); UI.toast(`“${it.word}” no seu dicionário`); }, 'Nunca mais marcar esta palavra') : null));
     document.body.append(box);
     const W = box.offsetWidth, H = box.offsetHeight, vh = window.visualViewport?.height || innerHeight;
     box.style.left = Math.max(8, Math.min(innerWidth - W - 8, x - 20)) + 'px'; box.style.top = (y + 18 + H > vh - 8 ? Math.max(8, y - H - 14) : y + 18) + 'px';
@@ -761,10 +789,31 @@ const FloatBar = {
       has ? B('📖 Virar versículo', 'O trecho selecionado vira um bloco de versículo', () => { this.hide(); Verseify.toVerse(); }) : null,
       B(has ? '✂ Separar em bloco' : '✂ Dividir aqui', has ? 'O trecho selecionado vira um bloco próprio' : 'Divide o bloco em dois no ponto do cursor', () => { this.hide(); Verseify.split(); }),
       B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
+    /* sem marca do app: pergunta ao corretor sobre a palavra clicada e põe as sugestões no topo do menu */
+    const oneWord = !has || /^[\p{L}\p{M}'’-]+$/u.test(s.toString().trim());
+    if (!it && oneWord && node?.nodeType === 3 && Spell.wordAt(body, node, off)) {
+      const row = el('div', { class: 'fb-sp loading' }, el('span', { class: 'muted small', text: 'Conferindo a ortografia…' }));
+      box.prepend(row);
+      Spell.suggestFor(body, node, off).then(sg => {
+        if (this.ctxBox !== box) return;
+        if (!sg || sg.ok) { row.remove(); return this.place?.(); }
+        row.classList.remove('loading'); row.innerHTML = '';
+        row.append(el('span', { class: 'fb-sp-w', title: sg.long || '', text: '“' + sg.word + '”' }),
+          ...sg.reps.map(r => B(r || '(apagar)', 'Trocar por esta', () => { if (Spell.apply(sg, r, Spell.last || [])) { Spell._cache?.clear(); if (Spell.last) Spell.paint(Spell.last); } this.hide(); }, 'fb-rep')),
+          sg.type === 'misspelling' ? B('+ Dicionário', 'Não marcar mais esta palavra', () => { Spell.addWord(sg.word); this.hide(); UI.toast(`“${sg.word}” no seu dicionário`); }) : null);
+        this.place?.();
+      }).catch(() => { if (this.ctxBox === box) { row.remove(); this.place?.(); } });
+    }
     this.ctxBox = box; this.bar.prepend(box); this.bar.classList.add('ctx', 'show');
+    this._ctxAt = [e.clientX, e.clientY];
     const bw = this.bar.offsetWidth, bh = this.bar.offsetHeight, vh = window.visualViewport?.height || innerHeight;
     this.bar.style.left = Math.max(8, Math.min(innerWidth - bw - 8, e.clientX)) + 'px';
     this.bar.style.top = Math.max(8, Math.min(vh - bh - 8, e.clientY + 6)) + 'px';
+  },
+  place() {
+    if (!this.bar || !this._ctxAt) return; const [x, y] = this._ctxAt;
+    const bw = this.bar.offsetWidth, bh = this.bar.offsetHeight, vh = window.visualViewport?.height || innerHeight;
+    this.bar.style.left = Math.max(8, Math.min(innerWidth - bw - 8, x)) + 'px'; this.bar.style.top = Math.max(8, Math.min(vh - bh - 8, y + 6)) + 'px';
   },
   /* toque no texto (sem selecionar): mostra a barra junto do cursor — no título, só o emoji */
   caretUpdate() {
@@ -817,7 +866,10 @@ const FloatBar = {
     document.addEventListener('contextmenu', e => {
       const body = e.target.closest?.('#blocks .b-body[contenteditable]'); if (!body || e.shiftKey) return;
       if (this.bar?.classList.contains('ctx')) { this.hide(); return; } // segundo clique direito: menu do navegador
-      e.preventDefault(); this.context(e, body);
+      e.preventDefault();
+      const it = Spell.issueFromPoint(e.clientX, e.clientY);
+      if (it && it.reps.length && (getSelection().isCollapsed || /^[\p{L}\p{M}'’-]+$/u.test(getSelection().toString().trim()))) { Spell.popover(it, e.clientX, e.clientY); return; }   // palavra marcada: só o menu de correção
+      this.context(e, body);
     });
   }
 };

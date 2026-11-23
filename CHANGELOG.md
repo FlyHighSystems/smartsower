@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.22 — 22/11/2026
+- **Correção com o botão direito:** em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as **sugestões de correção no topo**, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.
+- Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre **só o menu de correção**, sem a formatação.
+
 ## 3.12.21 — 22/11/2026
 - **Modo foco em tela grande:** a coluna agora segue a **Largura** escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair.
 

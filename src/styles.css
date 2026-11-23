@@ -790,3 +790,8 @@ body.hide-meta .s-meta, body.hide-meta .bk-syn-row{display:none!important}
 body.hide-tags #blocks .b-tag{display:none}
 body.focus-mode .bk-syn-row, body.focus-mode .bk-kicker{display:none!important}
 .rpanel[data-panel="view"] .rgroup{gap:2px}
+
+.fb-ctx .fb-sp{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:4px 6px 8px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.fb-ctx .fb-sp.loading{opacity:.7}
+.fb-ctx .fb-sp-w{color:#d13438;text-decoration:underline wavy #d13438;text-underline-offset:3px;font-weight:600;margin-right:4px}
+.fb-ctx .fb-rep{font-weight:600;color:var(--accent)}
