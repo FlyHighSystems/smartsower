@@ -880,7 +880,7 @@ const EditorView = {
     const inner = $('#editor-inner'); if (inner) inner.style.setProperty('--ez', v.ez);
     document.body.classList.toggle('ed-wide', v.w === 'wide'); document.body.classList.toggle('ed-full', v.w === 'full');
     document.body.classList.toggle('hide-meta', v.meta === false); document.body.classList.toggle('hide-tags', v.tags === false);
-    typeof ViewTab !== 'undefined' && ViewTab.sync();
+    typeof ViewTab !== 'undefined' && ViewTab.sync(); typeof Focus !== 'undefined' && Focus.box && Focus.syncHud();
     if (this.val) this.val.textContent = Math.round(v.ez * 100) + '%';
     if (this.wb) { const w = this.WIDTHS.find(x => x[0] === v.w) || this.WIDTHS[0]; this.wb.textContent = w[1]; this.wb.title = w[2] + ' — clique para alternar'; }
   },

@@ -761,8 +761,11 @@ body.page-ro .add-float{display:none!important}
 body.focus-mode .topbar, body.focus-mode .ribbon-body, body.focus-mode #nb-pane, body.focus-mode #pages-pane,
 body.focus-mode .s-meta, body.focus-mode .pk-ask, body.focus-mode .shr-head, body.focus-mode .pane-resize{display:none!important}
 body.focus-mode #editor{background:var(--bg,var(--panel))}
-body.focus-mode #editor-inner{max-width:760px;padding-top:9vh;padding-bottom:45vh}
-body.focus-mode.ed-wide #editor-inner, body.focus-mode.ed-full #editor-inner{max-width:760px}
+body.focus-mode #editor-inner{max-width:calc(860px*var(--ez));padding-top:7vh;padding-bottom:45vh}
+body.focus-mode.ed-wide #editor-inner{max-width:calc(1320px*var(--ez))}
+body.focus-mode.ed-full #editor-inner{max-width:none;padding-left:5vw;padding-right:5vw}
+.focus-hud .fc-sep{width:1px;height:18px;background:var(--line);margin:0 2px}
+.focus-hud .fc-z{min-width:3.2em;text-align:center}
 body.focus-mode .s-title{font-size:calc(30px*var(--ez));border-color:transparent}
 body.focus-mode .b-tag{opacity:.35;transition:opacity .2s}
 body.focus-mode .block.focus .b-tag, body.focus-mode .block:hover .b-tag{opacity:.8}

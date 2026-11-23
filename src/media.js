@@ -940,10 +940,19 @@ const Focus = {
   hud() {
     this.box?.remove();
     this.st = el('span', { class: 'fc-st' });
-    this.box = el('div', { class: 'focus-hud' }, this.st,
+    const W = EditorView.WIDTHS.map(([id, ic, t]) => { const b = el('button', { class: 'fc-b fc-w', title: { normal: 'Coluna normal', wide: 'Coluna ampla', full: 'Tela toda' }[id], text: ic }); b.dataset.w = id; b.onclick = () => { EditorView.set({ w: id }); this.syncHud(); }; return b; });
+    this.zb = el('button', { class: 'fc-b fc-z', title: 'Voltar para 100%', onclick: () => { EditorView.set({ ez: 1 }); this.syncHud(); } });
+    const Z = d => el('button', { class: 'fc-b', title: d > 0 ? 'Letra maior (Ctrl+Alt+=)' : 'Letra menor (Ctrl+Alt+−)', text: d > 0 ? 'A+' : 'A−', onclick: () => { EditorView.zoom(d); this.syncHud(); } });
+    this.box = el('div', { class: 'focus-hud' }, this.st, el('span', { class: 'fc-sep' }), ...W, el('span', { class: 'fc-sep' }), Z(-0.1), this.zb, Z(0.1), el('span', { class: 'fc-sep' }),
       el('button', { class: 'fc-b', title: 'Sair do modo foco (Esc)', text: '✕ Sair do foco', onclick: () => this.toggle(false) }));
     this.box.addEventListener('pointerdown', e => e.preventDefault());
-    document.body.append(this.box);
+    document.body.append(this.box); this.syncHud();
+  },
+  syncHud() {
+    if (!this.box) return; const v = EditorView.get();
+    this.box.querySelectorAll('.fc-w').forEach(b => b.classList.toggle('on', b.dataset.w === v.w));
+    if (this.zb) this.zb.textContent = Math.round(v.ez * 100) + '%';
+    AddFloat.update?.();
   },
   stats: debounce(() => {
     const s = App.cur, F = Focus; if (!F.on || !F.st || !s) return;
