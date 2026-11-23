@@ -228,7 +228,7 @@ a.ref{color:var(--rverse);text-decoration:underline dotted;text-underline-offset
 #print-area{display:none}
 @media print{
   @page{margin:16mm}
-  body{display:block;overflow:visible;background:#fff}
+  html,body{display:block;overflow:visible!important;height:auto!important;background:#fff}
   body>*:not(#print-area){display:none!important}
   #print-area{display:block;font-family:Calibri,"Segoe UI",sans-serif;font-size:12pt;line-height:1.5;color:#000}
   #print-area h1{color:#7719aa;font-size:22pt;margin:0 0 4pt}
@@ -743,6 +743,11 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .by-tag{--by:#7719aa;margin-left:8px;font-size:11px;color:var(--by);font-weight:600}
 .b-conflict{outline:2px dashed #e8a33c;outline-offset:3px}.conf-tag{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;background:#fff4ce;color:#5c4400;padding:6px 10px;border-radius:8px;margin-bottom:6px}
 .shr-btn{align-self:center}.shr-btn.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+
+.ol-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;max-height:52vh;overflow:auto;margin:8px 0}
+.ol-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid var(--line);font-size:14px}.ol-row:first-child{border-top:0}
+.ol-row.part{background:color-mix(in srgb,var(--accent) 9%,transparent)}.ol-as{flex:0 0 96px;font:inherit;font-size:12.5px;padding:2px 4px}
+.ol-t{flex:1;min-width:0}.ol-dup{color:#a4262c;font-size:12px}.ol-skip{text-decoration:line-through}.ol-sum{font-size:13.5px;margin:6px 0 10px}
 </style>
 </head>
 <body>
@@ -940,7 +945,7 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.12", "code": "6b70cf", "at": "22/11 16:53", "notes": [{"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}, {"v": "3.12.1", "d": "22/11/2026", "items": ["Nova aba Pesquisar: procura no app inteiro por palavras, \"frase exata\", tipo de página, caderno e período; abre o resultado e volta para a lista.", "Número de versão do app e esta lista de novidades."]}]};
+<script>window.SS_BUILD = {"version": "3.12.14", "code": "e6b8ec", "at": "22/11 20:00", "notes": [{"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1691,6 +1696,9 @@ const App = {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); this.flush(); UI.toast('Salvo'); }
       if (e.key === 'F5' && !Reader.active) { e.preventDefault(); Reader.open(this.cur); }
       const inText = e.target.closest && e.target.closest('[contenteditable], input, textarea, select');
+      const inSel = inText && e.target.matches?.('#page-list input[type=checkbox]');
+      if ((!inText || inSel) && this.selMode && this.sel?.size && (e.key === 'Delete' || e.key === 'Backspace') && !$('.modal')) { e.preventDefault(); this._bulkDel?.click(); }
+      if ((!inText || inSel) && this.selMode && e.key === 'Escape' && !$('.modal')) { this.selMode = false; this.sel = new Set(); this.renderPages(); }
       if (this.cur && !Reader.active && e.ctrlKey && e.altKey && (e.key === ']' || e.key === '[')) { e.preventDefault(); this.indentPage(this.cur.id, e.key === ']' ? 1 : -1); }
       if (this.cur && !Reader.active && !inText && e.altKey && e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.movePage(this.cur.id, e.key === 'ArrowUp' ? -1 : 1); }
     });
@@ -1755,6 +1763,7 @@ const App = {
     blk.forEach(b => { b.level = Math.max(0, Math.min(2, (b.level || 0) + shift)); this.touch(b); });
     l.splice(t, 0, ...blk); this.saveOrder(l); this.renderNav();
   },
+  startSelect(ids) { this.selMode = true; this.sel = new Set(ids.filter(id => id && this.sermons.has(id))); this.renderPages(); UI.toast('Seleção: marque as páginas e use Mover, Copiar, Tipo ou Excluir (tecla Delete).'); },
   pageMenu(s) {
     const m = UI.modal({ title: s.title || 'Página', body: el('div', { class: 'pm' },
       el('button', { class: 'on-item', onclick: () => { m.close(); this.movePage(s.id, -1); } }, el('b', { text: '↑ Subir' })),
@@ -1762,6 +1771,7 @@ const App = {
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, 1); } }, el('b', { text: '→ Tornar subpágina' }), el('span', { class: 'muted small', text: 'Fica recuada debaixo da página de cima' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, -1); } }, el('b', { text: '← Promover' }), el('span', { class: 'muted small', text: 'Volta um nível' })),
       el('button', { class: 'on-item', onclick: async () => { m.close(); const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) this.moveSermons([s.id], r.sec, r.copy); } }, el('b', { text: '⇢ Mover / Copiar para outra seção' })),
+      el('button', { class: 'on-item', onclick: () => { m.close(); this.startSelect([s.id]); } }, el('b', { text: '☑ Selecionar várias' }), el('span', { class: 'muted small', text: 'Para mover, copiar ou excluir várias de uma vez' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.open(s.id); this.deleteSermon(); } }, el('b', { class: 'danger-text', text: 'Excluir' }))) });
   },
 
@@ -1815,6 +1825,7 @@ const App = {
     if (nb.foreign) { const m2 = UI.modal({ title: '👥 ' + nb.name, body: el('p', { class: 'muted', text: `Caderno de ${nb.foreign.ownerName || Shared.nameOf(nb.foreign.ownerEmail)}, compartilhado com você. Seções e pessoas são definidas pelo dono.` }), actions: [{ label: 'Sair deste caderno', danger: true, onClick: () => Shared.leave(nb) }] }); return; }
     const m = UI.modal({ title: 'Caderno: ' + nb.name, body: '', actions: [
       { label: nb.shared ? '👥 Pessoas e permissões' : '👥 Compartilhar…', onClick: () => Shared.open(nb) },
+      ...(Book.isNb(nb) ? [{ label: '📄 Exportar livro', onClick: () => Book.open('export') }] : []),
       { label: 'Renomear', onClick: async () => { const n = await UI.ask('Renomear caderno', nb.name); if (n) { nb.name = n; this.saveMeta(); this.renderNav(); } } },
       { label: Book.isNb(nb) ? 'Voltar a caderno comum' : '📖 Transformar em livro', onClick: async () => {
         if (Book.isNb(nb)) { if (!await UI.confirm('Voltar a caderno comum', 'As páginas continuam iguais; só some o modo livro (metas, quadro, exportação). Os dados do livro ficam guardados.', 'Voltar a caderno comum')) return; nb.kind = ''; }
@@ -1927,12 +1938,15 @@ const App = {
       const preview = s.passage || htmlToText(s.blocks.find(b => b.type === 'text')?.html || '').slice(0, 60);
       if (this.selMode) {
         const on = this.sel.has(s.id);
-        list.append(el('label', { class: 'page sel-row' + (on ? ' active' : '') },
-          el('input', { type: 'checkbox', checked: on, onchange: e => { e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
+        const vis = items.map(x => x.id), myIdx = vis.indexOf(s.id);
+        list.append(el('label', { class: 'page sel-row' + (on ? ' active' : ''), 'data-id': s.id, onclick: e => { this._shift = e.shiftKey; } },
+          el('input', { type: 'checkbox', checked: on, onchange: e => {
+            if (this._shift && this._lastSel != null) { const [a2, b2] = [Math.min(this._lastSel, myIdx), Math.max(this._lastSel, myIdx)]; for (let i = a2; i <= b2; i++) this.sel.add(vis[i]); this._shift = false; this._lastSel = myIdx; this.renderPages(); return; }
+            e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this._lastSel = myIdx; this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
           el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
-      const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: () => this.open(s.id),
+      const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: e => { if (e.ctrlKey || e.metaKey || e.shiftKey) return this.startSelect(e.shiftKey && this.cur ? (() => { const v = items.map(x => x.id), i1 = v.indexOf(this.cur.id), i2 = v.indexOf(s.id); return i1 < 0 ? [s.id] : v.slice(Math.min(i1, i2), Math.max(i1, i2) + 1); })() : [this.cur?.id, s.id]); this.open(s.id); },
         ondragstart: e => { e.dataTransfer.setData('text/x-sermon', s.id); e.dataTransfer.effectAllowed = 'copyMove'; document.body.classList.add('dragging'); this._drag = s.id; },
         ondragend: () => { document.body.classList.remove('dragging'); this._drag = null; } },
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
@@ -1959,11 +1973,13 @@ const App = {
     const mv = el('button', { class: 'btn sm primary', text: 'Mover para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Mover ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, false); } });
     const cp = el('button', { class: 'btn sm', text: 'Copiar para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Copiar ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, true); } });
     const del = el('button', { class: 'btn sm danger-text', text: 'Excluir', disabled: !n, onclick: async () => {
-      if (!await UI.confirm('Excluir páginas', `Excluir ${n} ministração(ões)?`)) return;
+      const blocked = ids().filter(id => { const x = this.sermons.get(id); return x && !Shared.canDelete(x); }).length;
+      if (!await UI.confirm('Excluir páginas', `Excluir ${n - blocked} página(s)? Não dá para desfazer.` + (blocked ? ` (${blocked} de outras pessoas ficam — só o autor ou o dono do caderno podem excluir.)` : ''), 'Excluir')) return;
       for (const id of this.sel) { const x = this.sermons.get(id); if (x && !Shared.canDelete(x)) continue; this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
       if (this.cur && !this.sermons.has(this.cur.id)) { this.cur = null; this.renderEditor(); }
-      this.sel = new Set(); this.renderNav();
+      this.sel = new Set(); this.selMode = false; this.renderNav(); UI.toast('Páginas excluídas');
     } });
+    this._bulkDel = del;
     bar.append(el('span', { class: 'small', text: n ? `${n} selecionada(s)` : 'Toque nas páginas' }), all, mv, cp, PageKinds.bulkButton(ids, n), del);
   },
   /* Move ou copia ministrações para outra seção */
@@ -6718,24 +6734,122 @@ const Book = {
     }
     App.newSermon(data);
   },
-  /* lê a lista "Capítulos" do roteiro e cria as páginas que ainda não existem */
+  /* ===== Roteiro → partes e capítulos =====
+     Lê o roteiro como árvore (Parte → Capítulo → tópicos), mostra uma prévia para você ajustar
+     e cria uma parte do livro para cada Parte, com os capítulos em ordem e os tópicos dentro. */
+  isPartLine(t) { return /^(parte|part|livro|se[cç][aã]o|movimento|bloco|unidade|m[oó]dulo|ato)\s*([0-9ivxlc]+|um|dois|tr[eê]s|quatro|cinco|seis|sete|oito|nove|dez|primeir|segund|terceir|quart|quint)\b/i.test(t) || /^[IVXLC]+\s*[.)\-–—:]\s+\S/.test(t); },
+  isChapLine(t) { return /^(cap[ií]tulo|cap\.?)\s*[0-9ivxlc]+/i.test(t); },
+  outlineLines(s) {
+    const T = b => htmlToText(b.html || '').trim();
+    const skip = /^(tese|para quem|p[uú]blico|promessa|ilustra|hist[oó]rias|notas|refer[eê]ncias|ideias soltas|pesquisa)/i;
+    let start = s.blocks.findIndex(b => b.type === 'subhead' && /cap[ií]tulos|estrutura|sum[aá]rio|esbo[cç]o|partes|[ií]ndice/i.test(T(b)));
+    const lines = []; let inScope = start < 0;
+    s.blocks.forEach((b, i) => {
+      if (b.type === 'subhead') {
+        const t = T(b); if (!t) return;
+        if (i === start) { inScope = true; return; }
+        if (skip.test(t)) { inScope = false; return; }
+        if (start >= 0 && i > start && !this.isPartLine(t) && !this.isChapLine(t)) { inScope = false; return; }
+        if (inScope || this.isPartLine(t) || this.isChapLine(t)) { inScope = true; lines.push({ t, d: -1, head: true }); }
+        return;
+      }
+      if (!inScope || b.type !== 'text' || !b.html) return;
+      const d = document.createElement('div'); d.innerHTML = b.html;
+      const walk = (node, depth) => {
+        for (const n of node.childNodes) {
+          if (n.nodeType === 3) { n.data.split('\n').forEach(x => { x = x.trim(); if (x) lines.push({ t: x, d: depth + (/^[-•*▪◦·]\s/.test(x) ? 1 : 0) }); }); continue; }
+          if (n.nodeType !== 1) continue; const tag = n.tagName;
+          if (tag === 'UL' || tag === 'OL') { walk(n, depth + 1); continue; }
+          if (tag === 'LI') { const own = [...n.childNodes].filter(c => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(c => c.textContent).join('').trim(); if (own) lines.push({ t: own, d: depth }); [...n.children].filter(c => /^(UL|OL)$/.test(c.tagName)).forEach(c => walk(c, depth + 1)); continue; }
+          if (tag === 'BLOCKQUOTE') { walk(n, depth + 1); continue; }
+          if (tag === 'BR') continue;
+          if (/^(DIV|P|H[1-6])$/.test(tag) && ![...n.children].some(c => /^(UL|OL|DIV|P|BLOCKQUOTE)$/.test(c.tagName))) { const x = n.textContent.trim(); const ind = (parseFloat(n.style?.marginLeft || 0) > 0 ? 1 : 0) + (/^[-•*▪◦·]\s/.test(x) ? 1 : 0); if (x) lines.push({ t: x, d: depth + ind }); continue; }
+          walk(n, depth);
+        }
+      };
+      walk(d, 0);
+    });
+    return lines.map(l => ({ ...l, t: l.t.replace(/^\s*(\d+[.)]|[-•*▪◦·])\s*/, '').trim() })).filter(l => l.t && !/^t[ií]tulo do cap[ií]tulo/i.test(l.t));
+  },
+  classify(lines) {
+    const hasPart = lines.some(l => this.isPartLine(l.t)), explicit = lines.some(l => this.isChapLine(l.t));
+    const depths = lines.filter(l => !l.head && !this.isPartLine(l.t)).map(l => l.d); const minD = depths.length ? Math.min(...depths) : 0;
+    let partD = null;
+    return lines.map(l => {
+      if (this.isPartLine(l.t) || (l.head && !this.isChapLine(l.t))) { partD = l.d; return { ...l, as: 'part' }; }
+      if (this.isChapLine(l.t)) return { ...l, as: 'chap' };
+      if (explicit) return { ...l, as: 'topic' }; // quando o roteiro diz “Capítulo N”, o resto é tópico
+      const chapD = hasPart && partD != null && partD >= 0 ? partD + 1 : minD;
+      return { ...l, as: l.d <= chapD ? 'chap' : 'topic' };
+    });
+  },
+  splitTitle(t) {
+    t = t.replace(/^(cap[ií]tulo|cap\.?)\s*[0-9ivxlc]+\s*[.:\-–—]?\s*/i, '');
+    const m = t.split(/\s+[—–-]\s+|:\s+/); return { title: (m.shift() || '').trim(), syn: m.join(' — ').trim() };
+  },
+  partName(t) { const m = t.replace(/^(parte|part|livro|se[cç][aã]o|bloco|unidade|m[oó]dulo|ato)\s*([0-9ivxlc]+|\S+)\s*[.:\-–—]?\s*/i, '').replace(/^[IVXLC]+\s*[.)\-–—:]\s+/, '').trim(); return m || t; },
   fromOutline(s) {
-    const nb = this.nbOf(s.sec); const idx = s.blocks.findIndex(b => b.type === 'subhead' && /cap[ií]tulo/i.test(htmlToText(b.html || '')));
-    const scope = idx >= 0 ? s.blocks.slice(idx + 1, (s.blocks.slice(idx + 1).findIndex(b => b.type === 'subhead') + idx + 1) || undefined) : s.blocks;
-    const items = [];
-    for (const b of scope) { if (b.type !== 'text') continue; const d = document.createElement('div'); d.innerHTML = (b.html || '').replace(/<br\s*\/?>|<\/div>|<\/p>/gi, '\n');
-      const lis = d.querySelectorAll('li'); (lis.length ? [...lis].map(li => li.textContent) : d.textContent.split('\n')).forEach(t => { t = t.replace(/^\s*(\d+[.)]|[-•*])\s*/, '').trim(); if (t) items.push(t); }); }
-    const exist = new Set(this.chapters(nb).map(c => (c.s.title || '').trim().toLowerCase()));
-    const target = this.secKind(App.meta.sections.find(x => x.id === s.sec)) === 'plan' ? (this.realParts(nb)[0] || App.meta.sections.find(x => x.id === s.sec)) : App.meta.sections.find(x => x.id === s.sec);
-    let made = 0; this.ensureOrder(target.id); const list = App.sectionSermons(target.id);
-    for (const t of items) {
-      const [title, ...rest] = t.split(/\s+[—–-]\s+|:\s+/); const name = (title || '').trim(); if (!name || exist.has(name.toLowerCase()) || /^título do capítulo$/i.test(name)) continue;
-      const c = { ...blankSermon(target.id), ...this.blankChapter(), title: name, order: list.length + made };
-      c.book = { kind: 'capitulo', status: 'ideia', goal: 0, synopsis: rest.join(' — ').trim() };
-      App.sermons.set(c.id, c); App.touch(c); exist.add(name.toLowerCase()); made++;
+    const nb = this.nbOf(s.sec); const raw = this.outlineLines(s);
+    if (!raw.length) return UI.toast('Não achei a lista do roteiro. Escreva em “Capítulos” — uma linha por capítulo (e “Parte 1 — …” para as partes).');
+    let rows = this.classify(raw);
+    const body = el('div', { class: 'ol' }); const m = UI.modal({ title: '➜ Criar capítulos a partir do roteiro', body, wide: true });
+    const exist = new Map(this.chapters(nb).map(c => [(c.s.title || '').trim().toLowerCase(), c.s]));
+    const draw = () => {
+      body.innerHTML = '';
+      const nP = rows.filter(r => r.as === 'part').length, nC = rows.filter(r => r.as === 'chap').length;
+      body.append(el('p', { class: 'muted small', text: 'Confira como li o seu roteiro. Ajuste cada linha se precisar: Parte vira uma parte do livro, Capítulo vira uma página, Tópico entra dentro do capítulo acima.' }));
+      const list = el('div', { class: 'ol-list' });
+      rows.forEach((r, i) => {
+        const sel = el('select', { class: 'ol-as ' + r.as, onchange: e => { r.as = e.target.value; draw(); } }, ...[['part', 'Parte'], ['chap', 'Capítulo'], ['topic', 'Tópico'], ['skip', 'Ignorar']].map(([v, t]) => el('option', { value: v, text: t, selected: r.as === v })));
+        const st = r.as === 'chap' ? this.splitTitle(r.t) : null, dup = st && exist.has(st.title.toLowerCase());
+        list.append(el('div', { class: 'ol-row ' + r.as }, sel, el('span', { class: 'ol-t', style: { paddingLeft: (r.as === 'topic' ? 28 : r.as === 'chap' ? 12 : 0) + 'px' } },
+          r.as === 'part' ? el('b', { text: '📂 ' + this.partName(r.t) }) : r.as === 'chap' ? el('span', {}, el('b', { text: '📄 ' + st.title }), st.syn ? el('span', { class: 'muted', text: ' — ' + st.syn }) : '', dup ? el('span', { class: 'ol-dup', text: ' já existe — vai para o lugar certo, com o texto que você já escreveu' }) : '') : el('span', { class: r.as === 'skip' ? 'muted ol-skip' : 'muted', text: (r.as === 'topic' ? '• ' : '') + r.t }))));
+      });
+      body.append(list, el('div', { class: 'ol-sum' }, el('b', { text: `${nP ? nP + ' parte(s) · ' : ''}${nC} capítulo(s)` }), nP ? ' — cada Parte vira uma parte do livro (seção), com os capítulos dela.' : ` — vão para “${this.outlineTarget(s, nb).name}”.`),
+        el('div', { class: 'row-btns' }, el('button', { class: 'btn primary', text: 'Criar', disabled: !nC, onclick: () => { m.close(); this.buildOutline(s, nb, rows, exist); } })));
+    };
+    draw();
+  },
+  outlineTarget(s, nb) { const here = App.meta.sections.find(x => x.id === s.sec); return this.secKind(here) === 'plan' ? (this.realParts(nb)[0] || here) : here; },
+  buildOutline(s, nb, rows, exist) {
+    const made = [], newSecs = [], renamed = [], moved = [], seq = {}; let part = null, chap = null, topics = [];
+    const flush = () => {
+      if (!chap) return;
+      if (topics.length) {
+        const lv = topics.map(t => t.d), base = Math.min(...lv); let html = '<ul>', cur = base;
+        for (const t of topics) { while (t.d > cur) { html += '<ul>'; cur++; } while (t.d < cur) { html += '</ul>'; cur--; } html += `<li>${esc(t.t)}</li>`; }
+        while (cur > base) { html += '</ul>'; cur--; } html += '</ul>';
+        chap.blocks = [{ id: uid(), type: 'subhead', html: 'Tópicos do roteiro' }, { id: uid(), type: 'text', html }, { id: uid(), type: 'text', html: '' }];
+      }
+      chap = null; topics = [];
+    };
+    const targetFor = () => part || this.outlineTarget(s, nb);
+    for (const r of rows) {
+      if (r.as === 'skip') continue;
+      if (r.as === 'part') {
+        flush(); const name = this.partName(r.t);
+        part = App.meta.sections.find(x => x.nb === nb.id && this.secKind(x) === 'parte' && x.name.trim().toLowerCase() === name.toLowerCase());
+        if (!part) { const empty = App.meta.sections.find(x => x.nb === nb.id && this.secKind(x) === 'parte' && !App.sectionSermons(x.id).length && /^cap[ií]tulos$/i.test(x.name)); if (empty && !newSecs.length && !renamed.length) { renamed.push([empty, empty.name]); empty.name = name; part = empty; } else { part = { id: uid(), nb: nb.id, name, color: nb.color || '#8e562e', kind: 'parte' }; App.meta.sections.push(part); newSecs.push(part.id); } }
+        continue;
+      }
+      if (r.as === 'chap') {
+        flush(); const { title, syn } = this.splitTitle(r.t); if (!title) continue;
+        const sec = targetFor(); this.ensureOrder(sec.id);
+        const old = exist.get(title.toLowerCase());
+        if (old) { if (!moved.some(x => x[0] === old)) { moved.push([old, old.sec, old.order, old.level]); old.sec = sec.id; old.level = 0; old.order = (seq[sec.id] = (seq[sec.id] ?? -1) + 1); if (syn && !old.book?.synopsis) Book.meta(old).synopsis = syn; App.touch(old); } continue; }
+        chap = { ...blankSermon(sec.id), ...this.blankChapter(), title, order: (seq[sec.id] = (seq[sec.id] ?? -1) + 1) };
+        chap.book = { kind: 'capitulo', status: 'ideia', goal: 0, synopsis: syn };
+        App.sermons.set(chap.id, chap); made.push(chap); exist.set(title.toLowerCase(), chap); continue;
+      }
+      if (r.as === 'topic' && chap) topics.push(r);
     }
-    App.flush(); App.renderNav();
-    UI.toast(made ? `${made} capítulo(s) criado(s) em “${target.name}”, com o resumo de cada um.` : 'Nenhum capítulo novo: escreva a lista em “Capítulos” como “Título — do que trata”.');
+    flush();
+    for (const [secId, last] of Object.entries(seq)) { let k = last; for (const x of App.sectionSermons(secId)) if (!made.includes(x) && !moved.some(m => m[0] === x)) { x.order = ++k; App.touch(x); } }
+    made.forEach(c => App.touch(c)); App.saveMeta(); App.flush(); App.renderNav();
+    const nParts = new Set(made.map(c => c.sec)).size;
+    const msg = [made.length ? `${made.length} capítulo(s) criado(s)` : '', moved.length ? `${moved.length} reorganizado(s)` : ''].filter(Boolean).join(' e ');
+    UI.toast(msg ? `${msg}${nParts > 1 ? ` em ${nParts} partes` : ''}.` : 'Nada a fazer: o roteiro já está igual ao livro.',
+      msg ? { label: 'Desfazer', fn: () => { for (const [x, sec, order, level] of moved) { x.sec = sec; x.order = order; x.level = level; App.touch(x); } for (const c of made) { App.sermons.delete(c.id); DB.del('sermons', c.id); Cloud.tomb(c.id); } App.meta.sections = App.meta.sections.filter(x => !newSecs.includes(x.id)); renamed.forEach(([x, n]) => x.name = n); App.saveMeta(); App.renderNav(); App.open(s.id); UI.toast('Desfeito'); } } : undefined);
   },
   meta(s) { s.book ||= {}; s.book.status ||= 'rascunho'; s.book.goal ??= 0; s.book.synopsis ??= ''; return s.book; },
   status(s) { return BOOK_STATUS.find(x => x[0] === this.meta(s).status) || BOOK_STATUS[1]; },
@@ -7318,33 +7432,82 @@ sup a{text-decoration:none}.notas{margin-top:2.5em;border-top:1px solid #999;pad
     return `Pronto ✓ e-book com ${list.filter(c => c.num).length} capítulo(s). Antes de publicar, confira no Kindle Previewer ou no app de livros.`;
   },
 
-  /* ---------- PDF (impressão do navegador) ---------- */
+  /* ---------- PDF (impressão do navegador) ----------
+     Formato de livro: margens espelhadas, número de página no rodapé (sem número na capa,
+     dedicatória e aberturas de parte), título do livro no alto, sumário com partes, capítulos
+     e números de página (calculados medindo o texto com as mesmas medidas da página). */
+  pdfGeom(o) {
+    const a4 = o.size === 'a4';
+    return a4 ? { w: 210, h: 297, top: 25, bottom: 22, inner: 30, outer: 20, fs: '12pt' } : { w: 140, h: 210, top: 18, bottom: 18, inner: 20, outer: 15, fs: '10.5pt' };
+  },
+  pdfRules(prefix, o) {
+    const G = this.pdfGeom(o);
+    return `${prefix}{font-family:Georgia,"Times New Roman",serif;font-size:${G.fs};line-height:1.5;color:#111}${prefix} .pb{break-before:page}${prefix} .nonum{page:nonum}
+${prefix} .toc h1{margin-top:0}${prefix} .toc-part{font-weight:bold;margin:1em 0 .3em;text-indent:0;display:flex;gap:.4em}${prefix} .toc-i{display:flex;align-items:baseline;gap:.4em;margin:.25em 0;text-indent:0;text-align:left}
+${prefix} .toc-i .t{flex:0 1 auto}${prefix} .toc-i .lead{flex:1 1 auto;border-bottom:1px dotted #777;transform:translateY(-.25em);min-width:1em}${prefix} .toc-i .n,${prefix} .toc-part .n{flex:0 0 auto;min-width:1.6em;text-align:right}${prefix} .toc-part .lead{flex:1}
+${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
+${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => prefix + ' ' + x.trim()).join(',') + '{')}`;
+  },
   async pdf(nb, o) {
-    const F = this.front(nb), P = $('#print-area'); P.innerHTML = ''; P.className = 'bk-print ' + (o.size === 'a4' ? 'a4' : 'b14');
+    const F = this.front(nb), P = $('#print-area'), G = this.pdfGeom(o); P.innerHTML = ''; P.className = 'bk-print ' + (o.size === 'a4' ? 'a4' : 'b14');
     let st = $('#bk-print-css'); if (!st) { st = el('style', { id: 'bk-print-css' }); document.head.append(st); }
-    st.textContent = `@media print{@page{size:${o.size === 'a4' ? 'A4' : '140mm 210mm'};margin:${o.size === 'a4' ? '30mm 20mm 20mm 30mm' : '18mm 15mm 18mm 20mm'}}#print-area.bk-print{font-family:Georgia,"Times New Roman",serif;font-size:${o.size === 'a4' ? '12pt' : '10.5pt'};line-height:1.5}#print-area.bk-print .pb{break-before:page}${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => '#print-area.bk-print ' + x.trim()).join(',') + '{')}}`;
-    const pb = (...k) => el('div', { class: 'pb' }, ...k);
+    const num = 'content:counter(page);font-family:Georgia,serif;font-size:9pt;color:#444', head = `content:"${String(F.title || '').replace(/["\\]/g, '')}";font-family:Georgia,serif;font-size:8pt;font-style:italic;color:#777`;
+    st.textContent = `@media print{@page{size:${G.w}mm ${G.h}mm;margin:${G.top}mm ${G.outer}mm ${G.bottom}mm ${G.inner}mm;@bottom-center{${num}}}
+@page :left{margin-left:${G.outer}mm;margin-right:${G.inner}mm;@top-left{${head}}}@page :right{margin-left:${G.inner}mm;margin-right:${G.outer}mm;@top-right{${head}}}
+@page nonum{@bottom-center{content:none}@top-left{content:none}@top-right{content:none}}
+${this.pdfRules('#print-area.bk-print', o)}}`;
+    const pb = (...k) => el('div', { class: 'pb' }, ...k), nonum = (...k) => el('div', { class: 'pb nonum' }, ...k);
     if (o.front) {
-      P.append(el('div', { class: 'rosto' }, el('h1', { text: F.title }), F.sub ? el('p', { class: 'sub', text: F.sub }) : '', F.author ? el('p', { class: 'autor', text: F.author }) : ''));
-      if (F.copy) P.append(pb(el('div', { class: 'direitos', text: F.copy })));
-      if (F.ded) P.append(pb(el('div', { class: 'ded', text: F.ded })));
-      if (F.epi) P.append(pb(el('div', { class: 'epi' }, F.epi, F.epiRef ? el('p', { class: 'ref', text: F.epiRef }) : '')));
+      P.append(el('div', { class: 'nonum' }, el('div', { class: 'rosto' }, el('h1', { text: F.title }), F.sub ? el('p', { class: 'sub', text: F.sub }) : '', F.author ? el('p', { class: 'autor', text: F.author }) : '')));
+      if (F.copy) P.append(nonum(el('div', { class: 'direitos', text: F.copy })));
+      if (F.ded) P.append(nonum(el('div', { class: 'ded', text: F.ded })));
+      if (F.epi) P.append(nonum(el('div', { class: 'epi' }, F.epi, F.epiRef ? el('p', { class: 'ref', text: F.epiRef }) : '')));
     }
-    const list = this.list(nb, o);
-    if (o.toc) P.append(pb(el('div', { class: 'toc' }, el('h1', { text: 'Sumário' }), ...list.filter(c => c.top).map(c => el('p', { class: 'toc-i', text: c.num ? `${c.num}. ${c.s.title || ''}` : c.s.title || '' })))));
+    const list = this.list(nb, o), parts = Book.realParts(nb), multi = parts.length > 1;
+    // sumário: partes e capítulos, com espaço para o número da página
+    let toc = null; const tocRefs = [];
+    if (o.toc) {
+      toc = el('div', { class: 'toc' }, el('h1', { text: 'Sumário' })); let lp = null;
+      for (const c of list) {
+        if (!c.top) continue;
+        if (multi && c.part !== lp && Book.secKind(c.part) === 'parte') { lp = c.part; const n = el('span', { class: 'n' }); toc.append(el('p', { class: 'toc-part' }, el('span', { text: `Parte ${ROMAN(parts.indexOf(c.part) + 1)} — ${c.part.name}` }), el('span', { class: 'lead' }), n)); tocRefs.push(['part', c.part.id, n]); }
+        const n = el('span', { class: 'n' }); toc.append(el('p', { class: 'toc-i' + (multi && Book.secKind(c.part) === 'parte' ? ' sub' : '') }, el('span', { class: 't', text: c.num ? `${o.capLabel ? 'Capítulo ' + c.num + ' — ' : c.num + '. '}${c.s.title || ''}` : c.s.title || '' }), el('span', { class: 'lead' }), n)); tocRefs.push(['cap', c.s.id, n]);
+      }
+      P.append(nonum(toc));
+    }
     if (o.front && F.thanks) P.append(pb(el('h1', { text: 'Agradecimentos' }), ...F.thanks.split(/\n+/).map(l => el('p', { text: l }))));
-    const multi = Book.realParts(nb).length > 1; let lastPart = null, pn = 0;
+    let lastPart = null;
     for (const c of list) {
-      if (multi && c.part !== lastPart && Book.secKind(c.part) === 'parte') { lastPart = c.part; P.append(pb(el('p', { class: 'capn', text: 'Parte ' + ROMAN(Book.realParts(nb).indexOf(c.part) + 1) }), el('h2', { class: 'parte', text: c.part.name }))); }
+      if (multi && c.part !== lastPart && Book.secKind(c.part) === 'parte') { lastPart = c.part; const pp = nonum(el('p', { class: 'capn', text: 'Parte ' + ROMAN(parts.indexOf(c.part) + 1) }), el('h2', { class: 'parte', text: c.part.name })); pp.dataset.mark = 'part:' + c.part.id; P.append(pp); }
       const notes = []; const box = this.chapterHTML(c, notes);
       const sec = c.top ? pb(o.capLabel && c.num ? el('p', { class: 'capn', text: 'Capítulo ' + c.num }) : '', el('h1', { text: c.s.title || '' })) : el('div', {}, el('h3', { text: c.s.title || '' }));
+      sec.dataset.mark = 'cap:' + c.s.id;
       sec.append(...box.childNodes); const nh = this.notesHTML(c, notes); if (nh) sec.append(nh); P.append(sec);
     }
     if (o.refs && Book.info(nb).refs.length) P.append(pb(el('div', { class: 'refs' }, el('h1', { text: 'Referências' }), ...Refs.sorted(nb).map(r => el('p', { html: Refs.abnt(r).html })))));
     if (o.about && F.about) P.append(pb(el('h1', { text: 'Sobre o autor' }), ...F.about.split(/\n+/).map(l => el('p', { text: l }))));
+    if (toc) { for (const [, , n] of tocRefs) n.textContent = '000'; for (let k = 0; k < 2; k++) { const pages = this.paginate(P, o); for (const [t, id, n] of tocRefs) n.textContent = pages[t + ':' + id] || ''; } }
     const old = document.title; document.title = safeName(F.title);
     setTimeout(() => { window.print(); document.title = old; P.className = ''; }, 200);
-    return 'Na janela de impressão, escolha “Salvar como PDF”.';
+    return 'Na janela de impressão, escolha “Salvar como PDF” (tamanho e margens já vêm certos; deixe “Margens: padrão” e desmarque “Cabeçalhos e rodapés”).';
+  },
+  /* mede o livro com as mesmas medidas da página e devolve o número da página onde começa cada parte/capítulo */
+  paginate(P, o) {
+    const G = this.pdfGeom(o), mm = 96 / 25.4, W = (G.w - G.inner - G.outer) * mm, H = (G.h - G.top - G.bottom) * mm;
+    let ms = $('#bk-measure-css'); if (!ms) { ms = el('style', { id: 'bk-measure-css' }); document.head.append(ms); }
+    ms.textContent = this.pdfRules('.bk-measure', o) + `.bk-measure{position:absolute;left:-99999px;top:0;width:${W}px;visibility:hidden}.bk-measure .pb{break-before:auto}.bk-measure>*{display:flow-root}`;
+    const M = el('div', { class: 'bk-measure' }); M.innerHTML = P.innerHTML; document.body.append(M);
+    const out = {}; let page = 0, used = 0;
+    const lh = parseFloat(getComputedStyle(M).lineHeight) || 20;
+    for (const ch of M.children) {
+      const forced = ch.classList.contains('pb') || page === 0;
+      if (forced) { page++; used = 0; }
+      if (ch.dataset.mark) out[ch.dataset.mark] = page;
+      const h = ch.getBoundingClientRect().height;
+      if (used + h <= H) used += h;
+      else { let rem = h - (H - used); const full = Math.ceil(rem / (H - lh)); page += full; used = rem - (full - 1) * (H - lh); }
+    }
+    M.remove(); return out;
   }
 };
 

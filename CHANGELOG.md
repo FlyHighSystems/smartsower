@@ -2,6 +2,11 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.14 — 22/11/2026
+- **Excluir várias páginas**: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); "☑ Selecionar várias" no menu da página; tecla Delete exclui as marcadas; Esc sai.
+- **Capítulos a partir do roteiro** refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.
+- **PDF do livro em formato de livro**: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho "📄 Exportar livro" no ⋯ do caderno-livro.
+
 ## 3.12.12 — 22/11/2026
 - Pesquisar: "👥 Todos os compartilhados" e "👥 Compartilhados comigo" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página.
 

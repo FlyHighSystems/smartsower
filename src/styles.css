@@ -217,7 +217,7 @@ a.ref{color:var(--rverse);text-decoration:underline dotted;text-underline-offset
 #print-area{display:none}
 @media print{
   @page{margin:16mm}
-  body{display:block;overflow:visible;background:#fff}
+  html,body{display:block;overflow:visible!important;height:auto!important;background:#fff}
   body>*:not(#print-area){display:none!important}
   #print-area{display:block;font-family:Calibri,"Segoe UI",sans-serif;font-size:12pt;line-height:1.5;color:#000}
   #print-area h1{color:#7719aa;font-size:22pt;margin:0 0 4pt}
@@ -732,3 +732,8 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .by-tag{--by:#7719aa;margin-left:8px;font-size:11px;color:var(--by);font-weight:600}
 .b-conflict{outline:2px dashed #e8a33c;outline-offset:3px}.conf-tag{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;background:#fff4ce;color:#5c4400;padding:6px 10px;border-radius:8px;margin-bottom:6px}
 .shr-btn{align-self:center}.shr-btn.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+
+.ol-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;max-height:52vh;overflow:auto;margin:8px 0}
+.ol-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid var(--line);font-size:14px}.ol-row:first-child{border-top:0}
+.ol-row.part{background:color-mix(in srgb,var(--accent) 9%,transparent)}.ol-as{flex:0 0 96px;font:inherit;font-size:12.5px;padding:2px 4px}
+.ol-t{flex:1;min-width:0}.ol-dup{color:#a4262c;font-size:12px}.ol-skip{text-decoration:line-through}.ol-sum{font-size:13.5px;margin:6px 0 10px}

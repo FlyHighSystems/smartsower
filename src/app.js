@@ -51,6 +51,9 @@ const App = {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); this.flush(); UI.toast('Salvo'); }
       if (e.key === 'F5' && !Reader.active) { e.preventDefault(); Reader.open(this.cur); }
       const inText = e.target.closest && e.target.closest('[contenteditable], input, textarea, select');
+      const inSel = inText && e.target.matches?.('#page-list input[type=checkbox]');
+      if ((!inText || inSel) && this.selMode && this.sel?.size && (e.key === 'Delete' || e.key === 'Backspace') && !$('.modal')) { e.preventDefault(); this._bulkDel?.click(); }
+      if ((!inText || inSel) && this.selMode && e.key === 'Escape' && !$('.modal')) { this.selMode = false; this.sel = new Set(); this.renderPages(); }
       if (this.cur && !Reader.active && e.ctrlKey && e.altKey && (e.key === ']' || e.key === '[')) { e.preventDefault(); this.indentPage(this.cur.id, e.key === ']' ? 1 : -1); }
       if (this.cur && !Reader.active && !inText && e.altKey && e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.movePage(this.cur.id, e.key === 'ArrowUp' ? -1 : 1); }
     });
@@ -115,6 +118,7 @@ const App = {
     blk.forEach(b => { b.level = Math.max(0, Math.min(2, (b.level || 0) + shift)); this.touch(b); });
     l.splice(t, 0, ...blk); this.saveOrder(l); this.renderNav();
   },
+  startSelect(ids) { this.selMode = true; this.sel = new Set(ids.filter(id => id && this.sermons.has(id))); this.renderPages(); UI.toast('Seleção: marque as páginas e use Mover, Copiar, Tipo ou Excluir (tecla Delete).'); },
   pageMenu(s) {
     const m = UI.modal({ title: s.title || 'Página', body: el('div', { class: 'pm' },
       el('button', { class: 'on-item', onclick: () => { m.close(); this.movePage(s.id, -1); } }, el('b', { text: '↑ Subir' })),
@@ -122,6 +126,7 @@ const App = {
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, 1); } }, el('b', { text: '→ Tornar subpágina' }), el('span', { class: 'muted small', text: 'Fica recuada debaixo da página de cima' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.indentPage(s.id, -1); } }, el('b', { text: '← Promover' }), el('span', { class: 'muted small', text: 'Volta um nível' })),
       el('button', { class: 'on-item', onclick: async () => { m.close(); const r = await SectionPicker.pick(`“${s.title}”`, true); if (r) this.moveSermons([s.id], r.sec, r.copy); } }, el('b', { text: '⇢ Mover / Copiar para outra seção' })),
+      el('button', { class: 'on-item', onclick: () => { m.close(); this.startSelect([s.id]); } }, el('b', { text: '☑ Selecionar várias' }), el('span', { class: 'muted small', text: 'Para mover, copiar ou excluir várias de uma vez' })),
       el('button', { class: 'on-item', onclick: () => { m.close(); this.open(s.id); this.deleteSermon(); } }, el('b', { class: 'danger-text', text: 'Excluir' }))) });
   },
 
@@ -175,6 +180,7 @@ const App = {
     if (nb.foreign) { const m2 = UI.modal({ title: '👥 ' + nb.name, body: el('p', { class: 'muted', text: `Caderno de ${nb.foreign.ownerName || Shared.nameOf(nb.foreign.ownerEmail)}, compartilhado com você. Seções e pessoas são definidas pelo dono.` }), actions: [{ label: 'Sair deste caderno', danger: true, onClick: () => Shared.leave(nb) }] }); return; }
     const m = UI.modal({ title: 'Caderno: ' + nb.name, body: '', actions: [
       { label: nb.shared ? '👥 Pessoas e permissões' : '👥 Compartilhar…', onClick: () => Shared.open(nb) },
+      ...(Book.isNb(nb) ? [{ label: '📄 Exportar livro', onClick: () => Book.open('export') }] : []),
       { label: 'Renomear', onClick: async () => { const n = await UI.ask('Renomear caderno', nb.name); if (n) { nb.name = n; this.saveMeta(); this.renderNav(); } } },
       { label: Book.isNb(nb) ? 'Voltar a caderno comum' : '📖 Transformar em livro', onClick: async () => {
         if (Book.isNb(nb)) { if (!await UI.confirm('Voltar a caderno comum', 'As páginas continuam iguais; só some o modo livro (metas, quadro, exportação). Os dados do livro ficam guardados.', 'Voltar a caderno comum')) return; nb.kind = ''; }
@@ -287,12 +293,15 @@ const App = {
       const preview = s.passage || htmlToText(s.blocks.find(b => b.type === 'text')?.html || '').slice(0, 60);
       if (this.selMode) {
         const on = this.sel.has(s.id);
-        list.append(el('label', { class: 'page sel-row' + (on ? ' active' : '') },
-          el('input', { type: 'checkbox', checked: on, onchange: e => { e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
+        const vis = items.map(x => x.id), myIdx = vis.indexOf(s.id);
+        list.append(el('label', { class: 'page sel-row' + (on ? ' active' : ''), 'data-id': s.id, onclick: e => { this._shift = e.shiftKey; } },
+          el('input', { type: 'checkbox', checked: on, onchange: e => {
+            if (this._shift && this._lastSel != null) { const [a2, b2] = [Math.min(this._lastSel, myIdx), Math.max(this._lastSel, myIdx)]; for (let i = a2; i <= b2; i++) this.sel.add(vis[i]); this._shift = false; this._lastSel = myIdx; this.renderPages(); return; }
+            e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this._lastSel = myIdx; this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
           el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
-      const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: () => this.open(s.id),
+      const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: e => { if (e.ctrlKey || e.metaKey || e.shiftKey) return this.startSelect(e.shiftKey && this.cur ? (() => { const v = items.map(x => x.id), i1 = v.indexOf(this.cur.id), i2 = v.indexOf(s.id); return i1 < 0 ? [s.id] : v.slice(Math.min(i1, i2), Math.max(i1, i2) + 1); })() : [this.cur?.id, s.id]); this.open(s.id); },
         ondragstart: e => { e.dataTransfer.setData('text/x-sermon', s.id); e.dataTransfer.effectAllowed = 'copyMove'; document.body.classList.add('dragging'); this._drag = s.id; },
         ondragend: () => { document.body.classList.remove('dragging'); this._drag = null; } },
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
@@ -319,11 +328,13 @@ const App = {
     const mv = el('button', { class: 'btn sm primary', text: 'Mover para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Mover ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, false); } });
     const cp = el('button', { class: 'btn sm', text: 'Copiar para…', disabled: !n, onclick: async () => { const sec = await SectionPicker.pick(`Copiar ${n} página(s) para…`); if (sec) this.moveSermons(ids(), sec, true); } });
     const del = el('button', { class: 'btn sm danger-text', text: 'Excluir', disabled: !n, onclick: async () => {
-      if (!await UI.confirm('Excluir páginas', `Excluir ${n} ministração(ões)?`)) return;
+      const blocked = ids().filter(id => { const x = this.sermons.get(id); return x && !Shared.canDelete(x); }).length;
+      if (!await UI.confirm('Excluir páginas', `Excluir ${n - blocked} página(s)? Não dá para desfazer.` + (blocked ? ` (${blocked} de outras pessoas ficam — só o autor ou o dono do caderno podem excluir.)` : ''), 'Excluir')) return;
       for (const id of this.sel) { const x = this.sermons.get(id); if (x && !Shared.canDelete(x)) continue; this.sermons.delete(id); DB.del('sermons', id); Cloud.tomb(id); }
       if (this.cur && !this.sermons.has(this.cur.id)) { this.cur = null; this.renderEditor(); }
-      this.sel = new Set(); this.renderNav();
+      this.sel = new Set(); this.selMode = false; this.renderNav(); UI.toast('Páginas excluídas');
     } });
+    this._bulkDel = del;
     bar.append(el('span', { class: 'small', text: n ? `${n} selecionada(s)` : 'Toque nas páginas' }), all, mv, cp, PageKinds.bulkButton(ids, n), del);
   },
   /* Move ou copia ministrações para outra seção */

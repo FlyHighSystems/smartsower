@@ -80,24 +80,122 @@ const Book = {
     }
     App.newSermon(data);
   },
-  /* lê a lista "Capítulos" do roteiro e cria as páginas que ainda não existem */
+  /* ===== Roteiro → partes e capítulos =====
+     Lê o roteiro como árvore (Parte → Capítulo → tópicos), mostra uma prévia para você ajustar
+     e cria uma parte do livro para cada Parte, com os capítulos em ordem e os tópicos dentro. */
+  isPartLine(t) { return /^(parte|part|livro|se[cç][aã]o|movimento|bloco|unidade|m[oó]dulo|ato)\s*([0-9ivxlc]+|um|dois|tr[eê]s|quatro|cinco|seis|sete|oito|nove|dez|primeir|segund|terceir|quart|quint)\b/i.test(t) || /^[IVXLC]+\s*[.)\-–—:]\s+\S/.test(t); },
+  isChapLine(t) { return /^(cap[ií]tulo|cap\.?)\s*[0-9ivxlc]+/i.test(t); },
+  outlineLines(s) {
+    const T = b => htmlToText(b.html || '').trim();
+    const skip = /^(tese|para quem|p[uú]blico|promessa|ilustra|hist[oó]rias|notas|refer[eê]ncias|ideias soltas|pesquisa)/i;
+    let start = s.blocks.findIndex(b => b.type === 'subhead' && /cap[ií]tulos|estrutura|sum[aá]rio|esbo[cç]o|partes|[ií]ndice/i.test(T(b)));
+    const lines = []; let inScope = start < 0;
+    s.blocks.forEach((b, i) => {
+      if (b.type === 'subhead') {
+        const t = T(b); if (!t) return;
+        if (i === start) { inScope = true; return; }
+        if (skip.test(t)) { inScope = false; return; }
+        if (start >= 0 && i > start && !this.isPartLine(t) && !this.isChapLine(t)) { inScope = false; return; }
+        if (inScope || this.isPartLine(t) || this.isChapLine(t)) { inScope = true; lines.push({ t, d: -1, head: true }); }
+        return;
+      }
+      if (!inScope || b.type !== 'text' || !b.html) return;
+      const d = document.createElement('div'); d.innerHTML = b.html;
+      const walk = (node, depth) => {
+        for (const n of node.childNodes) {
+          if (n.nodeType === 3) { n.data.split('\n').forEach(x => { x = x.trim(); if (x) lines.push({ t: x, d: depth + (/^[-•*▪◦·]\s/.test(x) ? 1 : 0) }); }); continue; }
+          if (n.nodeType !== 1) continue; const tag = n.tagName;
+          if (tag === 'UL' || tag === 'OL') { walk(n, depth + 1); continue; }
+          if (tag === 'LI') { const own = [...n.childNodes].filter(c => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(c => c.textContent).join('').trim(); if (own) lines.push({ t: own, d: depth }); [...n.children].filter(c => /^(UL|OL)$/.test(c.tagName)).forEach(c => walk(c, depth + 1)); continue; }
+          if (tag === 'BLOCKQUOTE') { walk(n, depth + 1); continue; }
+          if (tag === 'BR') continue;
+          if (/^(DIV|P|H[1-6])$/.test(tag) && ![...n.children].some(c => /^(UL|OL|DIV|P|BLOCKQUOTE)$/.test(c.tagName))) { const x = n.textContent.trim(); const ind = (parseFloat(n.style?.marginLeft || 0) > 0 ? 1 : 0) + (/^[-•*▪◦·]\s/.test(x) ? 1 : 0); if (x) lines.push({ t: x, d: depth + ind }); continue; }
+          walk(n, depth);
+        }
+      };
+      walk(d, 0);
+    });
+    return lines.map(l => ({ ...l, t: l.t.replace(/^\s*(\d+[.)]|[-•*▪◦·])\s*/, '').trim() })).filter(l => l.t && !/^t[ií]tulo do cap[ií]tulo/i.test(l.t));
+  },
+  classify(lines) {
+    const hasPart = lines.some(l => this.isPartLine(l.t)), explicit = lines.some(l => this.isChapLine(l.t));
+    const depths = lines.filter(l => !l.head && !this.isPartLine(l.t)).map(l => l.d); const minD = depths.length ? Math.min(...depths) : 0;
+    let partD = null;
+    return lines.map(l => {
+      if (this.isPartLine(l.t) || (l.head && !this.isChapLine(l.t))) { partD = l.d; return { ...l, as: 'part' }; }
+      if (this.isChapLine(l.t)) return { ...l, as: 'chap' };
+      if (explicit) return { ...l, as: 'topic' }; // quando o roteiro diz “Capítulo N”, o resto é tópico
+      const chapD = hasPart && partD != null && partD >= 0 ? partD + 1 : minD;
+      return { ...l, as: l.d <= chapD ? 'chap' : 'topic' };
+    });
+  },
+  splitTitle(t) {
+    t = t.replace(/^(cap[ií]tulo|cap\.?)\s*[0-9ivxlc]+\s*[.:\-–—]?\s*/i, '');
+    const m = t.split(/\s+[—–-]\s+|:\s+/); return { title: (m.shift() || '').trim(), syn: m.join(' — ').trim() };
+  },
+  partName(t) { const m = t.replace(/^(parte|part|livro|se[cç][aã]o|bloco|unidade|m[oó]dulo|ato)\s*([0-9ivxlc]+|\S+)\s*[.:\-–—]?\s*/i, '').replace(/^[IVXLC]+\s*[.)\-–—:]\s+/, '').trim(); return m || t; },
   fromOutline(s) {
-    const nb = this.nbOf(s.sec); const idx = s.blocks.findIndex(b => b.type === 'subhead' && /cap[ií]tulo/i.test(htmlToText(b.html || '')));
-    const scope = idx >= 0 ? s.blocks.slice(idx + 1, (s.blocks.slice(idx + 1).findIndex(b => b.type === 'subhead') + idx + 1) || undefined) : s.blocks;
-    const items = [];
-    for (const b of scope) { if (b.type !== 'text') continue; const d = document.createElement('div'); d.innerHTML = (b.html || '').replace(/<br\s*\/?>|<\/div>|<\/p>/gi, '\n');
-      const lis = d.querySelectorAll('li'); (lis.length ? [...lis].map(li => li.textContent) : d.textContent.split('\n')).forEach(t => { t = t.replace(/^\s*(\d+[.)]|[-•*])\s*/, '').trim(); if (t) items.push(t); }); }
-    const exist = new Set(this.chapters(nb).map(c => (c.s.title || '').trim().toLowerCase()));
-    const target = this.secKind(App.meta.sections.find(x => x.id === s.sec)) === 'plan' ? (this.realParts(nb)[0] || App.meta.sections.find(x => x.id === s.sec)) : App.meta.sections.find(x => x.id === s.sec);
-    let made = 0; this.ensureOrder(target.id); const list = App.sectionSermons(target.id);
-    for (const t of items) {
-      const [title, ...rest] = t.split(/\s+[—–-]\s+|:\s+/); const name = (title || '').trim(); if (!name || exist.has(name.toLowerCase()) || /^título do capítulo$/i.test(name)) continue;
-      const c = { ...blankSermon(target.id), ...this.blankChapter(), title: name, order: list.length + made };
-      c.book = { kind: 'capitulo', status: 'ideia', goal: 0, synopsis: rest.join(' — ').trim() };
-      App.sermons.set(c.id, c); App.touch(c); exist.add(name.toLowerCase()); made++;
+    const nb = this.nbOf(s.sec); const raw = this.outlineLines(s);
+    if (!raw.length) return UI.toast('Não achei a lista do roteiro. Escreva em “Capítulos” — uma linha por capítulo (e “Parte 1 — …” para as partes).');
+    let rows = this.classify(raw);
+    const body = el('div', { class: 'ol' }); const m = UI.modal({ title: '➜ Criar capítulos a partir do roteiro', body, wide: true });
+    const exist = new Map(this.chapters(nb).map(c => [(c.s.title || '').trim().toLowerCase(), c.s]));
+    const draw = () => {
+      body.innerHTML = '';
+      const nP = rows.filter(r => r.as === 'part').length, nC = rows.filter(r => r.as === 'chap').length;
+      body.append(el('p', { class: 'muted small', text: 'Confira como li o seu roteiro. Ajuste cada linha se precisar: Parte vira uma parte do livro, Capítulo vira uma página, Tópico entra dentro do capítulo acima.' }));
+      const list = el('div', { class: 'ol-list' });
+      rows.forEach((r, i) => {
+        const sel = el('select', { class: 'ol-as ' + r.as, onchange: e => { r.as = e.target.value; draw(); } }, ...[['part', 'Parte'], ['chap', 'Capítulo'], ['topic', 'Tópico'], ['skip', 'Ignorar']].map(([v, t]) => el('option', { value: v, text: t, selected: r.as === v })));
+        const st = r.as === 'chap' ? this.splitTitle(r.t) : null, dup = st && exist.has(st.title.toLowerCase());
+        list.append(el('div', { class: 'ol-row ' + r.as }, sel, el('span', { class: 'ol-t', style: { paddingLeft: (r.as === 'topic' ? 28 : r.as === 'chap' ? 12 : 0) + 'px' } },
+          r.as === 'part' ? el('b', { text: '📂 ' + this.partName(r.t) }) : r.as === 'chap' ? el('span', {}, el('b', { text: '📄 ' + st.title }), st.syn ? el('span', { class: 'muted', text: ' — ' + st.syn }) : '', dup ? el('span', { class: 'ol-dup', text: ' já existe — vai para o lugar certo, com o texto que você já escreveu' }) : '') : el('span', { class: r.as === 'skip' ? 'muted ol-skip' : 'muted', text: (r.as === 'topic' ? '• ' : '') + r.t }))));
+      });
+      body.append(list, el('div', { class: 'ol-sum' }, el('b', { text: `${nP ? nP + ' parte(s) · ' : ''}${nC} capítulo(s)` }), nP ? ' — cada Parte vira uma parte do livro (seção), com os capítulos dela.' : ` — vão para “${this.outlineTarget(s, nb).name}”.`),
+        el('div', { class: 'row-btns' }, el('button', { class: 'btn primary', text: 'Criar', disabled: !nC, onclick: () => { m.close(); this.buildOutline(s, nb, rows, exist); } })));
+    };
+    draw();
+  },
+  outlineTarget(s, nb) { const here = App.meta.sections.find(x => x.id === s.sec); return this.secKind(here) === 'plan' ? (this.realParts(nb)[0] || here) : here; },
+  buildOutline(s, nb, rows, exist) {
+    const made = [], newSecs = [], renamed = [], moved = [], seq = {}; let part = null, chap = null, topics = [];
+    const flush = () => {
+      if (!chap) return;
+      if (topics.length) {
+        const lv = topics.map(t => t.d), base = Math.min(...lv); let html = '<ul>', cur = base;
+        for (const t of topics) { while (t.d > cur) { html += '<ul>'; cur++; } while (t.d < cur) { html += '</ul>'; cur--; } html += `<li>${esc(t.t)}</li>`; }
+        while (cur > base) { html += '</ul>'; cur--; } html += '</ul>';
+        chap.blocks = [{ id: uid(), type: 'subhead', html: 'Tópicos do roteiro' }, { id: uid(), type: 'text', html }, { id: uid(), type: 'text', html: '' }];
+      }
+      chap = null; topics = [];
+    };
+    const targetFor = () => part || this.outlineTarget(s, nb);
+    for (const r of rows) {
+      if (r.as === 'skip') continue;
+      if (r.as === 'part') {
+        flush(); const name = this.partName(r.t);
+        part = App.meta.sections.find(x => x.nb === nb.id && this.secKind(x) === 'parte' && x.name.trim().toLowerCase() === name.toLowerCase());
+        if (!part) { const empty = App.meta.sections.find(x => x.nb === nb.id && this.secKind(x) === 'parte' && !App.sectionSermons(x.id).length && /^cap[ií]tulos$/i.test(x.name)); if (empty && !newSecs.length && !renamed.length) { renamed.push([empty, empty.name]); empty.name = name; part = empty; } else { part = { id: uid(), nb: nb.id, name, color: nb.color || '#8e562e', kind: 'parte' }; App.meta.sections.push(part); newSecs.push(part.id); } }
+        continue;
+      }
+      if (r.as === 'chap') {
+        flush(); const { title, syn } = this.splitTitle(r.t); if (!title) continue;
+        const sec = targetFor(); this.ensureOrder(sec.id);
+        const old = exist.get(title.toLowerCase());
+        if (old) { if (!moved.some(x => x[0] === old)) { moved.push([old, old.sec, old.order, old.level]); old.sec = sec.id; old.level = 0; old.order = (seq[sec.id] = (seq[sec.id] ?? -1) + 1); if (syn && !old.book?.synopsis) Book.meta(old).synopsis = syn; App.touch(old); } continue; }
+        chap = { ...blankSermon(sec.id), ...this.blankChapter(), title, order: (seq[sec.id] = (seq[sec.id] ?? -1) + 1) };
+        chap.book = { kind: 'capitulo', status: 'ideia', goal: 0, synopsis: syn };
+        App.sermons.set(chap.id, chap); made.push(chap); exist.set(title.toLowerCase(), chap); continue;
+      }
+      if (r.as === 'topic' && chap) topics.push(r);
     }
-    App.flush(); App.renderNav();
-    UI.toast(made ? `${made} capítulo(s) criado(s) em “${target.name}”, com o resumo de cada um.` : 'Nenhum capítulo novo: escreva a lista em “Capítulos” como “Título — do que trata”.');
+    flush();
+    for (const [secId, last] of Object.entries(seq)) { let k = last; for (const x of App.sectionSermons(secId)) if (!made.includes(x) && !moved.some(m => m[0] === x)) { x.order = ++k; App.touch(x); } }
+    made.forEach(c => App.touch(c)); App.saveMeta(); App.flush(); App.renderNav();
+    const nParts = new Set(made.map(c => c.sec)).size;
+    const msg = [made.length ? `${made.length} capítulo(s) criado(s)` : '', moved.length ? `${moved.length} reorganizado(s)` : ''].filter(Boolean).join(' e ');
+    UI.toast(msg ? `${msg}${nParts > 1 ? ` em ${nParts} partes` : ''}.` : 'Nada a fazer: o roteiro já está igual ao livro.',
+      msg ? { label: 'Desfazer', fn: () => { for (const [x, sec, order, level] of moved) { x.sec = sec; x.order = order; x.level = level; App.touch(x); } for (const c of made) { App.sermons.delete(c.id); DB.del('sermons', c.id); Cloud.tomb(c.id); } App.meta.sections = App.meta.sections.filter(x => !newSecs.includes(x.id)); renamed.forEach(([x, n]) => x.name = n); App.saveMeta(); App.renderNav(); App.open(s.id); UI.toast('Desfeito'); } } : undefined);
   },
   meta(s) { s.book ||= {}; s.book.status ||= 'rascunho'; s.book.goal ??= 0; s.book.synopsis ??= ''; return s.book; },
   status(s) { return BOOK_STATUS.find(x => x[0] === this.meta(s).status) || BOOK_STATUS[1]; },
@@ -680,33 +778,82 @@ sup a{text-decoration:none}.notas{margin-top:2.5em;border-top:1px solid #999;pad
     return `Pronto ✓ e-book com ${list.filter(c => c.num).length} capítulo(s). Antes de publicar, confira no Kindle Previewer ou no app de livros.`;
   },
 
-  /* ---------- PDF (impressão do navegador) ---------- */
+  /* ---------- PDF (impressão do navegador) ----------
+     Formato de livro: margens espelhadas, número de página no rodapé (sem número na capa,
+     dedicatória e aberturas de parte), título do livro no alto, sumário com partes, capítulos
+     e números de página (calculados medindo o texto com as mesmas medidas da página). */
+  pdfGeom(o) {
+    const a4 = o.size === 'a4';
+    return a4 ? { w: 210, h: 297, top: 25, bottom: 22, inner: 30, outer: 20, fs: '12pt' } : { w: 140, h: 210, top: 18, bottom: 18, inner: 20, outer: 15, fs: '10.5pt' };
+  },
+  pdfRules(prefix, o) {
+    const G = this.pdfGeom(o);
+    return `${prefix}{font-family:Georgia,"Times New Roman",serif;font-size:${G.fs};line-height:1.5;color:#111}${prefix} .pb{break-before:page}${prefix} .nonum{page:nonum}
+${prefix} .toc h1{margin-top:0}${prefix} .toc-part{font-weight:bold;margin:1em 0 .3em;text-indent:0;display:flex;gap:.4em}${prefix} .toc-i{display:flex;align-items:baseline;gap:.4em;margin:.25em 0;text-indent:0;text-align:left}
+${prefix} .toc-i .t{flex:0 1 auto}${prefix} .toc-i .lead{flex:1 1 auto;border-bottom:1px dotted #777;transform:translateY(-.25em);min-width:1em}${prefix} .toc-i .n,${prefix} .toc-part .n{flex:0 0 auto;min-width:1.6em;text-align:right}${prefix} .toc-part .lead{flex:1}
+${prefix} h1,${prefix} h2,${prefix} h3,${prefix} h4{color:#111!important}${prefix} .capn{color:#555!important}${prefix} .toc-i.sub{padding-left:1.4em;font-size:.95em}${prefix} figure{break-inside:avoid}${prefix} h1,${prefix} h3{break-after:avoid}
+${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => prefix + ' ' + x.trim()).join(',') + '{')}`;
+  },
   async pdf(nb, o) {
-    const F = this.front(nb), P = $('#print-area'); P.innerHTML = ''; P.className = 'bk-print ' + (o.size === 'a4' ? 'a4' : 'b14');
+    const F = this.front(nb), P = $('#print-area'), G = this.pdfGeom(o); P.innerHTML = ''; P.className = 'bk-print ' + (o.size === 'a4' ? 'a4' : 'b14');
     let st = $('#bk-print-css'); if (!st) { st = el('style', { id: 'bk-print-css' }); document.head.append(st); }
-    st.textContent = `@media print{@page{size:${o.size === 'a4' ? 'A4' : '140mm 210mm'};margin:${o.size === 'a4' ? '30mm 20mm 20mm 30mm' : '18mm 15mm 18mm 20mm'}}#print-area.bk-print{font-family:Georgia,"Times New Roman",serif;font-size:${o.size === 'a4' ? '12pt' : '10.5pt'};line-height:1.5}#print-area.bk-print .pb{break-before:page}${this.CSS.replace(/body\{[^}]*\}/, '').replace(/(^|\})\s*([^{}@]+)\{/g, (m0, a, sel) => a + sel.split(',').map(x => '#print-area.bk-print ' + x.trim()).join(',') + '{')}}`;
-    const pb = (...k) => el('div', { class: 'pb' }, ...k);
+    const num = 'content:counter(page);font-family:Georgia,serif;font-size:9pt;color:#444', head = `content:"${String(F.title || '').replace(/["\\]/g, '')}";font-family:Georgia,serif;font-size:8pt;font-style:italic;color:#777`;
+    st.textContent = `@media print{@page{size:${G.w}mm ${G.h}mm;margin:${G.top}mm ${G.outer}mm ${G.bottom}mm ${G.inner}mm;@bottom-center{${num}}}
+@page :left{margin-left:${G.outer}mm;margin-right:${G.inner}mm;@top-left{${head}}}@page :right{margin-left:${G.inner}mm;margin-right:${G.outer}mm;@top-right{${head}}}
+@page nonum{@bottom-center{content:none}@top-left{content:none}@top-right{content:none}}
+${this.pdfRules('#print-area.bk-print', o)}}`;
+    const pb = (...k) => el('div', { class: 'pb' }, ...k), nonum = (...k) => el('div', { class: 'pb nonum' }, ...k);
     if (o.front) {
-      P.append(el('div', { class: 'rosto' }, el('h1', { text: F.title }), F.sub ? el('p', { class: 'sub', text: F.sub }) : '', F.author ? el('p', { class: 'autor', text: F.author }) : ''));
-      if (F.copy) P.append(pb(el('div', { class: 'direitos', text: F.copy })));
-      if (F.ded) P.append(pb(el('div', { class: 'ded', text: F.ded })));
-      if (F.epi) P.append(pb(el('div', { class: 'epi' }, F.epi, F.epiRef ? el('p', { class: 'ref', text: F.epiRef }) : '')));
+      P.append(el('div', { class: 'nonum' }, el('div', { class: 'rosto' }, el('h1', { text: F.title }), F.sub ? el('p', { class: 'sub', text: F.sub }) : '', F.author ? el('p', { class: 'autor', text: F.author }) : '')));
+      if (F.copy) P.append(nonum(el('div', { class: 'direitos', text: F.copy })));
+      if (F.ded) P.append(nonum(el('div', { class: 'ded', text: F.ded })));
+      if (F.epi) P.append(nonum(el('div', { class: 'epi' }, F.epi, F.epiRef ? el('p', { class: 'ref', text: F.epiRef }) : '')));
     }
-    const list = this.list(nb, o);
-    if (o.toc) P.append(pb(el('div', { class: 'toc' }, el('h1', { text: 'Sumário' }), ...list.filter(c => c.top).map(c => el('p', { class: 'toc-i', text: c.num ? `${c.num}. ${c.s.title || ''}` : c.s.title || '' })))));
+    const list = this.list(nb, o), parts = Book.realParts(nb), multi = parts.length > 1;
+    // sumário: partes e capítulos, com espaço para o número da página
+    let toc = null; const tocRefs = [];
+    if (o.toc) {
+      toc = el('div', { class: 'toc' }, el('h1', { text: 'Sumário' })); let lp = null;
+      for (const c of list) {
+        if (!c.top) continue;
+        if (multi && c.part !== lp && Book.secKind(c.part) === 'parte') { lp = c.part; const n = el('span', { class: 'n' }); toc.append(el('p', { class: 'toc-part' }, el('span', { text: `Parte ${ROMAN(parts.indexOf(c.part) + 1)} — ${c.part.name}` }), el('span', { class: 'lead' }), n)); tocRefs.push(['part', c.part.id, n]); }
+        const n = el('span', { class: 'n' }); toc.append(el('p', { class: 'toc-i' + (multi && Book.secKind(c.part) === 'parte' ? ' sub' : '') }, el('span', { class: 't', text: c.num ? `${o.capLabel ? 'Capítulo ' + c.num + ' — ' : c.num + '. '}${c.s.title || ''}` : c.s.title || '' }), el('span', { class: 'lead' }), n)); tocRefs.push(['cap', c.s.id, n]);
+      }
+      P.append(nonum(toc));
+    }
     if (o.front && F.thanks) P.append(pb(el('h1', { text: 'Agradecimentos' }), ...F.thanks.split(/\n+/).map(l => el('p', { text: l }))));
-    const multi = Book.realParts(nb).length > 1; let lastPart = null, pn = 0;
+    let lastPart = null;
     for (const c of list) {
-      if (multi && c.part !== lastPart && Book.secKind(c.part) === 'parte') { lastPart = c.part; P.append(pb(el('p', { class: 'capn', text: 'Parte ' + ROMAN(Book.realParts(nb).indexOf(c.part) + 1) }), el('h2', { class: 'parte', text: c.part.name }))); }
+      if (multi && c.part !== lastPart && Book.secKind(c.part) === 'parte') { lastPart = c.part; const pp = nonum(el('p', { class: 'capn', text: 'Parte ' + ROMAN(parts.indexOf(c.part) + 1) }), el('h2', { class: 'parte', text: c.part.name })); pp.dataset.mark = 'part:' + c.part.id; P.append(pp); }
       const notes = []; const box = this.chapterHTML(c, notes);
       const sec = c.top ? pb(o.capLabel && c.num ? el('p', { class: 'capn', text: 'Capítulo ' + c.num }) : '', el('h1', { text: c.s.title || '' })) : el('div', {}, el('h3', { text: c.s.title || '' }));
+      sec.dataset.mark = 'cap:' + c.s.id;
       sec.append(...box.childNodes); const nh = this.notesHTML(c, notes); if (nh) sec.append(nh); P.append(sec);
     }
     if (o.refs && Book.info(nb).refs.length) P.append(pb(el('div', { class: 'refs' }, el('h1', { text: 'Referências' }), ...Refs.sorted(nb).map(r => el('p', { html: Refs.abnt(r).html })))));
     if (o.about && F.about) P.append(pb(el('h1', { text: 'Sobre o autor' }), ...F.about.split(/\n+/).map(l => el('p', { text: l }))));
+    if (toc) { for (const [, , n] of tocRefs) n.textContent = '000'; for (let k = 0; k < 2; k++) { const pages = this.paginate(P, o); for (const [t, id, n] of tocRefs) n.textContent = pages[t + ':' + id] || ''; } }
     const old = document.title; document.title = safeName(F.title);
     setTimeout(() => { window.print(); document.title = old; P.className = ''; }, 200);
-    return 'Na janela de impressão, escolha “Salvar como PDF”.';
+    return 'Na janela de impressão, escolha “Salvar como PDF” (tamanho e margens já vêm certos; deixe “Margens: padrão” e desmarque “Cabeçalhos e rodapés”).';
+  },
+  /* mede o livro com as mesmas medidas da página e devolve o número da página onde começa cada parte/capítulo */
+  paginate(P, o) {
+    const G = this.pdfGeom(o), mm = 96 / 25.4, W = (G.w - G.inner - G.outer) * mm, H = (G.h - G.top - G.bottom) * mm;
+    let ms = $('#bk-measure-css'); if (!ms) { ms = el('style', { id: 'bk-measure-css' }); document.head.append(ms); }
+    ms.textContent = this.pdfRules('.bk-measure', o) + `.bk-measure{position:absolute;left:-99999px;top:0;width:${W}px;visibility:hidden}.bk-measure .pb{break-before:auto}.bk-measure>*{display:flow-root}`;
+    const M = el('div', { class: 'bk-measure' }); M.innerHTML = P.innerHTML; document.body.append(M);
+    const out = {}; let page = 0, used = 0;
+    const lh = parseFloat(getComputedStyle(M).lineHeight) || 20;
+    for (const ch of M.children) {
+      const forced = ch.classList.contains('pb') || page === 0;
+      if (forced) { page++; used = 0; }
+      if (ch.dataset.mark) out[ch.dataset.mark] = page;
+      const h = ch.getBoundingClientRect().height;
+      if (used + h <= H) used += h;
+      else { let rem = h - (H - used); const full = Math.ceil(rem / (H - lh)); page += full; used = rem - (full - 1) * (H - lh); }
+    }
+    M.remove(); return out;
   }
 };
 
