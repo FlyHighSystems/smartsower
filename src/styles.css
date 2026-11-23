@@ -737,3 +737,4 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .ol-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid var(--line);font-size:14px}.ol-row:first-child{border-top:0}
 .ol-row.part{background:color-mix(in srgb,var(--accent) 9%,transparent)}.ol-as{flex:0 0 96px;font:inherit;font-size:12.5px;padding:2px 4px}
 .ol-t{flex:1;min-width:0}.ol-dup{color:#a4262c;font-size:12px}.ol-skip{text-decoration:line-through}.ol-sum{font-size:13.5px;margin:6px 0 10px}
+.fbar.mini > .fb-verse{display:none}.fbar:not(.has-sel) .fb-verse{display:none}.block.flash{animation:flashb 1.2s ease}@keyframes flashb{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}

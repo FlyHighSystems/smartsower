@@ -689,6 +689,7 @@ const FloatBar = {
     const sep = () => el('span', { class: 'fb-sep' });
     const bar = el('div', { class: 'fbar', role: 'toolbar', 'aria-label': 'Formatação' },
       B('😊', 'Emoji (Ctrl+Shift+E)', () => { const a = document.activeElement; if (!Emoji.isField(a)) { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }, 'fb-emoji'), sep(),
+      B('📖', 'Transformar o trecho selecionado em bloco de versículo', () => { this.hide(); Verseify.toVerse(); }, 'fb-verse'),
       B('<b>N</b>', 'Negrito (Ctrl+B)', () => this.exec('bold'), 'st-bold'), B('<i>I</i>', 'Itálico (Ctrl+I)', () => this.exec('italic'), 'st-italic'),
       B('<u>S</u>', 'Sublinhado (Ctrl+U)', () => this.exec('underline'), 'st-underline'), B('<s>ab</s>', 'Tachado', () => this.exec('strikeThrough'), 'st-strikeThrough'), sep(),
       ...this.HL.map(c => B('', 'Marca-texto', () => this.exec('hiliteColor', c, true), 'fb-sw').tap(x => x.style.background = c)),
@@ -720,6 +721,8 @@ const FloatBar = {
       B('✂ Recortar', 'Ctrl+X', () => { document.execCommand('cut'); this.hide(); }, has ? '' : 'off'),
       B('⧉ Copiar', 'Ctrl+C', () => { document.execCommand('copy'); this.hide(); }, has ? '' : 'off'),
       B('📋 Colar', 'Ctrl+V', async () => { this.hide(); try { const t = await navigator.clipboard.readText(); if (t) document.execCommand('insertText', false, t); } catch (x) { UI.toast('O navegador não deixou colar por aqui — use Ctrl+V'); } }),
+      has ? B('📖 Virar versículo', 'O trecho selecionado vira um bloco de versículo', () => { this.hide(); Verseify.toVerse(); }) : null,
+      B(has ? '✂ Separar em bloco' : '✂ Dividir aqui', has ? 'O trecho selecionado vira um bloco próprio' : 'Divide o bloco em dois no ponto do cursor', () => { this.hide(); Verseify.split(); }),
       B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
     this.ctxBox = box; this.bar.prepend(box); this.bar.classList.add('ctx', 'show');
     const bw = this.bar.offsetWidth, bh = this.bar.offsetHeight, vh = window.visualViewport?.height || innerHeight;
@@ -740,7 +743,7 @@ const FloatBar = {
     const vh = window.visualViewport?.height || innerHeight, bw = this.bar.offsetWidth || 420, bh = this.bar.offsetHeight || 40;
     let top = box.bottom + 10; if (top + bh > vh - 8) top = Math.max(56, box.top - bh - 10);
     const left = Math.max(8, Math.min(innerWidth - bw - 8, box.left - 20));
-    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
+    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show'); this.bar.classList.remove('has-sel');
   },
   update() {
     if (this.bar?.classList.contains('ctx')) return; // menu do clique direito aberto
@@ -756,7 +759,7 @@ const FloatBar = {
     /* no toque, a barra vai para baixo da seleção (em cima fica o menu do sistema) */
     let top = this.touch ? last.bottom + 12 : box.top - bh - 8; if (top < 56) top = last.bottom + 12; if (top + bh > innerHeight - 8) top = Math.max(56, box.top - bh - 8);
     const left = Math.max(8, Math.min(innerWidth - bw - 8, (this.touch ? last.left : box.left) + (this.touch ? 0 : box.width / 2 - bw / 2)));
-    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
+    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show', 'has-sel');
   },
   init() {
     if (!Element.prototype.tap) Object.defineProperty(Element.prototype, 'tap', { value(fn) { fn(this); return this; }, configurable: true });

@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.15 — 22/11/2026
+- **Versículo no meio do texto vira bloco de versículo**: selecione o trecho e toque em 📖 (barra de seleção) ou "📖 Virar versículo" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.
+- **✂ Dividir aqui / Separar em bloco** no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio.
+
 ## 3.12.14 — 22/11/2026
 - **Excluir várias páginas**: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); "☑ Selecionar várias" no menu da página; tecla Delete exclui as marcadas; Esc sai.
 - **Capítulos a partir do roteiro** refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.

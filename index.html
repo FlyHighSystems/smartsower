@@ -748,6 +748,7 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 .ol-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid var(--line);font-size:14px}.ol-row:first-child{border-top:0}
 .ol-row.part{background:color-mix(in srgb,var(--accent) 9%,transparent)}.ol-as{flex:0 0 96px;font:inherit;font-size:12.5px;padding:2px 4px}
 .ol-t{flex:1;min-width:0}.ol-dup{color:#a4262c;font-size:12px}.ol-skip{text-decoration:line-through}.ol-sum{font-size:13.5px;margin:6px 0 10px}
+.fbar.mini > .fb-verse{display:none}.fbar:not(.has-sel) .fb-verse{display:none}.block.flash{animation:flashb 1.2s ease}@keyframes flashb{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
 </style>
 </head>
 <body>
@@ -945,7 +946,7 @@ span.by{--by:#7719aa;text-decoration:underline;text-decoration-color:var(--by);t
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.14", "code": "e6b8ec", "at": "22/11 20:00", "notes": [{"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}, {"v": "3.12.2", "d": "22/11/2026", "items": ["Botão ⟳ no topo para recarregar o app sem fechar e abrir.", "O app percebe sozinho quando há versão nova (ao voltar para ele e a cada 15 min): o ⟳ fica verde e aparece \"Atualizar\"."]}]};
+<script>window.SS_BUILD = {"version": "3.12.15", "code": "99fe04", "at": "22/11 20:09", "notes": [{"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}, {"v": "3.12.14", "d": "22/11/2026", "items": ["Excluir várias páginas: Ctrl+clique ou Shift+clique já entra em seleção (Shift marca o intervalo); \"☑ Selecionar várias\" no menu da página; tecla Delete exclui as marcadas; Esc sai.", "Capítulos a partir do roteiro refeito: lê Parte → Capítulo → tópicos, mostra uma prévia para ajustar cada linha, cria uma parte do livro para cada Parte com os capítulos em ordem e os tópicos dentro; capítulos que já existem vão para o lugar certo sem perder o texto; Desfazer.", "PDF do livro em formato de livro: margens espelhadas, número de página no rodapé (sem número na capa, sumário e aberturas de parte), título do livro no alto, sumário com partes, capítulos e números de página; títulos em preto. Atalho \"📄 Exportar livro\" no ⋯ do caderno-livro."]}, {"v": "3.12.12", "d": "22/11/2026", "items": ["Pesquisar: \"👥 Todos os compartilhados\" e \"👥 Compartilhados comigo\" em Onde (sempre visíveis, com explicação quando ainda não há nada compartilhado); os resultados mostram 👥 e de quem é a página."]}, {"v": "3.12.11", "d": "22/11/2026", "items": ["Botão \"👥 Compartilhar\" ao lado do tipo da página (também nas páginas de livro); mostra \"👥 Compartilhado · N\" quando o caderno já está compartilhado.", "O antigo \"↗ Compartilhar\" (WhatsApp / link de leitura) passou a se chamar \"↗ Enviar\", para não confundir."]}, {"v": "3.12.10", "d": "22/11/2026", "items": ["Janelas com muitos botões (como o menu do caderno) quebram em duas linhas em vez de estourar para fora."]}, {"v": "3.12.9", "d": "22/11/2026", "items": ["Cadernos compartilhados: no menu do caderno, \"👥 Compartilhar…\" escolhe pessoas da equipe; o caderno (com as seções) aparece para elas em \"Compartilhados comigo\".", "Cada página é ✍️ Colaboração ou 🔒 Só leitura — quem define é o autor (ou o dono do caderno); o servidor também garante.", "O que outra pessoa escreve fica sublinhado na cor dela, com o nome; o autor pode aceitar uma a uma ou todas.", "Edições ao mesmo tempo: blocos diferentes se juntam; no mesmo bloco, as duas versões ficam guardadas com aviso ⚠."]}, {"v": "3.12.8", "d": "22/11/2026", "items": ["Guia de primeiro acesso: 13 passos que destacam cada função principal (cadernos, seções, nova página com tipo, filtro, blocos, formatação e emojis, revisão com IA, Pregar, Pesquisar, nuvem). Aparece uma vez por conta; reabra em \"❓ Guia\" no rodapé dos cadernos ou em ☁."]}, {"v": "3.12.7", "d": "22/11/2026", "items": ["Botão 🌐 Traduzir em qualquer página (sermão, devocional, estudo, capítulo de livro): cria uma cópia em inglês ou espanhol na mesma seção, com a formatação, as notas de rodapé e os emojis.", "Os versículos vêm de Bíblias publicadas: WEB e KJV (inglês) e Reina-Valera (espanhol), que podem ser baixadas no gerenciador de Bíblias. A IA só traduz versículo se você escolher.", "Página traduzida mostra 🇺🇸 EN / 🇪🇸 ES na lista; a correção ortográfica e as referências usam o idioma da página."]}, {"v": "3.12.6", "d": "22/11/2026", "items": ["Emojis de megafone 📣 📢 no começo de \"Fé e igreja\"; a busca \"megafone\" encontra os dois."]}, {"v": "3.12.5", "d": "22/11/2026", "items": ["Clique direito no texto abre o menu do SmartSower: sugestões da correção (na palavra marcada), Recortar, Copiar, Colar, Selecionar tudo e toda a formatação com emoji. Shift + clique direito (ou um segundo clique direito) abre o menu do navegador."]}, {"v": "3.12.4", "d": "22/11/2026", "items": ["Correção ortográfica: não puxa mais a primeira palavra de um parágrafo para o parágrafo de cima. O corretor agora enxerga as quebras de parágrafo e de linha, e nenhuma correção atravessa dois parágrafos."]}, {"v": "3.12.3", "d": "22/11/2026", "items": ["Ao tocar no texto (celular, Fold, Surface no toque), a barra de formatação aparece junto do cursor, com emoji; no título, aparece o botão de emoji. Some ao começar a digitar.", "Novos emojis: ❤️‍🔥 coração em chamas, ☁️ nuvem e 🚀 foguete logo no começo de \"Fé e igreja\", e mais nuvens em Natureza."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -6433,6 +6434,7 @@ const FloatBar = {
     const sep = () => el('span', { class: 'fb-sep' });
     const bar = el('div', { class: 'fbar', role: 'toolbar', 'aria-label': 'Formatação' },
       B('😊', 'Emoji (Ctrl+Shift+E)', () => { const a = document.activeElement; if (!Emoji.isField(a)) { const s = getSelection(); if (s.rangeCount) { const r = s.getRangeAt(0); r.collapse(false); s.removeAllRanges(); s.addRange(r); } } const bx = this.bar.getBoundingClientRect(); this.hide(); Emoji.open({ getBoundingClientRect: () => bx }); }, 'fb-emoji'), sep(),
+      B('📖', 'Transformar o trecho selecionado em bloco de versículo', () => { this.hide(); Verseify.toVerse(); }, 'fb-verse'),
       B('<b>N</b>', 'Negrito (Ctrl+B)', () => this.exec('bold'), 'st-bold'), B('<i>I</i>', 'Itálico (Ctrl+I)', () => this.exec('italic'), 'st-italic'),
       B('<u>S</u>', 'Sublinhado (Ctrl+U)', () => this.exec('underline'), 'st-underline'), B('<s>ab</s>', 'Tachado', () => this.exec('strikeThrough'), 'st-strikeThrough'), sep(),
       ...this.HL.map(c => B('', 'Marca-texto', () => this.exec('hiliteColor', c, true), 'fb-sw').tap(x => x.style.background = c)),
@@ -6464,6 +6466,8 @@ const FloatBar = {
       B('✂ Recortar', 'Ctrl+X', () => { document.execCommand('cut'); this.hide(); }, has ? '' : 'off'),
       B('⧉ Copiar', 'Ctrl+C', () => { document.execCommand('copy'); this.hide(); }, has ? '' : 'off'),
       B('📋 Colar', 'Ctrl+V', async () => { this.hide(); try { const t = await navigator.clipboard.readText(); if (t) document.execCommand('insertText', false, t); } catch (x) { UI.toast('O navegador não deixou colar por aqui — use Ctrl+V'); } }),
+      has ? B('📖 Virar versículo', 'O trecho selecionado vira um bloco de versículo', () => { this.hide(); Verseify.toVerse(); }) : null,
+      B(has ? '✂ Separar em bloco' : '✂ Dividir aqui', has ? 'O trecho selecionado vira um bloco próprio' : 'Divide o bloco em dois no ponto do cursor', () => { this.hide(); Verseify.split(); }),
       B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
     this.ctxBox = box; this.bar.prepend(box); this.bar.classList.add('ctx', 'show');
     const bw = this.bar.offsetWidth, bh = this.bar.offsetHeight, vh = window.visualViewport?.height || innerHeight;
@@ -6484,7 +6488,7 @@ const FloatBar = {
     const vh = window.visualViewport?.height || innerHeight, bw = this.bar.offsetWidth || 420, bh = this.bar.offsetHeight || 40;
     let top = box.bottom + 10; if (top + bh > vh - 8) top = Math.max(56, box.top - bh - 10);
     const left = Math.max(8, Math.min(innerWidth - bw - 8, box.left - 20));
-    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
+    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show'); this.bar.classList.remove('has-sel');
   },
   update() {
     if (this.bar?.classList.contains('ctx')) return; // menu do clique direito aberto
@@ -6500,7 +6504,7 @@ const FloatBar = {
     /* no toque, a barra vai para baixo da seleção (em cima fica o menu do sistema) */
     let top = this.touch ? last.bottom + 12 : box.top - bh - 8; if (top < 56) top = last.bottom + 12; if (top + bh > innerHeight - 8) top = Math.max(56, box.top - bh - 8);
     const left = Math.max(8, Math.min(innerWidth - bw - 8, (this.touch ? last.left : box.left) + (this.touch ? 0 : box.width / 2 - bw / 2)));
-    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show');
+    this.bar.style.top = top + 'px'; this.bar.style.left = left + 'px'; this.bar.classList.add('show', 'has-sel');
   },
   init() {
     if (!Element.prototype.tap) Object.defineProperty(Element.prototype, 'tap', { value(fn) { fn(this); return this; }, configurable: true });
@@ -6649,6 +6653,73 @@ const Emoji = {
       if (e.key === 'Escape' && this.pop) { this.close(true); return; }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') { const a = document.activeElement; if (this.isField(a)) { e.preventDefault(); this.open(a); return; } const s = getSelection(); if (s.rangeCount && this.host(s.getRangeAt(0).startContainer)) { e.preventDefault(); const r = s.getRangeAt(0).getBoundingClientRect(); this.open({ getBoundingClientRect: () => r }); } }
     });
+  }
+};
+
+/* ===== Transformar um trecho do texto em bloco de versículo / dividir o bloco ===== */
+const Verseify = {
+  ctx() {
+    const s = getSelection(); if (!s.rangeCount) return null; const r = s.getRangeAt(0);
+    const body = (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement)?.closest('#blocks .b-body[contenteditable="true"]');
+    if (!body || !body.contains(r.endContainer)) return null;
+    const id = body.closest('.block')?.dataset.id, b = App.cur?.blocks.find(x => x.id === id);
+    return b && b.type !== 'verse' ? { r, body, b } : null;
+  },
+  html(rg) {
+    const d = document.createElement('div'); d.append(rg.cloneContents());
+    d.querySelectorAll('li, div, p').forEach(e => { if (!e.textContent.trim() && !e.querySelector('img, sup')) e.remove(); });
+    d.querySelectorAll('ul, ol').forEach(e => { if (!e.querySelector('li')) e.remove(); });
+    return htmlToText(d.innerHTML).trim() ? d.innerHTML.replace(/^(\s|&nbsp;|<br\s*\/?>)+|(\s|&nbsp;|<br\s*\/?>)+$/g, '') : '';
+  },
+  trimLead(h) { // tira ". ", ") " etc. que sobram no começo do texto de baixo
+    if (!h) return h; const d = document.createElement('div'); d.innerHTML = h;
+    const w = document.createTreeWalker(d, NodeFilter.SHOW_TEXT); for (let n; (n = w.nextNode());) { if (!n.data.trim()) continue; n.data = n.data.replace(/^[\s.,;:)\]”"’»]+/, ''); break; }
+    return this.html((() => { const r = document.createRange(); r.selectNodeContents(d); return r; })());
+  },
+  parts(c) {
+    const { r, body } = c;
+    const pre = document.createRange(); pre.setStart(body, 0); pre.setEnd(r.startContainer, r.startOffset);
+    const post = document.createRange(); post.setStart(r.endContainer, r.endOffset); post.setEnd(body, body.childNodes.length);
+    return { before: this.html(pre), mid: r.toString(), after: this.trimLead(this.html(post)) };
+  },
+  replace(b, list) {
+    const s = App.cur, i = s.blocks.indexOf(b), snap = s.blocks.slice();
+    s.blocks.splice(i, 1, ...list); App.touch(s); App.renderBlocks();
+    return () => { s.blocks = snap; App.touch(s); App.renderBlocks(); UI.toast('Desfeito'); };
+  },
+  // ✂ dividir no cursor (ou separar o trecho selecionado num bloco próprio)
+  split() {
+    const c = this.ctx(); if (!c) return UI.toast('Coloque o cursor no texto onde quer dividir.');
+    const { before, after } = this.parts(c), sel = c.r.collapsed ? '' : this.html(c.r);
+    const type = c.b.type === 'point' ? 'text' : c.b.type, list = [];
+    if (before) list.push({ ...c.b, html: before });
+    if (sel) list.push({ id: uid(), type, html: sel });
+    if (after) list.push({ id: uid(), type, html: after });
+    if (list.length < 2) return UI.toast('Nada para dividir aqui — o cursor está no começo ou no fim do bloco.');
+    const undo = this.replace(c.b, list); UI.toast('Bloco dividido', { label: 'Desfazer', fn: undo });
+  },
+  // 📖 o trecho selecionado vira um bloco de versículo
+  async toVerse() {
+    const c = this.ctx(); if (!c || c.r.collapsed) return UI.toast('Selecione o versículo (com ou sem a referência) dentro do texto.');
+    const { before, mid, after } = this.parts(c); let text = mid.replace(/\s+/g, ' ').trim();
+    let ref = null, version = '', html = '', note = '';
+    // 1) a referência está no trecho? (ex.: "João 3:16", "(Rm 8:28)")
+    const found = [...text.matchAll(REF_IN_TEXT)].map(m => m[0]).find(m => parseRef(m));
+    if (found) { ref = parseRef(found); text = text.replace(found, ' '); }
+    text = text.replace(/\(\s*\)|\[\s*\]/g, ' ').replace(/\s+/g, ' ').replace(/^[\s"“”'‘’«»(\[\-–—:,;]+|[\s"“”'‘’«»(\[\-–—:,;]+$/g, '').trim();
+    text = text.replace(/^[\s"“”'‘’«»]+|[\s"“”'‘’«»]+$/g, '');
+    const lang = App.cur.lang;
+    if (ref && text.length < 12) { // só a referência → busca o texto na Bíblia
+      const res = await Bible.lookup(ref); if (!res.error) { html = Bible.versesHTML(res.verses); version = res.version; } else { note = res.error; }
+    } else if (text) html = esc(text);
+    if (!ref && text.length >= 12) { // sem referência → procura a frase na Bíblia
+      try { const res = await Bible.searchWords(text.split(' ').slice(0, 14).join(' '), Bible.current(), 6); const ex = (res || []).filter(x => x.exact); if (ex.length === 1) { ref = parseRef(`${BOOKS[ex[0].book - 1].name} ${ex[0].ch}:${ex[0].v}`); note = 'Referência encontrada pela frase — confira.'; } else note = ex.length > 1 ? 'Essa frase aparece em mais de um versículo — escreva a referência na caixa.' : 'Não achei a referência — escreva na caixa do versículo.'; } catch (e) { }
+    }
+    const vb = { id: uid(), type: 'verse', ref: ref ? refLabel(ref, lang) : '', version, html };
+    const list = []; if (before) list.push({ ...c.b, html: before }); list.push(vb); if (after) list.push({ id: uid(), type: c.b.type === 'point' ? 'text' : c.b.type, html: after });
+    const undo = this.replace(c.b, list);
+    setTimeout(() => { const w = $(`#blocks .block[data-id="${vb.id}"]`); w?.scrollIntoView({ block: 'center', behavior: 'smooth' }); w?.classList.add('flash'); setTimeout(() => w?.classList.remove('flash'), 1200); }, 60);
+    UI.toast('📖 Versículo separado' + (note ? ' — ' + note : ''), { label: 'Desfazer', fn: undo });
   }
 };
 
