@@ -157,6 +157,7 @@ const App = {
       const m = UI.modal({ title: 'Novo caderno', body: el('div', { class: 'type-grid' },
         el('button', { class: 'on-item', onclick: () => { m.close(); newEmpty(); } }, el('b', { text: '🎤 Caderno — ' + NbPanel.gname('ser') }), el('span', { class: 'muted small', text: 'Ministrações, devocionais, estudos, insights' })),
         el('button', { class: 'on-item', onclick: async () => { m.close(); const n = await UI.ask('Novo livro', '', 'Título do livro'); if (n) Book.create(n); } }, el('b', { text: '📖 Livro' }), el('span', { class: 'muted small', text: 'Partes, capítulos, metas, notas de rodapé e exportação do manuscrito' })),
+        el('button', { class: 'on-item', onclick: async () => { m.close(); const n = await UI.ask('Novo caderno de anotações', '', 'Ex.: Projetos SOW, Reuniões, Ideias'); if (n) Notes.create(n); } }, el('b', { text: '🗒 Caderno de Anotações' }), el('span', { class: 'muted small', text: 'Reuniões, projetos, organogramas, fluxos, mapas e prints' })),
         el('button', { class: 'on-item', onclick: () => { m.close(); Porter.notebookImport(); } }, el('b', { text: 'Importar caderno do OneNote' }), el('span', { class: 'muted small', text: 'Com as seções, a partir dos arquivos exportados' }))) });
     };
     const newEmpty = async () => { const n = await UI.ask('Novo caderno', '', 'Ex.: Conferência 2027'); if (!n) return; const nb = { id: uid(), name: n, color: SECTION_COLORS[this.meta.notebooks.length % 10] }; this.meta.notebooks.push(nb); const sec = { id: uid(), nb: nb.id, name: 'Geral', color: SECTION_COLORS[0] }; this.meta.sections.push(sec); this.meta.currentNb = nb.id; this.meta.currentSec = sec.id; this.saveMeta(); this.renderNav(); };
@@ -190,6 +191,7 @@ const App = {
         if (Book.isNb(nb)) { if (!await UI.confirm('Voltar a caderno comum', 'As páginas continuam iguais; só some o modo livro (metas, quadro, exportação). Os dados do livro ficam guardados.', 'Voltar a caderno comum')) return; nb.kind = ''; }
         else { nb.kind = 'book'; Book.info(nb); this.meta.sections.filter(x => x.nb === nb.id).forEach(x => Book.ensureOrder(x.id)); }
         this.saveMeta(); this.renderNav(); this.renderEditor(); } },
+      ...(Book.isNb(nb) ? [] : [{ label: Notes.isNb(nb) ? '🎤 Voltar a caderno de ministrações' : '🗒 Transformar em caderno de anotações', onClick: () => { nb.kind = Notes.isNb(nb) ? '' : 'notes'; this.saveMeta(); this.renderNav(); this.renderEditor(); UI.toast(Notes.isNb(nb) ? 'Agora é um caderno de anotações' : 'Agora é um caderno de ministrações'); } }]),
       { label: 'Excluir caderno', danger: true, onClick: async () => {
         if (this.meta.notebooks.length < 2) { UI.toast('Mantenha pelo menos um caderno'); return; }
         if (!await UI.confirm('Excluir caderno', `Excluir “${nb.name}” e todas as suas ministrações?`)) return;
@@ -204,7 +206,7 @@ const App = {
   renderNav() {
     const m = this.meta;
     { /* cadernos agrupados por tipo: sermões e livros */
-      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${n.foreign || n.shared ? '👥' : Book.isNb(n) ? '📖' : '🎤'} ${esc(n.name)}</option>`;
+      const opt = n => `<option value="${n.id}" ${n.id === m.currentNb ? 'selected' : ''}>${n.foreign || n.shared ? '👥' : Book.isNb(n) ? '📖' : Notes.isNb(n) ? '🗒' : '🎤'} ${esc(n.name)}</option>`;
       const ser = m.notebooks.filter(n => !n.foreign && !Book.isNb(n)), bks = m.notebooks.filter(n => !n.foreign && Book.isNb(n)), shr = m.notebooks.filter(n => n.foreign);
       $('#nb-select').innerHTML = (bks.length || shr.length) ? `<optgroup label="${esc(NbPanel.gname('ser'))}">${ser.map(opt).join('')}</optgroup>` + (bks.length ? `<optgroup label="${esc(NbPanel.gname('book'))}">${bks.map(opt).join('')}</optgroup>` : '') + (shr.length ? `<optgroup label="Compartilhados comigo">${shr.map(opt).join('')}</optgroup>` : '') : ser.map(opt).join('');
       $('#nb-select').title = NbPanel.gname(Book.cur() ? 'book' : 'ser');
@@ -361,8 +363,9 @@ const App = {
   },
   newSermon(data = {}) {
     if (!this.meta.currentSec) { UI.toast('Crie uma seção primeiro'); return; }
-    const inBook = Book.isNb(Book.nbOf(this.meta.currentSec));
+    const inBook = Book.isNb(Book.nbOf(this.meta.currentSec)), inNotes = Notes.isNb(Book.nbOf(this.meta.currentSec));
     if (inBook) { data = { ...Book.blankChapter(), ...data }; Book.ensureOrder(this.meta.currentSec); }
+    else if (inNotes || NOTE_KINDS.includes(data.kind)) { const k = data.kind || 'anotacao'; data = { title: { projeto: 'Novo projeto', reuniao: 'Reunião ' + new Date().toLocaleDateString(DL()), anotacao: 'Nova anotação' }[k] || 'Nova anotação', passage: '', duration: 0, durSet: false, blocks: Notes.blank(k), ...data, kind: k }; }
     const s = Object.assign(blankSermon(this.meta.currentSec), data);
     if (Shared.inShared(s)) { s.shareMode ||= Shared.mode(s); s.author = { email: Shared.myEmail() }; }
     this.sermons.set(s.id, s);
@@ -427,7 +430,7 @@ const App = {
     const s = this.cur;
     { const bb = typeof FindView !== 'undefined' && FindView.backBar(); if (bb && s) ed.append(bb); }
     if (!s) { ed.append(el('div', { class: 'empty-state' }, el('h2', { text: 'Nenhuma ministração aberta' }), el('button', { class: 'btn primary', text: '+ Nova ministração', onclick: () => this.newSermon() }))); return; }
-    if (Book.is(s)) Book.renderHead(s, ed);
+    if (Book.is(s)) { Book.renderHead(s, ed); document.body.classList.remove('pg-simple'); }
     else {
       const secOpts = this.meta.sections.map(x => { const nb = this.meta.notebooks.find(n => n.id === x.nb); return `<option value="${x.id}" ${x.id === s.sec ? 'selected' : ''}>${esc(nb?.name || '')} › ${esc(x.name)}</option>`; }).join('');
       const head = el('div', { class: 's-head' });
@@ -464,6 +467,7 @@ const App = {
       };
       $('#s-duration').oninput = e => { s.duration = +e.target.value || 0; s.durSet = true; this.touch(); };
       $('#s-kind-slot').replaceWith(PageKinds.headSelect(s)); if (!Book.is(s)) PageKinds.paintTime(s);
+      Notes.paint(s);
       $('#s-sec').onchange = e => { s.sec = e.target.value; const sec = this.meta.sections.find(x => x.id === s.sec); this.meta.currentSec = sec.id; this.meta.currentNb = sec.nb; this.touch(); this.saveMeta(); this.renderNav(); };
       $('#s-dup').onclick = () => this.duplicateSermon(); $('#s-tr').onclick = () => Translate.open(s);
       $('#s-share').onclick = () => { this.flush(); Share.open(s); };
@@ -478,7 +482,12 @@ const App = {
     }
     ed.append(el('div', { id: 'blocks' }));
     this.updateEstimate();
-    const add = Book.is(s) ? Book.addBar(s) : el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
+    const add = Book.is(s) ? Book.addBar(s) : Notes.simple(s) ? el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
+      ...['subhead', 'text', 'verse'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, text: '+ ' + (t === 'subhead' ? 'Título' : BLOCK_TYPES[t].label), onclick: () => this.insertBlock(t, {}, Infinity) })),
+      ...Mind.LAYOUTS.map(([id, l]) => el('button', { class: 'chip t-mind', 'data-l': id, text: '+ ' + l, onclick: () => Mind.insert(id, Infinity) })),
+      el('button', { class: 'chip t-ink', 'data-t': 'ink', text: '+ ✎ Desenho', onclick: () => this.insertBlock('ink', {}, Infinity) }),
+      el('button', { class: 'chip', 'data-t': 'image', text: '+ 🖼 Imagem / print', title: 'Escolher imagem — ou cole um print direto no texto (Ctrl+V)', onclick: () => Ribbon.insertImage(true) }))
+    : el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
       ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'mind', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
       el('button', { class: 'chip', text: '⚙ Tipos…', title: 'Criar ou editar seus próprios tipos de bloco', onclick: () => TypeManager.open() }));
     ed.append(add);
@@ -506,7 +515,7 @@ const App = {
       el('button', { class: 'icon-btn sm', title: 'Mudar tipo', text: '⇄', onclick: e => this.typeMenu(b, e.currentTarget) }),
       el('button', { class: 'icon-btn sm', title: 'Excluir bloco', text: '✕', onclick: () => this.removeBlock(b.id) }));
     const mg = Marks.gutter(b); if (mg) { wrap.append(mg); wrap.classList.add('has-marks'); }
-    wrap.append(el('div', { class: 'b-tag', text: T.label }), tools);
+    wrap.append(el('div', { class: 'b-tag', text: b.type === 'mind' ? Mind.label(b.mind) : b.type === 'subhead' && Notes.simple(this.cur) ? 'Título' : T.label }), tools);
     if (b.type === 'ink') {
       const area = el('div', { class: 'ink-wrap' });
       const surf = new InkSurface(b, area, { onChange: () => this.touch(), theme: Theme.resolved() });
@@ -603,6 +612,8 @@ const App = {
     body.addEventListener('input', () => { b.html = body.innerHTML === '<br>' ? '' : body.innerHTML; if (b.by && this.cur && Shared.isAuthor(this.cur) && b.by !== Shared.myEmail()) { delete b.by; body.closest('.block')?.querySelector('.by-tag')?.remove(); } this.touch(); fixC(); });
     requestAnimationFrame(() => { if (body.isConnected && ensureContrast(body)) { b.html = body.innerHTML; this.touch(b === this.cur?.blocks.find(x => x.id === b.id) ? this.cur : undefined); } });
     body.addEventListener('paste', e => {
+      const img = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
+      if (img) { e.preventDefault(); this.focusId = b.id; imageFileToDataURL(img).then(src => { this.insertBlock('image', { src }); UI.toast('🖼 Print colado como imagem'); }); return; }
       const html = e.clipboardData.getData('text/html');
       if (!html) return;
       e.preventDefault();

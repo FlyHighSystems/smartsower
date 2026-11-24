@@ -2,6 +2,19 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.35 — 11/24/2026
+- **🗒 Caderno de Anotações** (＋ Novo caderno): para reuniões, projetos e ideias.
+  - As páginas são mais limpas: sem texto-base, duração, pregações, telão e revisão de sermão.
+  - Tipos: **🗒 Anotação**, **🤝 Reunião** (já vem com Pauta / Decisões / Próximos passos) e **📐 Projeto**.
+  - Um caderno existente vira de anotações pelo ⋯ do caderno.
+- **📐 Página Projeto**, também disponível nos cadernos de ministração. A barra de adicionar traz Título, Texto, Versículo, 🧠 Mapa, 🏢 Organograma, 🔀 Fluxo, ✎ Desenho e 🖼 Imagem / print.
+- **Organograma e Fluxo** são novos estilos do bloco de diagrama, com o mesmo arrastar, ＋, cores e IA do mapa.
+  - **Organograma:** de cima para baixo, e o ＋ cria abaixo.
+  - **Fluxo:** etapas com setas, com a forma **⬡** de cada balão (retângulo, oval para início/fim, losango para decisão).
+  - O estilo de qualquer diagrama muda em 🧠 Mapa / 🏢 Organograma / 🔀 Fluxo.
+  - Ficam em Inserir e saem como imagem no Word, PDF e link.
+- **Prints:** colar uma imagem ou captura de tela (Ctrl+V) dentro de um texto cria um bloco de imagem.
+
 ## 3.12.34 — 11/24/2026
 - Mapa mental: o **tema central tem um ＋ de cada lado**. O da direita cria à direita e o da esquerda, à esquerda. Antes, o ＋ do tema podia mandar a ideia para o lado “mais vazio”. Tab, Enter e ↳ Ramo no tema criam à direita, e os galhos que já existem não mudam de lado.
 

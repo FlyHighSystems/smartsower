@@ -7,12 +7,23 @@ const PAGE_KINDS = [
   ['estudo', 'Estudo', '📖', '#0f6cbd', 'Estudo bíblico / ensino'],
   ['celula', 'Célula / PG', '👥', '#107c10', 'Palavra para pequeno grupo'],
   ['insight', 'Insight', '💡', '#b4009e', 'Ideia, anotação, semente de mensagem'],
+  ['projeto', 'Projeto', '📐', '#0e7a8a', 'Organogramas, fluxos, mapas, prints', 'all'],
+  ['anotacao', 'Anotação', '🗒', '#5c6b7a', 'Anotação livre', 'notes'],
+  ['reuniao', 'Reunião', '🤝', '#8a5a00', 'Pauta, decisões, próximos passos', 'notes'],
   ['outro', 'Outro', '📝', '#605e5c', 'Qualquer outro tipo'],
 ];
+/* onde cada tipo aparece: 'notes' só em caderno de anotações; 'all' em qualquer um; sem marca, nos de ministração */
+const NOTE_KINDS = ['projeto', 'anotacao', 'reuniao'];
 // tempo de cada tipo: [como medir, minutos padrão]
-const KIND_TIME = { sermao: ['fala', 40], estudo: ['fala', 50], celula: ['fala', 20], devocional: ['leitura', 5], insight: ['nenhum', 0], outro: ['fala', 0] };
+const KIND_TIME = { projeto: ['nenhum', 0], anotacao: ['nenhum', 0], reuniao: ['nenhum', 0], sermao: ['fala', 40], estudo: ['fala', 50], celula: ['fala', 20], devocional: ['leitura', 5], insight: ['nenhum', 0], outro: ['fala', 0] };
 const READ_WPM = 200; // leitura silenciosa em português (conservador)
 const PageKinds = {
+  forNb(nb) {
+    nb ||= App.meta.notebooks.find(n => n.id === App.meta.currentNb);
+    const notes = Notes.isNb(nb);
+    if (notes) { const O = ['anotacao', 'reuniao', 'projeto', 'insight', 'outro']; return O.map(id => PAGE_KINDS.find(k => k[0] === id)); }
+    return PAGE_KINDS.filter(k => k[5] !== 'notes');
+  },
   timeMode(s) { return KIND_TIME[this.eff(s)]?.[0] || 'fala'; },
   userSetDur(s) { return s.durSet === true || (s.durSet === undefined && !!s.duration && s.duration !== 40); }, // páginas antigas: 40 era o padrão de toda página
   planned(s) { if (Book.is(s)) return s.duration || 0; if (this.userSetDur(s)) return s.duration || 0; const k = KIND_TIME[this.eff(s)]; return k ? k[1] : (s.duration || 0); },
@@ -38,12 +49,12 @@ const PageKinds = {
     const k = this.get(this.of(s)); if (!k) return null;
     return el('span', { class: 'pk-badge', style: { '--pk': k[3] }, title: k[1], text: k[2] + ' ' + k[1] });
   },
-  set(s, id) { const was = this.timeMode(s); s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s) || was !== this.timeMode(s)) { s.durSet = false; s.duration = this.planned(s); } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); } },
+  set(s, id) { const was = this.timeMode(s); s.kind = id || undefined; if (!id) delete s.kind; if (!this.userSetDur(s) || was !== this.timeMode(s)) { s.durSet = false; s.duration = this.planned(s); } App.touch(s); if (App.cur === s) { this.paintTime(s); App.updateEstimate(); Notes.paint(s); } },
   // ── criar página já com o tipo
   addMenu(anchor) {
     $('.mk-menu')?.remove();
     const box = el('div', { class: 'mk-menu pk-menu' }, el('div', { class: 'muted small', style: { padding: '4px 10px' }, text: 'Nova página — o que vai ser?' }),
-      ...PAGE_KINDS.map(([id, label, ic, color, hint]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); try { localStorage.setItem('ss-last-kind', id); } catch (e) { } App.newSermon({ kind: id, duration: KIND_TIME[id][1], durSet: false }); } },
+      ...this.forNb().map(([id, label, ic, color, hint]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); try { localStorage.setItem('ss-last-kind', id); } catch (e) { } App.newSermon({ kind: id, duration: KIND_TIME[id][1], durSet: false }); } },
         el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }), el('kbd', { text: hint }))),
       el('button', { class: 'mk-item muted', onclick: () => { box.remove(); App.newSermon(); } }, el('span', { class: 'pk-ic', text: '▫' }), el('span', { class: 'mk-l', text: 'Sem tipo' }), el('kbd', { text: 'decido depois' })));
     document.body.append(box); const r = anchor.getBoundingClientRect();
@@ -71,7 +82,7 @@ const PageKinds = {
   askKey(secId) { return 'ss-kindask-' + secId; },
   suggestion(secId) {
     const sec = App.meta.sections.find(x => x.id === secId); if (!sec) return null;
-    const nb = App.meta.notebooks.find(n => n.id === sec.nb); if (!nb || Book.isNb(nb)) return null;
+    const nb = App.meta.notebooks.find(n => n.id === sec.nb); if (!nb || Book.isNb(nb) || Notes.isNb(nb)) return null;
     try { if (localStorage.getItem(this.askKey(secId))) return null; } catch (e) { }
     const pages = App.sectionSermons(secId), g = pages.length && this.guess(pages[0]); if (!g) return null;
     const free = pages.filter(s => !this.of(s)); if (!free.length) return null;
@@ -86,8 +97,8 @@ const PageKinds = {
   // ── seletor no cabeçalho da página
   headSelect(s) {
     const sel = el('select', { id: 's-kind', title: 'O que é esta página — usado no filtro "Tipo" e na revisão com IA' },
-      el('option', { value: '', text: '— sem tipo —' }), ...PAGE_KINDS.map(([id, label, ic]) => el('option', { value: id, text: ic + ' ' + label, selected: s.kind === id })));
-    sel.onchange = () => { this.set(s, sel.value); App.renderPages(); };
+      el('option', { value: '', text: '— sem tipo —' }), ...this.forNb(Book.nbOf(s.sec)).map(([id, label, ic]) => el('option', { value: id, text: ic + ' ' + label, selected: s.kind === id })));
+    sel.onchange = () => { const was = Notes.simple(s); this.set(s, sel.value); App.renderPages(); if (was !== Notes.simple(s)) { App.flush(); App.renderEditor(); } };
     return el('label', { class: 'pk-head' }, 'Tipo ', sel);
   },
   // ── ação em massa (modo Selecionar)
@@ -95,11 +106,35 @@ const PageKinds = {
     return el('button', { class: 'btn sm', text: 'Tipo…', disabled: !n, onclick: e => {
       $('.mk-menu')?.remove();
       const box = el('div', { class: 'mk-menu pk-menu' }, el('div', { class: 'muted small', style: { padding: '4px 10px' }, text: `Marcar ${n} página(s) como:` }),
-        ...PAGE_KINDS.map(([id, label, ic, color]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); for (const i of ids()) { const s = App.sermons.get(i); if (s && !Book.is(s)) this.set(s, id); } App.flush(); App.renderPages(); if (App.cur) App.renderEditor(); UI.toast(`${n} página(s) marcada(s) como ${label}`); } }, el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }))),
+        ...this.forNb().map(([id, label, ic, color]) => el('button', { class: 'mk-item', onclick: () => { box.remove(); for (const i of ids()) { const s = App.sermons.get(i); if (s && !Book.is(s)) this.set(s, id); } App.flush(); App.renderPages(); if (App.cur) App.renderEditor(); UI.toast(`${n} página(s) marcada(s) como ${label}`); } }, el('span', { class: 'pk-ic', style: { color }, text: ic }), el('span', { class: 'mk-l', text: label }))),
         el('button', { class: 'mk-item', onclick: () => { box.remove(); for (const i of ids()) { const s = App.sermons.get(i); if (s && !Book.is(s)) this.set(s, ''); } App.flush(); App.renderPages(); } }, el('span', { class: 'pk-ic', text: '▫' }), el('span', { class: 'mk-l', text: 'Tirar o tipo' })));
       document.body.append(box); const r = e.currentTarget.getBoundingClientRect();
       box.style.left = Math.max(8, Math.min(innerWidth - box.offsetWidth - 8, r.left)) + 'px'; box.style.top = Math.min(r.bottom + 4, innerHeight - box.offsetHeight - 8) + 'px';
       setTimeout(() => { const off = ev => { if (!box.contains(ev.target)) { box.remove(); document.removeEventListener('pointerdown', off, true); } }; document.addEventListener('pointerdown', off, true); }, 0);
     } });
   }
+};
+
+
+/* ===== 🗒 Caderno de Anotações e páginas “simples” (Projeto, Anotação, Reunião):
+   sem texto-base, duração, pregações e telão; barra de adicionar com diagramas e prints ===== */
+const Notes = {
+  isNb(nb) { return nb?.kind === 'notes'; },
+  is(s) { return !!s && this.isNb(Book.nbOf(s.sec)); },
+  simple(s) { return !!s && !Book.is(s) && (this.is(s) || NOTE_KINDS.includes(s.kind)); },
+  create(name) {
+    const M = App.meta, nb = { id: uid(), name, kind: 'notes', color: '#0e7a8a' }; M.notebooks.push(nb);
+    const sec = { id: uid(), nb: nb.id, name: 'Geral', color: SECTION_COLORS[2] }; M.sections.push(sec);
+    M.currentNb = nb.id; M.currentSec = sec.id; App.saveMeta(); App.renderNav();
+    App.newSermon({ kind: 'anotacao' }); UI.toast('🗒 Caderno de anotações criado. Use “＋ Página” para escolher: Anotação, Reunião ou Projeto.');
+  },
+  blank(kind) {
+    if (kind === 'projeto') return [{ id: uid(), type: 'subhead', html: 'Visão geral' }, { id: uid(), type: 'text', html: '' }];
+    if (kind === 'reuniao') return [{ id: uid(), type: 'subhead', html: 'Pauta' }, { id: uid(), type: 'text', html: '<ul><li><br></li></ul>' }, { id: uid(), type: 'subhead', html: 'Decisões' }, { id: uid(), type: 'text', html: '' }, { id: uid(), type: 'subhead', html: 'Próximos passos' }, { id: uid(), type: 'text', html: '' }];
+    return [{ id: uid(), type: 'text', html: '' }];
+  },
+  paint(s) {
+    const on = this.simple(s); document.body.classList.toggle('pg-simple', on);
+    const t = $('#s-title'); if (t) t.placeholder = on ? 'Título' : 'Título da ministração';
+  },
 };

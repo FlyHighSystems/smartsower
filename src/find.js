@@ -45,7 +45,7 @@ const FindView = {
     const opt = (v, t, cur) => el('option', { value: v, text: t, selected: v === cur });
     const where = el('select', { class: 'inp', title: 'Onde procurar' }, opt('all', '📚 Todo o app', st.where), opt('sec', '📄 Só a seção aberta', st.where),
       opt('shared', '👥 Todos os compartilhados', st.where), opt('withme', '👥 Compartilhados comigo', st.where),
-      ...App.meta.notebooks.map(n => opt('nb:' + n.id, (n.foreign || n.shared ? '👥 ' : Book.isNb(n) ? '📖 ' : '🎤 ') + n.name, st.where)));
+      ...App.meta.notebooks.map(n => opt('nb:' + n.id, (n.foreign || n.shared ? '👥 ' : Book.isNb(n) ? '📖 ' : Notes.isNb(n) ? '🗒 ' : '🎤 ') + n.name, st.where)));
     const kind = el('select', { class: 'inp', title: 'Tipo de página' }, opt('', 'Todos os tipos', st.kind), ...PAGE_KINDS.map(([id, l, ic]) => opt(id, ic + ' ' + l, st.kind)), opt('none', '▫ Sem tipo', st.kind), opt('book', '📖 Páginas de livro', st.kind));
     const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
     const sort = el('select', { class: 'inp', title: 'Ordem' }, opt('rel', 'Mais relevantes', st.sort), opt('date', 'Mais recentes', st.sort));

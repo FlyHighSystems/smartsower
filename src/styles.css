@@ -879,3 +879,18 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .mm-sep0{width:1px;height:20px;background:var(--line);margin:0 4px}
 .mm-plus{position:absolute;z-index:3;width:22px;height:22px;border-radius:50%;border:2px solid var(--mc,var(--accent));background:var(--panel);color:var(--mc,var(--accent));font:700 16px/1 system-ui,sans-serif;padding:0;display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 .mm-plus:hover{background:var(--mc,var(--accent));color:#fff;transform:scale(1.12)}
+/* Mapa mental: estilos Organograma e Fluxo */
+.mm-sty button{padding:4px 10px;font-size:13px}
+.mm-wrap[data-lay="map"] .mm-shape{display:none}
+.mm-wrap:not([data-lay="map"]) .mm-only-map{display:none}
+.mm-wrap:not([data-lay="map"]) .mm-node{border-radius:8px}
+.mm-wrap:not([data-lay="map"]) .mm-node.d0{border-radius:10px}
+.mm-node.sh-pill{border-radius:999px!important}
+.mm-node.sh-diamond{border-color:transparent!important;background:transparent!important;padding:16px 30px;box-shadow:none!important}
+.mm-node.sh-diamond.d0{color:#fff}
+.mm-dia{fill:color-mix(in srgb,var(--mc) 14%,var(--panel));stroke:var(--mc);stroke-width:2}
+.mm-dia.root{fill:var(--accent);stroke:var(--accent)}
+.mm-node.sh-diamond.on{outline:2px dashed color-mix(in srgb,var(--mc) 50%,transparent);outline-offset:2px}
+.mm-svg{z-index:0}.mm-node{z-index:1}
+/* Página simples (caderno de Anotações; tipos Projeto, Anotação, Reunião) */
+body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.pg-simple #s-est, body.pg-simple #s-report, body.pg-simple #s-slide, body.pg-simple #s-review{display:none!important}

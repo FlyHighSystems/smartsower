@@ -5,7 +5,15 @@ const MIND_COLORS = ['#7719aa', '#0f6cbd', '#c25e00', '#107c10', '#b4009e', '#00
 const Mind = {
   R: new WeakMap(),
   r(n) { let o = this.R.get(n); if (!o) this.R.set(n, o = {}); return o; },
-  blank(title = '') { return { t: title || 'Tema central', k: [{ t: 'Ideia 1', k: [] }, { t: 'Ideia 2', k: [] }, { t: 'Ideia 3', k: [] }] }; },
+  LAYOUTS: [['map', '🧠 Mapa', 'Mapa mental'], ['org', '🏢 Organograma', 'Organograma'], ['flow', '🔀 Fluxo', 'Fluxo']],
+  lay(m) { return m?.layout === 'org' || m?.layout === 'flow' ? m.layout : 'map'; },
+  label(m) { return (this.LAYOUTS.find(x => x[0] === this.lay(m)) || this.LAYOUTS[0])[2]; },
+  blank(title = '', layout = 'map') {
+    if (layout === 'org') return { layout, t: 'Liderança', k: [{ t: 'Área 1', k: [] }, { t: 'Área 2', k: [] }, { t: 'Área 3', k: [] }] };
+    if (layout === 'flow') return { layout, t: 'Início', shape: 'pill', k: [{ t: 'Etapa 1', k: [{ t: 'Decisão?', shape: 'diamond', k: [{ t: 'Sim → Etapa 2', k: [{ t: 'Fim', shape: 'pill', k: [] }] }, { t: 'Não → Ajustar', k: [] }] }] }] };
+    return { t: title || 'Tema central', k: [{ t: 'Ideia 1', k: [] }, { t: 'Ideia 2', k: [] }, { t: 'Ideia 3', k: [] }] };
+  },
+  insert(layout = 'map', at) { const mind = this.blank(App.cur?.title, layout); return App.insertBlock('mind', { mind, html: this.html(mind) }, at); },
   html(m) {
     const li = n => `<li>${esc(n.t || '')}${n.k?.length ? '<ul>' + n.k.map(li).join('') + '</ul>' : ''}</li>`;
     return `<div><b>${esc(m.t || '')}</b></div>` + (m.k?.length ? '<ul>' + m.k.map(li).join('') + '</ul>' : '');
@@ -36,30 +44,41 @@ const Mind = {
     const ctx = { b, box, stage, svg, bar, fit, sel: null };
     box._mm = ctx;
     const B = (t, title, fn, cls = '') => { const x = el('button', { class: 'btn sm ' + cls, text: t, title }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = fn; return x; };
-    bar.append(
+    const sty = el('div', { class: 'seg-toggle mm-sty' }, ...this.LAYOUTS.map(([id, l]) => { const x = el('button', { class: this.lay(b.mind) === id ? 'on' : '', text: l, title: 'Desenhar como ' + l.slice(2) }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = () => { b.mind.layout = id === 'map' ? undefined : id; if (id === 'map') delete b.mind.layout; sty.querySelectorAll('button').forEach(y => y.classList.toggle('on', y === x)); this.mode(ctx); this.save(ctx); }; return x; }));
+    bar.append(sty, el('span', { class: 'mm-sep0' }),
       B('⬅ ＋', 'Nova ideia principal do lado ESQUERDO do tema (Alt+←)', () => this.addMain(ctx, 'L')),
       B('＋ ➡', 'Nova ideia principal do lado DIREITO do tema (Alt+→)', () => this.addMain(ctx, 'R')),
       B('⇆ Lado', 'Passar o galho selecionado para o outro lado do tema', () => this.flip(ctx)),
-      el('span', { class: 'mm-sep0' }),
+      el('span', { class: 'mm-sep0 mm-only-map' }),
       B('↳ Ramo', 'Abre um ramo SAINDO do balão selecionado — dá para ir abrindo quantos níveis quiser (Tab ou o ＋ da ponta)', () => this.add(ctx, 'child')),
       B('＋ Mesmo nível', 'Nova ideia no mesmo nível do balão selecionado (Enter)', () => this.add(ctx, 'sib')),
       B('↑', 'Subir na ordem (Ctrl+↑)', () => this.move(ctx, -1)), B('↓', 'Descer na ordem (Ctrl+↓)', () => this.move(ctx, 1)),
       B('🎨', 'Trocar a cor do galho', () => this.recolor(ctx)),
+      B('⬡ Forma', 'Forma do balão: retângulo, oval (início/fim) ou losango (decisão)', () => this.reshape(ctx), 'mm-shape'),
       B('✕', 'Apagar o nó e o que está abaixo dele', () => this.del(ctx)),
       el('span', { class: 'mm-sep' }),
       B('✦ IA', 'Gerar o mapa a partir da página, ou expandir o nó selecionado com ideias', () => this.ai(ctx), 'mm-ai'),
       B('⛶', 'Abrir o mapa em tela cheia', () => this.full(ctx)));
+    // botões que só fazem sentido no mapa (lados) ou nos diagramas (forma)
+    [...bar.children].slice(2, 6).forEach(x => x.classList.add('mm-only-map'));
+    this.mode(ctx);
     box.addEventListener('focusout', () => setTimeout(() => { if (!box.contains(document.activeElement) && !ctx.dragging) { ctx.stage.querySelector('.mm-plus')?.remove(); ctx.stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); ctx.sel = null; } }, 150));
     this.draw(ctx);
     new ResizeObserver(() => this.layout(ctx)).observe(box);
     return box;
+  },
+  mode(ctx) { const L = this.lay(ctx.b.mind); ctx.box.dataset.lay = L; const t = ctx.box.closest('.block')?.querySelector('.b-tag'); if (t) t.textContent = this.label(ctx.b.mind); },
+  reshape(ctx) {
+    const n = ctx.sel; if (!n) return UI.toast('Selecione um balão.');
+    const order = [undefined, 'pill', 'diamond'], i = order.indexOf(n.shape); n.shape = order[(i + 1) % order.length]; if (!n.shape) delete n.shape;
+    this.save(ctx); this.focus(n); UI.toast({ undefined: 'Retângulo', pill: 'Oval (início/fim)', diamond: 'Losango (decisão)' }[n.shape]);
   },
   path(ctx, node) { const find = (n, p) => { if (n === node) return p; for (const k of n.k || []) { const r = find(k, [...p, n]); if (r) return r; } return null; }; return find(ctx.b.mind, []); },
   save(ctx, redraw = true) { const b = ctx.b; b.html = this.html(b.mind); App.touch(); if (redraw) this.draw(ctx); },
   draw(ctx) {
     const { stage, b } = ctx; stage.querySelectorAll('.mm-node').forEach(n => n.remove());
     const mk = (n, depth, color) => {
-      const d = el('div', { class: `mm-node d${Math.min(depth, 3)}`, contentEditable: Shared.canEdit(App.cur) ? 'plaintext-only' : 'false', spellcheck: true, text: n.t });
+      const d = el('div', { class: `mm-node d${Math.min(depth, 3)}${n.shape ? ' sh-' + n.shape : ''}`, contentEditable: Shared.canEdit(App.cur) ? 'plaintext-only' : 'false', spellcheck: true, text: n.t });
       d.style.setProperty('--mc', color); this.r(n).el = d;
       d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); this.plus(ctx); });
       d.addEventListener('input', () => { n.t = d.textContent.replace(/\n/g, ' '); this.save(ctx, false); this.layout(ctx); });
@@ -75,6 +94,9 @@ const Mind = {
   /* posições do mapa. size(n) → {w,h}. Galhos divididos à direita e à esquerda do tema (como no XMind);
      em espaço estreito ou com poucos galhos, tudo à direita. Devolve { P: Map(nó → {x,y,w,h}), SW, H } */
   place(root, size, W, allowSplit = true) {
+    const L = this.lay(root);
+    if (L === 'org') return this.placeOrg(root, size);
+    if (L === 'flow') allowSplit = false;
     const GX = 34, GY = 10, P = new Map(), S = new Map();
     const sz = n => { P.set(n, { ...size(n) }); (n.k || []).forEach(sz); }; sz(root);
     const hgt = n => { const p = P.get(n), k = n.k || []; const h = k.length ? Math.max(p.h, k.reduce((s, x) => s + hgt(x), 0) + GY * (k.length - 1)) : p.h; S.set(n, h); return h; };
@@ -83,7 +105,7 @@ const Mind = {
     const free = kids.filter(k => !k.side), split = allowSplit && !(W < 560 || kids.length < 3);
     const nR = kids.filter(k => k.side === 'R').length, nL = kids.filter(k => k.side === 'L').length;
     const autoR = split ? Math.max(0, Math.ceil(kids.length / 2) - nR) : free.length;
-    const SIDE = new Map(); let a = 0; for (const k of kids) SIDE.set(k, k.side || (a++ < autoR ? 'R' : 'L'));
+    const SIDE = new Map(); let a = 0; for (const k of kids) SIDE.set(k, L === 'flow' ? 'R' : k.side || (a++ < autoR ? 'R' : 'L'));
     const right = kids.filter(k => SIDE.get(k) === 'R'), left = kids.filter(k => SIDE.get(k) === 'L');
     const side = list => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
     const R0 = P.get(root), hR = side(right), hL = side(left), H = Math.max(hR, hL, R0.h) + 20;
@@ -100,6 +122,35 @@ const Mind = {
     let SW = 0; P.forEach(p => { SW = Math.max(SW, p.x + p.w); });
     return { P, SW: SW + 10, H, SIDE };
   },
+  /* organograma: de cima para baixo, filhos lado a lado */
+  placeOrg(root, size) {
+    const GX = 16, GY = 44, P = new Map(), SW_ = new Map(), LH = [];
+    const sz = (n, d) => { const s = { ...size(n) }; P.set(n, s); LH[d] = Math.max(LH[d] || 0, s.h); (n.k || []).forEach(k => sz(k, d + 1)); }; sz(root, 0);
+    const wid = n => { const k = n.k || []; const w = k.length ? Math.max(P.get(n).w, k.reduce((s, c) => s + wid(c), 0) + GX * (k.length - 1)) : P.get(n).w; SW_.set(n, w); return w; };
+    const total = wid(root);
+    const Y = [10]; for (let d = 1; d < LH.length; d++) Y[d] = Y[d - 1] + LH[d - 1] + GY;
+    const put = (n, x0, d) => {
+      const p = P.get(n), k = n.k || []; p.x = x0 + (SW_.get(n) - p.w) / 2; p.y = Y[d] + (LH[d] - p.h) / 2;
+      let x = x0 + (SW_.get(n) - (k.reduce((s, c) => s + SW_.get(c), 0) + GX * Math.max(0, k.length - 1))) / 2;
+      for (const c of k) { put(c, x, d + 1); x += SW_.get(c) + GX; }
+    };
+    put(root, 10, 0);
+    const H = Y[LH.length - 1] + LH[LH.length - 1] + 10;
+    return { P, SW: total + 20, H, SIDE: new Map((root.k || []).map(k => [k, 'R'])) };
+  },
+  /* ligação entre dois balões: lista de comandos (M/C/L) e, no fluxo, a ponta da seta */
+  link(a, c, L) {
+    if (L === 'org') {
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = c.x + c.w / 2, y2 = c.y, my = (y1 + y2) / 2;
+      return { seg: [['M', x1, y1], ['L', x1, my], ['L', x2, my], ['L', x2, y2]] };
+    }
+    const dir = c.x > a.x ? 1 : -1;
+    const x1 = dir > 0 ? a.x + a.w : a.x, y1 = a.y + a.h / 2, x2 = dir > 0 ? c.x : c.x + c.w, y2 = c.y + c.h / 2, mx = (x1 + x2) / 2;
+    if (L === 'flow') return { seg: [['M', x1, y1], ['L', mx, y1], ['L', mx, y2], ['L', x2 - 7 * dir, y2]], arrow: [x2, y2, dir] };
+    return { seg: [['M', x1, y1], ['C', mx, y1, mx, y2, x2, y2]] };
+  },
+  segD(seg) { return seg.map(([c, ...v]) => c + v.map(n => Math.round(n * 10) / 10).join(',')).join(' '); },
+  diamond(p) { return [[p.x + p.w / 2, p.y], [p.x + p.w, p.y + p.h / 2], [p.x + p.w / 2, p.y + p.h], [p.x, p.y + p.h / 2]]; },
   /* cor de cada nó: o tema usa a cor do app; cada galho principal tem a sua (ou a escolhida no 🎨) */
   colors(root, rootColor) {
     const C = new Map([[root, rootColor]]);
@@ -118,7 +169,6 @@ const Mind = {
     const { P, SW, H, SIDE } = this.place(root, n => ({ w: this.r(n).el.offsetWidth, h: this.r(n).el.offsetHeight }), W);
     ctx.P = P; ctx.SIDE = SIDE;
     P.forEach((p, n) => { const e = this.r(n).el; e.style.left = p.x + 'px'; e.style.top = p.y + 'px'; });
-    this.plus(ctx);
     stage.style.width = SW + 'px'; stage.style.height = H + 'px';
     // encolhe para caber no bloco (até 60%); abaixo disso, rola de lado
     const s = SW > W ? Math.max(0.6, W / SW) : 1; ctx.scale = s;
@@ -126,14 +176,20 @@ const Mind = {
     ctx.fit.style.width = Math.ceil(SW * s) + 'px'; ctx.fit.style.height = Math.ceil(H * s) + 'px';
     ctx.fit.style.marginLeft = SW * s < W ? Math.max(0, (W - SW * s) / 2) + 'px' : '0';
     svg.setAttribute('width', SW); svg.setAttribute('height', H); svg.innerHTML = '';
+    const L = this.lay(root), NS = 'http://www.w3.org/2000/svg', colOf = n => getComputedStyle(this.r(n).el).getPropertyValue('--mc').trim() || '#888';
     const line = (a, c) => {
-      const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(c));
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
-      p.setAttribute('stroke', getComputedStyle(this.r(c).el).getPropertyValue('--mc').trim() || '#888'); p.setAttribute('fill', 'none'); p.setAttribute('stroke-width', a === root ? 3 : 2); p.setAttribute('stroke-linecap', 'round');
-      svg.append(p); (c.k || []).forEach(k => line(c, k));
+      const { seg, arrow } = this.link(P.get(a), P.get(c), L), col = colOf(c);
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', this.segD(seg)); p.setAttribute('stroke', col); p.setAttribute('fill', 'none'); p.setAttribute('stroke-width', a === root && L === 'map' ? 3 : 2); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+      svg.append(p);
+      if (arrow) { const [x, y, d] = arrow, t = document.createElementNS(NS, 'path'); t.setAttribute('d', `M${x},${y} L${x - 9 * d},${y - 5} L${x - 9 * d},${y + 5} Z`); t.setAttribute('fill', col); svg.append(t); }
+      (c.k || []).forEach(k => line(c, k));
     };
     (root.k || []).forEach(k => line(root, k));
+    // losangos (decisão) desenhados atrás do texto
+    P.forEach((p, n) => { if (n.shape !== 'diamond') return; const g = document.createElementNS(NS, 'polygon'); g.setAttribute('points', this.diamond(p).map(q => q.join(',')).join(' ')); g.setAttribute('class', 'mm-dia' + (n === root ? ' root' : '')); g.style.setProperty('--mc', colOf(n)); svg.prepend(g); });
+    if (L !== 'map') svg.style.zIndex = 'auto';
+    this.plus(ctx);
   },
   /* ---------- arrastar um balão para outro galho (ou mudar a ordem) ---------- */
   drag(ctx, n, d, e) {
@@ -155,7 +211,7 @@ const Mind = {
       target = null; where = null;
       if (!hit || !ctx.stage.contains(hit)) return;
       let t = null; ctx.P?.forEach((_, k) => { if (this.r(k).el === hit) t = k; }); if (!t || sub.has(t)) return;
-      const r = hit.getBoundingClientRect(), f = (y - r.top) / r.height;
+      const r = hit.getBoundingClientRect(), f = this.lay(ctx.b.mind) === 'org' ? (x - r.left) / r.width : (y - r.top) / r.height;
       where = t === ctx.b.mind ? 'in' : f < 0.28 ? 'before' : f > 0.72 ? 'after' : 'in';
       target = t; hit.classList.add(where === 'in' ? 'mm-drop' : where === 'before' ? 'mm-before' : 'mm-after');
     };
@@ -201,31 +257,39 @@ const Mind = {
       out.push(cur); lines.set(n, out);
       const tw = Math.max(...out.map(l => g.measureText(l).width));
       const px = d === 0 ? 20 : 13, py = d === 0 ? 10 : 6, lh = d === 0 ? 22 : 18;
-      return { w: Math.ceil(tw + px * 2 + 4), h: Math.ceil(out.length * lh + py * 2 + 4) };
+      const w = Math.ceil(tw + px * 2 + 4), h = Math.ceil(out.length * lh + py * 2 + 4);
+      return n.shape === 'diamond' ? { w: Math.ceil(w * 1.45), h: Math.ceil(h * 1.6) } : { w, h };
     };
     const { P, SW, H } = this.place(mind, wrap, 99999);
-    const C = this.colors(mind, '#7719aa');
+    const C = this.colors(mind, '#7719aa'), L = this.lay(mind);
     c.width = Math.ceil(SW * S); c.height = Math.ceil(H * S); g.scale(S, S);
     g.fillStyle = '#ffffff'; g.fillRect(0, 0, SW, H);
-    const lineTo = (a, k) => { const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(k)); g.beginPath(); g.moveTo(x1, y1); g.bezierCurveTo(cx1, cy1, cx2, cy2, x2, y2); g.strokeStyle = C.get(k); g.lineWidth = a === mind ? 3 : 2; g.lineCap = 'round'; g.stroke(); (k.k || []).forEach(z => lineTo(k, z)); };
+    const lineTo = (a, k) => {
+      const { seg, arrow } = this.link(P.get(a), P.get(k), L); g.beginPath();
+      for (const [cmd, ...v] of seg) cmd === 'M' ? g.moveTo(...v) : cmd === 'L' ? g.lineTo(...v) : g.bezierCurveTo(...v);
+      g.strokeStyle = C.get(k); g.lineWidth = a === mind && L === 'map' ? 3 : 2; g.lineCap = 'round'; g.lineJoin = 'round'; g.stroke();
+      if (arrow) { const [x, y, d] = arrow; g.beginPath(); g.moveTo(x, y); g.lineTo(x - 9 * d, y - 5); g.lineTo(x - 9 * d, y + 5); g.closePath(); g.fillStyle = C.get(k); g.fill(); }
+      (k.k || []).forEach(z => lineTo(k, z));
+    };
     (mind.k || []).forEach(k => lineTo(mind, k));
     const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
     const mix = (hex, a) => { const n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255; return `rgb(${Math.round(255 - (255 - r) * a)},${Math.round(255 - (255 - gg) * a)},${Math.round(255 - (255 - b) * a)})`; };
     P.forEach((p, n) => {
       const d = depth.get(n), col = C.get(n);
-      rr(p.x, p.y, p.w, p.h, Math.min(p.h / 2, d === 0 ? 22 : 16));
+      if (n.shape === 'diamond') { g.beginPath(); this.diamond(p).forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); }
+      else rr(p.x, p.y, p.w, p.h, n.shape === 'pill' ? p.h / 2 : L === 'map' ? Math.min(p.h / 2, d === 0 ? 22 : 16) : 7);
       g.fillStyle = d === 0 ? col : d === 1 ? mix(col, 0.14) : '#ffffff'; g.fill();
       g.strokeStyle = col; g.lineWidth = d >= 2 ? 1.5 : 2; g.stroke();
       g.font = font(d); g.fillStyle = d === 0 ? '#ffffff' : '#1b1b1b'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      const L = lines.get(n), lh = d === 0 ? 22 : 18, top = p.y + p.h / 2 - (L.length - 1) * lh / 2;
-      L.forEach((l, i) => g.fillText(l, p.x + p.w / 2, top + i * lh));
+      const Ls = lines.get(n), lh = d === 0 ? 22 : 18, top = p.y + p.h / 2 - (Ls.length - 1) * lh / 2;
+      Ls.forEach((l, i) => g.fillText(l, p.x + p.w / 2, top + i * lh));
     });
     const w = Math.min(maxW, SW);
     return { src: c.toDataURL('image/png'), w, h: Math.round(H * w / SW) };
   },
   focus(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); const s = getSelection(); s.removeAllRanges(); s.addRange(r); d.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); },
-  add(ctx, how) {
-    if (how === 'child' && (!ctx.sel || ctx.sel === ctx.b.mind)) return this.addMain(ctx, 'R');   // do tema: à direita; ⬅ ＋ ou Alt+← para a esquerda
+  add(ctx, how, plain) {
+    if (!plain && this.lay(ctx.b.mind) === 'map' && how === 'child' && (!ctx.sel || ctx.sel === ctx.b.mind)) return this.addMain(ctx, 'R');   // do tema: à direita; ⬅ ＋ ou Alt+← para a esquerda
     const cur = ctx.sel || ctx.b.mind, p = this.path(ctx, cur), par = p?.[p.length - 1];
     const n = { t: '', k: [] };
     if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
@@ -246,6 +310,13 @@ const Mind = {
       b.style.top = (p.y + p.h / 2 - S / 2) + 'px'; b.style.left = (side === 'L' ? p.x - S - 4 : p.x + p.w + 4) + 'px';
       b.style.setProperty('--mc', col); ctx.stage.append(b);
     };
+    const L = this.lay(root);
+    if (L === 'org') {
+      const b = el('button', { class: 'mm-plus', title: 'Novo cargo/área abaixo deste (Tab)', text: '+' });
+      b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); }); b.onclick = e => { e.stopPropagation(); this.add(ctx, 'child', true); };
+      b.style.left = (p.x + p.w / 2 - S / 2) + 'px'; b.style.top = (p.y + p.h + 4) + 'px'; b.style.setProperty('--mc', col); ctx.stage.append(b); return;
+    }
+    if (L === 'flow') { mk('R', () => this.add(ctx, 'child', true), 'Próxima etapa saindo daqui (Tab)'); return; }
     if (n === root) {   // tema central: um ＋ de cada lado
       mk('L', () => this.addMain(ctx, 'L'), 'Nova ideia principal à ESQUERDA (Alt+←)');
       mk('R', () => this.addMain(ctx, 'R'), 'Nova ideia principal à DIREITA (Alt+→)');
@@ -285,11 +356,11 @@ const Mind = {
     top.c = MIND_COLORS[(i + 1) % MIND_COLORS.length]; this.save(ctx); this.focus(n);
   },
   key(ctx, n, e) {
-    if (e.key === 'Tab') { e.preventDefault(); if (e.shiftKey) { const p = this.path(ctx, n); if (p.length) this.focus(p[p.length - 1]); } else this.add(ctx, 'child'); }
-    else if (e.key === 'Enter') { e.preventDefault(); this.add(ctx, n === ctx.b.mind ? 'child' : 'sib'); }
+    if (e.key === 'Tab') { e.preventDefault(); if (e.shiftKey) { const p = this.path(ctx, n); if (p.length) this.focus(p[p.length - 1]); } else this.add(ctx, 'child', this.lay(ctx.b.mind) !== 'map'); }
+    else if (e.key === 'Enter') { e.preventDefault(); this.add(ctx, n === ctx.b.mind ? 'child' : 'sib', true); }
     else if ((e.key === 'Backspace' || e.key === 'Delete') && !this.r(n).el.textContent && n !== ctx.b.mind) { e.preventDefault(); this.del(ctx); }
     else if (e.ctrlKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.move(ctx, e.key === 'ArrowUp' ? -1 : 1); }
-    else if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); this.addMain(ctx, e.key === 'ArrowLeft' ? 'L' : 'R'); }
+    else if (e.altKey && this.lay(ctx.b.mind) === 'map' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); this.addMain(ctx, e.key === 'ArrowLeft' ? 'L' : 'R'); }
     else if (e.key === 'Escape') this.r(n).el.blur();
   },
   full(ctx) {

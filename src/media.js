@@ -934,7 +934,8 @@ const AddFloat = {
       const b = el('button', { class: c.className.replace(/\bprimary-chip\b/, '') + ' afm-i', style: c.getAttribute('style') || '', text: c.textContent, title: c.title || '' });
       b.onclick = () => {
         this.close();
-        if (t === 'image') Ribbon.insertImage();
+        if (c.dataset.l) Mind.insert(c.dataset.l);
+        else if (t === 'image') Ribbon.insertImage();
         else if (t) App.insertBlock(t);
         else c.click();
       };
