@@ -225,6 +225,7 @@ const Mind = {
   },
   focus(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); const s = getSelection(); s.removeAllRanges(); s.addRange(r); d.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); },
   add(ctx, how) {
+    if (how === 'child' && (!ctx.sel || ctx.sel === ctx.b.mind)) return this.addMain(ctx, 'R');   // do tema: à direita; ⬅ ＋ ou Alt+← para a esquerda
     const cur = ctx.sel || ctx.b.mind, p = this.path(ctx, cur), par = p?.[p.length - 1];
     const n = { t: '', k: [] };
     if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
@@ -233,21 +234,25 @@ const Mind = {
   },
   /* botão ＋ na ponta do balão selecionado: cria uma ideia saindo dele (para fora do tema) */
   plus(ctx) {
+    ctx.stage.querySelectorAll('.mm-plus').forEach(x => x.remove());
     if (!Shared.canEdit(App.cur)) return;
-    let b = ctx.stage.querySelector('.mm-plus');
     const n = ctx.sel, p = n && ctx.P?.get(n);
-    if (!p || !this.r(n).el?.isConnected) { b?.remove(); return; }
-    if (!b) {
-      b = el('button', { class: 'mm-plus', title: 'Nova ideia saindo deste balão (Tab)', text: '+' });
+    if (!p || !this.r(n).el?.isConnected) return;
+    const root = ctx.b.mind, S = 22, col = getComputedStyle(this.r(n).el).getPropertyValue('--mc');
+    const mk = (side, fn, title) => {
+      const b = el('button', { class: 'mm-plus', title, text: '+' });
       b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); });
-      b.onclick = e => { e.stopPropagation(); this.add(ctx, 'child'); };
-      ctx.stage.append(b);
+      b.onclick = e => { e.stopPropagation(); fn(); };
+      b.style.top = (p.y + p.h / 2 - S / 2) + 'px'; b.style.left = (side === 'L' ? p.x - S - 4 : p.x + p.w + 4) + 'px';
+      b.style.setProperty('--mc', col); ctx.stage.append(b);
+    };
+    if (n === root) {   // tema central: um ＋ de cada lado
+      mk('L', () => this.addMain(ctx, 'L'), 'Nova ideia principal à ESQUERDA (Alt+←)');
+      mk('R', () => this.addMain(ctx, 'R'), 'Nova ideia principal à DIREITA (Alt+→)');
+    } else {
+      const top = this.path(ctx, n)[1] || n;
+      mk(ctx.SIDE?.get(top) === 'L' ? 'L' : 'R', () => this.add(ctx, 'child'), 'Novo ramo saindo deste balão (Tab)');
     }
-    const root = ctx.b.mind, top = n === root ? null : this.path(ctx, n)[1] || n;
-    const left = n !== root && ctx.SIDE?.get(top) === 'L';
-    const S = 22; b.style.top = (p.y + p.h / 2 - S / 2) + 'px';
-    b.style.left = (left ? p.x - S - 4 : p.x + p.w + 4) + 'px';
-    b.style.setProperty('--mc', getComputedStyle(this.r(n).el).getPropertyValue('--mc'));
   },
   /* fixa o lado atual de todos os galhos principais, para nenhum pular de lado quando outro muda */
   freeze(ctx) { (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); },

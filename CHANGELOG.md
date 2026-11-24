@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.34 — 11/24/2026
+- Mapa mental: o **tema central tem um ＋ de cada lado**. O da direita cria à direita e o da esquerda, à esquerda. Antes, o ＋ do tema podia mandar a ideia para o lado “mais vazio”. Tab, Enter e ↳ Ramo no tema criam à direita, e os galhos que já existem não mudam de lado.
+
 ## 3.12.33 — 11/24/2026
 - Mapa mental: os botões ficaram mais claros. **↳ Ramo** abre uma árvore saindo do balão selecionado, com quantos níveis quiser, e **＋ Mesmo nível** cria ao lado.
 
