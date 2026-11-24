@@ -788,6 +788,7 @@ const FloatBar = {
       B('📋 Colar', 'Ctrl+V', async () => { this.hide(); try { const t = await navigator.clipboard.readText(); if (t) document.execCommand('insertText', false, t); } catch (x) { UI.toast('O navegador não deixou colar por aqui — use Ctrl+V'); } }),
       has ? B('📖 Virar versículo', 'O trecho selecionado vira um bloco de versículo', () => { this.hide(); Verseify.toVerse(); }) : null,
       B(has ? '✂ Separar em bloco' : '✂ Dividir aqui', has ? 'O trecho selecionado vira um bloco próprio' : 'Divide o bloco em dois no ponto do cursor', () => { this.hide(); Verseify.split(); }),
+      B('🔖 Parei aqui', 'Marca este ponto para continuar depois (Ctrl+Alt+M)', () => { this.hide(); Bookmark.insert(); }),
       B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
     /* sem marca do app: pergunta ao corretor sobre a palavra clicada e põe as sugestões no topo do menu */
     const oneWord = !has || /^[\p{L}\p{M}'’-]+$/u.test(s.toString().trim());

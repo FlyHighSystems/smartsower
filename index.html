@@ -854,6 +854,18 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .topbar.tf4 .cl-x{display:none}.topbar.tf4 .pr-l{display:none}.topbar.tf4 .btn.preach{padding:6px 12px}
 .topbar.tf5 .cl-t{display:none}.topbar.tf5 .cloud-btn{padding-left:9px;padding-right:9px}.topbar.tf5 .rtab{padding:8px 6px;font-size:13px}.topbar.tf5 #btn-theme{display:none}
 .topbar.tf6{flex-wrap:wrap;height:auto;min-height:48px;row-gap:2px;padding-top:6px}.topbar.tf6 .top-right{margin-left:auto}.topbar.tf6 .rtabs{order:9;width:100%;height:40px}.topbar.tf6 .rtab{padding:8px 10px;font-size:14px}
+/* 🔖 Marcador “Parei aqui” */
+.ss-bm{display:none}
+#blocks .ss-bm{display:inline-flex;align-items:center;gap:3px;margin:0 3px;padding:0 8px 0 6px;border-radius:10px;background:#ffb900;color:#3b2a00;font-size:.78em;font-weight:700;font-style:normal;line-height:1.6;vertical-align:.08em;cursor:pointer;user-select:none;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+#blocks .ss-bm::before{content:"🔖 Parei aqui"}
+#blocks .ss-bm[data-note]::after{content:"· " attr(data-note);font-weight:500;max-width:22em;overflow:hidden;text-overflow:ellipsis}
+#blocks .ss-bm.flash{animation:bmflash 1.5s ease}@keyframes bmflash{0%,100%{box-shadow:0 0 0 0 rgba(255,185,0,.0)}30%{box-shadow:0 0 0 6px rgba(255,185,0,.45)}}
+.bm-bar{display:flex;align-items:center;gap:10px;margin:4px 0 10px;flex-wrap:wrap}.bm-go{border-color:#ffb900;background:rgba(255,185,0,.12)}
+.bm-n{font-style:italic}.bm-ic{font-size:.85em}
+.bm-pop{position:fixed;z-index:90;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.bm-pop .inp{width:100%}
+.fv-bm.on{background:rgba(255,185,0,.18);border-radius:8px}.fv-bmi{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+@media print{.ss-bm,.bm-bar{display:none!important}}
 </style>
 </head>
 <body>
@@ -940,6 +952,9 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
     <div class="rgroup">
       <button data-insert="ink" class="rb t-ink">✎ Desenho</button>
       <button data-insert="image" class="rb">🖼 Imagem</button>
+    </div>
+    <div class="rgroup">
+      <button class="rb" id="rb-bookmark" title="Marca no texto o ponto onde você parou de escrever (Ctrl+Alt+M)" onmousedown="event.preventDefault()" onclick="Bookmark.insert()">🔖 Parei aqui</button>
     </div>
     <span class="rhint">Insere logo abaixo do bloco onde está o cursor.</span>
   </div>
@@ -1058,7 +1073,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.27", "code": "1980ee", "at": "23/11 21:26", "notes": [{"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}]};
+<script>window.SS_BUILD = {"version": "3.12.28", "code": "4b0690", "at": "24/11 09:25", "notes": [{"v": "3.12.28", "d": "24/11/2026", "items": ["🔖 Marcador “Parei aqui”: marca dentro do texto o ponto onde você parou."]}, {"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1951,7 +1966,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); Bookmark.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -2086,7 +2101,7 @@ const App = {
           el('input', { type: 'checkbox', checked: on, onchange: e => {
             if (this._shift && this._lastSel != null) { const [a2, b2] = [Math.min(this._lastSel, myIdx), Math.max(this._lastSel, myIdx)]; for (let i = a2; i <= b2; i++) this.sel.add(vis[i]); this._shift = false; this._lastSel = myIdx; this.renderPages(); return; }
             e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this._lastSel = myIdx; this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
+          el('span', {}, el('div', { class: 'page-title' }, s.title || 'Sem título', Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: e => { if (e.ctrlKey || e.metaKey || e.shiftKey) return this.startSelect(e.shiftKey && this.cur ? (() => { const v = items.map(x => x.id), i1 = v.indexOf(this.cur.id), i2 = v.indexOf(s.id); return i1 < 0 ? [s.id] : v.slice(Math.min(i1, i2), Math.max(i1, i2) + 1); })() : [this.cur?.id, s.id]); this.open(s.id); },
@@ -2094,7 +2109,7 @@ const App = {
         ondragend: () => { document.body.classList.remove('dragging'); this._drag = null; } },
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
-          el('div', { class: 'page-title', text: (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : '') }),
+          el('div', { class: 'page-title' }, (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : ''), Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''),
           Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
         flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
       if (!flat) {
@@ -2274,7 +2289,7 @@ const App = {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.();
+    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.(); Bookmark.afterBlocks();
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },
@@ -6790,6 +6805,7 @@ const FloatBar = {
       B('📋 Colar', 'Ctrl+V', async () => { this.hide(); try { const t = await navigator.clipboard.readText(); if (t) document.execCommand('insertText', false, t); } catch (x) { UI.toast('O navegador não deixou colar por aqui — use Ctrl+V'); } }),
       has ? B('📖 Virar versículo', 'O trecho selecionado vira um bloco de versículo', () => { this.hide(); Verseify.toVerse(); }) : null,
       B(has ? '✂ Separar em bloco' : '✂ Dividir aqui', has ? 'O trecho selecionado vira um bloco próprio' : 'Divide o bloco em dois no ponto do cursor', () => { this.hide(); Verseify.split(); }),
+      B('🔖 Parei aqui', 'Marca este ponto para continuar depois (Ctrl+Alt+M)', () => { this.hide(); Bookmark.insert(); }),
       B('Selecionar tudo', 'Seleciona o texto deste bloco', () => { const r = document.createRange(); r.selectNodeContents(body); s.removeAllRanges(); s.addRange(r); this.hide(); setTimeout(() => this.update(), 50); })));
     /* sem marca do app: pergunta ao corretor sobre a palavra clicada e põe as sugestões no topo do menu */
     const oneWord = !has || /^[\p{L}\p{M}'’-]+$/u.test(s.toString().trim());
@@ -8372,7 +8388,7 @@ const PageKinds = {
    Os resultados ocupam a área do editor; ao abrir um resultado, uma barra no topo volta para a lista. */
 const FindView = {
   active: false, ran: false,
-  st: { q: '', where: 'all', kind: '', period: '', titles: false, sort: 'rel' },
+  st: { q: '', where: 'all', kind: '', period: '', titles: false, sort: 'rel', bm: false },
   load() { try { Object.assign(this.st, JSON.parse(localStorage.getItem('ss-find') || '{}'), { q: this.st.q }); } catch (e) { } },
   save() { try { const { q, ...rest } = this.st; localStorage.setItem('ss-find', JSON.stringify(rest)); } catch (e) { } },
   pool() {
@@ -8384,6 +8400,7 @@ const FindView = {
     else { const ok = new Set(m.sections.map(x => x.id)); list = list.filter(s => ok.has(s.sec)); }
     const k = this.st.kind;
     if (k === 'book') list = list.filter(s => Book.is(s)); else if (k === 'none') list = list.filter(s => !Book.is(s) && !PageKinds.of(s)); else if (k) list = list.filter(s => PageKinds.of(s) === k);
+    if (this.st.bm) list = list.filter(s => Bookmark.has(s));
     const p = this.st.period;
     if (p) { const now = new Date(), from = p === 'year' ? `${now.getFullYear()}-01-01` : new Date(now - (+p) * 864e5).toISOString().slice(0, 10); list = list.filter(s => (s.date || '') >= from); }
     return list;
@@ -8419,10 +8436,12 @@ const FindView = {
     const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
     const sort = el('select', { class: 'inp', title: 'Ordem' }, opt('rel', 'Mais relevantes', st.sort), opt('date', 'Mais recentes', st.sort));
     const titles = el('label', { class: 'fv-chk' }, el('input', { type: 'checkbox', checked: st.titles }), ' Só nos títulos');
+    const nBm = [...App.sermons.values()].filter(s => Bookmark.has(s)).length;
+    const bm = el('label', { class: 'fv-chk fv-bm' + (st.bm ? ' on' : ''), title: 'Só as páginas com o marcador “Parei aqui” — o que falta terminar' }, el('input', { type: 'checkbox', checked: st.bm }), ` 🔖 Para terminar${nBm ? ` (${nBm})` : ''}`);
     const out = el('div', { class: 'fv-results' });
     const go = () => {
-      Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked }); this.save();
-      out.innerHTML = ''; const filt = st.kind || st.period || st.where !== 'all';
+      Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked, bm: bm.firstChild.checked }); bm.classList.toggle('on', st.bm); this.save();
+      out.innerHTML = ''; const filt = st.kind || st.period || st.bm || st.where !== 'all';
       if (!st.q && !filt) { out.append(el('div', { class: 'fv-help muted' }, el('p', { html: 'Digite palavras (em qualquer ordem) ou <b>"uma frase exata"</b> entre aspas. Acentos não importam.' }), el('p', { text: 'Ou escolha só um tipo — por exemplo “🌅 Devocional” — para ver todas as devocionais do app, de todos os cadernos.' }))); return; }
       if ((st.where === 'shared' && !App.meta.notebooks.some(n => n.shared || n.foreign)) || (st.where === 'withme' && !App.meta.notebooks.some(n => n.foreign))) {
         out.append(el('div', { class: 'fv-help muted' }, el('p', { text: st.where === 'withme' ? 'Ninguém compartilhou um caderno com você ainda. Quando compartilharem, as páginas aparecem aqui.' : 'Você ainda não tem cadernos compartilhados. Abra uma página e toque em “👥 Compartilhar”, ao lado do Tipo.' }))); return;
@@ -8433,20 +8452,21 @@ const FindView = {
         const s = r.s, row = el('button', { class: 'fv-row' + (App.cur?.id === s.id ? ' cur' : ''), onclick: () => this.openResult(s.id) },
           el('div', { class: 'fv-top' }, el('b', { class: 'fv-title', text: s.title || 'Sem título' }), r.hits ? el('span', { class: 'sr-n', text: r.hits }) : null),
           el('div', { class: 'fv-meta' }, PageKinds.badge(s), Translate.langBadge(s), Shared.inShared(s) ? el('span', { class: 'lang-badge', title: 'Caderno compartilhado', text: Shared.isAuthor(s) ? '👥' : '👥 de ' + Shared.authorName(s) }) : null, el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
-          r.ts.length ? Search.snippet(r.d, r.ts) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
+          r.ts.length ? Search.snippet(r.d, r.ts) : st.bm ? el('div', { class: 'fv-bmi' }, ...Bookmark.info(s).slice(0, 3).map(x => el('div', { class: 'page-sub' }, el('span', { class: 'bm-tag', text: '🔖' }), x.note ? el('b', { text: ' ' + x.note + ' — ' }) : ' ', el('span', { text: x.before ? '…' + x.before : '(no início do bloco)' }), x.at ? el('span', { class: 'muted', text: ' · ' + Recent.ago(x.at) }) : ''))) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
         out.append(row);
       }
       if (res.length > 300) out.append(el('p', { class: 'muted small', text: `Mostrando 300 de ${res.length}. Refine a busca.` }));
     };
     let t; q.oninput = () => { clearTimeout(t); t = setTimeout(go, 200); }; q.onkeydown = e => { if (e.key === 'Enter') { clearTimeout(t); go(); q.blur(); } };
-    for (const c of [where, kind, period, sort]) c.onchange = go; titles.firstChild.onchange = go;
+    for (const c of [where, kind, period, sort]) c.onchange = go; titles.firstChild.onchange = go; bm.firstChild.onchange = go;
     ed.append(el('div', { class: 'fv' },
       el('div', { class: 'fv-head' }, el('h2', { text: '🔎 Pesquisar' }), el('button', { class: 'btn sm', text: '✕ Fechar', title: 'Voltar para a página', onclick: () => { $('.rtab[data-tab="home"]').click(); } })),
-      q, el('div', { class: 'fv-filters' }, where, kind, period, sort, titles), out));
+      q, el('div', { class: 'fv-filters' }, bm, where, kind, period, sort, titles), out));
     go(); if (focus && !matchMedia('(pointer:coarse)').matches) setTimeout(() => { q.focus(); q.select(); }, 30);
   },
   openResult(id) {
     this.active = false; this.ran = true; this._opening = true; try { App.open(id); } finally { this._opening = false; }
+    if (this.st.bm && !this.st.q) setTimeout(() => Bookmark.goTo($('#blocks .ss-bm')), 120);
     const ts = Search.terms(this.st.q); setTimeout(() => Search.highlight(ts), 60);
   },
   // barra no topo da página aberta a partir da pesquisa
@@ -8643,6 +8663,99 @@ const Recent = {
     const m = this.m = UI.modal({ title: '🕘 Páginas recentes', body: el('div', { class: 'rc' }, q, list, el('p', { class: 'muted small rc-tip', text: '↑↓ escolhe · Enter abre · Shift+Enter ou ◫ abre ao lado · Ctrl+K de qualquer lugar' })), onClose: () => { this.m = null; } });
     paint(); setTimeout(() => q.focus(), 50);
   },
+};
+
+/* ===== 🔖 Marcador “Parei aqui”: uma marca dentro do texto que diz onde continuar.
+   É um <span class="ss-bm"> vazio (o rótulo vem do CSS), então não entra em contagem de palavras,
+   corretor, tradução, PDF, Word, Pregar nem link de leitura. ===== */
+const Bookmark = {
+  SEL: '.ss-bm',
+  has(s) { return (s?.blocks || []).some(b => (b.html || '').includes('ss-bm')); },
+  count(s) { return (s?.blocks || []).reduce((n, b) => n + ((b.html || '').match(/class="ss-bm"/g) || []).length, 0); },
+  /* as notas e o texto logo antes de cada marca (para a busca e a lista) */
+  info(s) {
+    const out = [];
+    for (const b of s?.blocks || []) {
+      if (!(b.html || '').includes('ss-bm')) continue;
+      const d = document.createElement('div'); d.innerHTML = b.html; d.querySelectorAll('div,p,li,br').forEach(x => x.after(document.createTextNode(' ')));
+      d.querySelectorAll(this.SEL).forEach(m => {
+        const r = document.createRange(); r.selectNodeContents(d); r.setEndBefore(m);
+        const before = r.toString().replace(/\s+/g, ' ').trim().slice(-90);
+        out.push({ note: m.dataset.note || '', before, at: +m.dataset.at || 0 });
+      });
+    }
+    return out;
+  },
+  make(note = '') {
+    const m = document.createElement('span');
+    m.className = 'ss-bm'; m.contentEditable = 'false'; m.dataset.at = Date.now();
+    if (note) m.dataset.note = note;
+    m.title = 'Parei aqui — clique para opções';
+    return m;
+  },
+  /* coloca a marca onde está o cursor (ou no fim da seleção) */
+  insert() {
+    const sel = getSelection(); if (!sel.rangeCount) return UI.toast('Clique no texto onde você parou e tente de novo.');
+    const r = sel.getRangeAt(0); const body = (r.endContainer.nodeType === 1 ? r.endContainer : r.endContainer.parentElement)?.closest('#blocks .b-body[contenteditable="true"]');
+    if (!body) return UI.toast('Clique dentro de um texto (não no título) e tente de novo.');
+    const wrap = body.closest('.block'), b = App.cur?.blocks.find(x => x.id === wrap?.dataset.id);
+    if (!b) return; if (!Shared.canEdit(App.cur)) return UI.toast('Página somente leitura.');
+    const m = this.make(); const rr = r.cloneRange(); rr.collapse(false);
+    const sp = document.createTextNode(' ');
+    rr.insertNode(sp); rr.insertNode(m);
+    const c = document.createRange(); c.setStartAfter(sp); c.collapse(true); sel.removeAllRanges(); sel.addRange(c);
+    b.html = body.innerHTML; App.touch(); this.paint(); App.renderPages();
+    UI.toast('🔖 Marcado: “Parei aqui”. Ache depois em Pesquisar › 🔖 Para terminar.');
+  },
+  sync(m) {
+    const body = m.closest('.b-body'), wrap = m.closest('.block'), b = App.cur?.blocks.find(x => x.id === wrap?.dataset.id);
+    if (b && body) { b.html = body.innerHTML; App.touch(); }
+  },
+  remove(m) { const body = m.closest('.b-body'), wrap = m.closest('.block'); const n = m.nextSibling; m.remove(); if (n?.nodeType === 3 && n.data === ' ') n.remove();
+    const b = App.cur?.blocks.find(x => x.id === wrap?.dataset.id); if (b && body) { b.html = body.innerHTML; App.touch(); } this.paint(); App.renderPages(); },
+  /* leva o cursor para logo antes da marca (onde o texto parou) */
+  goTo(m) {
+    if (!m) return; const body = m.closest('.b-body'); body?.focus({ preventScroll: true });
+    const r = document.createRange(); r.setStartBefore(m); r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    const ed = $('#editor'), rc = m.getBoundingClientRect(); ed?.scrollBy({ top: rc.top - ed.getBoundingClientRect().top - ed.clientHeight / 3, behavior: 'smooth' });
+    m.classList.add('flash'); setTimeout(() => m.classList.remove('flash'), 1600);
+  },
+  pop(m) {
+    this.close();
+    const note = el('input', { class: 'inp', placeholder: 'Nota (opcional): o que falta aqui?', value: m.dataset.note || '' });
+    note.oninput = () => { if (note.value.trim()) m.dataset.note = note.value.trim(); else delete m.dataset.note; this.sync(m); };
+    note.onkeydown = e => { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); this.close(); this.goTo(m); } };
+    const at = +m.dataset.at;
+    const p = el('div', { class: 'bm-pop' },
+      el('div', { class: 'bm-pop-h' }, el('b', { text: '🔖 Parei aqui' }), at ? el('span', { class: 'muted small', text: ' · ' + (typeof Recent !== 'undefined' ? Recent.ago(at) : new Date(at).toLocaleString('pt-BR')) }) : null),
+      note,
+      el('div', { class: 'row-btns' },
+        el('button', { class: 'btn sm primary', text: '✍ Continuar daqui', onclick: () => { this.close(); this.goTo(m); } }),
+        el('button', { class: 'btn sm', text: '✓ Terminei (tirar)', title: 'Remove o marcador', onclick: () => { this.close(); this.remove(m); UI.toast('Marcador removido'); } })));
+    document.body.append(p); this._p = p;
+    const r = m.getBoundingClientRect(); const W = Math.min(320, innerWidth - 16);
+    p.style.width = W + 'px'; p.style.left = Math.max(8, Math.min(innerWidth - W - 8, r.left - 20)) + 'px';
+    const h = p.offsetHeight; p.style.top = (r.bottom + 6 + h > innerHeight - 8 ? Math.max(8, r.top - h - 6) : r.bottom + 6) + 'px';
+    setTimeout(() => { const off = e => { if (!p.contains(e.target) && !e.target.closest?.(this.SEL)) this.close(); }; document.addEventListener('pointerdown', off, true); this._off = off; }, 0);
+  },
+  close() { this._p?.remove(); this._p = null; if (this._off) document.removeEventListener('pointerdown', this._off, true); this._off = null; },
+  /* faixa no topo da página com marcador */
+  paint() {
+    const host = $('#blocks'); if (!host || !App.cur) return;
+    host.previousElementSibling?.classList?.contains('bm-bar') && host.previousElementSibling.remove();
+    const ms = [...host.querySelectorAll(this.SEL)]; if (!ms.length) return;
+    let i = 0;
+    const go = el('button', { class: 'btn sm bm-go', text: ms.length > 1 ? `🔖 Continuar de onde parei (1/${ms.length})` : '🔖 Continuar de onde parei', onclick: () => { this.goTo(ms[i % ms.length]); i++; if (ms.length > 1) go.textContent = `🔖 Continuar de onde parei (${(i % ms.length) + 1}/${ms.length})`; } });
+    const n = ms[0].dataset.note;
+    host.before(el('div', { class: 'bm-bar' }, go, n ? el('span', { class: 'muted small bm-n', text: '“' + n + '”' }) : null));
+  },
+  init() {
+    document.addEventListener('click', e => { const m = e.target.closest?.('#blocks ' + this.SEL); if (m) { e.preventDefault(); e.stopPropagation(); this.pop(m); } }, true);
+    document.addEventListener('keydown', e => { if (e.ctrlKey && e.altKey && (e.key === 'm' || e.key === 'M')) { e.preventDefault(); this.insert(); } });
+    // apagar a marca com Backspace/Delete também atualiza a faixa e a lista
+    document.addEventListener('input', e => { if (e.target.closest?.('#blocks') && this._had !== undefined) { const now = !!$('#blocks ' + this.SEL); if (now !== this._had) { this.paint(); App.renderPages(); } this._had = now; } }, true);
+  },
+  afterBlocks() { this._had = !!$('#blocks ' + this.SEL); this.paint(); },
 };
 
 /* ===== Traduzir a página para inglês ou espanhol =====

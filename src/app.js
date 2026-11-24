@@ -166,7 +166,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); Bookmark.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -301,7 +301,7 @@ const App = {
           el('input', { type: 'checkbox', checked: on, onchange: e => {
             if (this._shift && this._lastSel != null) { const [a2, b2] = [Math.min(this._lastSel, myIdx), Math.max(this._lastSel, myIdx)]; for (let i = a2; i <= b2; i++) this.sel.add(vis[i]); this._shift = false; this._lastSel = myIdx; this.renderPages(); return; }
             e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this._lastSel = myIdx; this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title', text: s.title || 'Sem título' }), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
+          el('span', {}, el('div', { class: 'page-title' }, s.title || 'Sem título', Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: e => { if (e.ctrlKey || e.metaKey || e.shiftKey) return this.startSelect(e.shiftKey && this.cur ? (() => { const v = items.map(x => x.id), i1 = v.indexOf(this.cur.id), i2 = v.indexOf(s.id); return i1 < 0 ? [s.id] : v.slice(Math.min(i1, i2), Math.max(i1, i2) + 1); })() : [this.cur?.id, s.id]); this.open(s.id); },
@@ -309,7 +309,7 @@ const App = {
         ondragend: () => { document.body.classList.remove('dragging'); this._drag = null; } },
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
-          el('div', { class: 'page-title', text: (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : '') }),
+          el('div', { class: 'page-title' }, (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : ''), Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''),
           Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
         flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
       if (!flat) {
@@ -489,7 +489,7 @@ const App = {
     this.inkSurfaces.forEach(i => i.destroy()); this.inkSurfaces = [];
     const host = $('#blocks'); host.innerHTML = '';
     this.cur.blocks.forEach(b => host.append(this.blockEl(b)));
-    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.();
+    this.numberPoints(); Shared.afterBlocks(this.cur); Spell.repaint?.(); Bookmark.afterBlocks();
   },
   numberPoints() { let n = 0; $$('#blocks .block').forEach(e => { if (e.dataset.type === 'point') e.querySelector('.b-tag').textContent = 'Ponto ' + (++n); }); },
   blockIndex(id) { return this.cur.blocks.findIndex(b => b.id === id); },

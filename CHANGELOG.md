@@ -2,6 +2,14 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.28 — 24/11/2026
+- **🔖 Marcador “Parei aqui”**: marca dentro do texto o ponto onde você parou.
+  - Para marcar: Ctrl+Alt+M, o botão direito, ou Inserir › 🔖 Parei aqui.
+  - Clicando na marca: escrever uma nota (“falta a ilustração…”), **Continuar daqui** (o cursor vai para o ponto) ou **✓ Terminei** (tira a marca).
+  - A página com marca ganha 🔖 na lista e o botão **Continuar de onde parei** no topo.
+  - Em **Pesquisar › 🔖 Para terminar** aparecem todas as páginas pendentes, com a nota e as últimas palavras antes da marca; abrir uma leva direto ao ponto.
+  - A marca não aparece em Pregar, Telão, PDF, Word, link de leitura nem na contagem de palavras.
+
 ## 3.12.27 — 23/11/2026
 - **Barra roxa sempre cabendo:** com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:
   - o tema vira ícone;

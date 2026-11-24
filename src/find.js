@@ -2,7 +2,7 @@
    Os resultados ocupam a área do editor; ao abrir um resultado, uma barra no topo volta para a lista. */
 const FindView = {
   active: false, ran: false,
-  st: { q: '', where: 'all', kind: '', period: '', titles: false, sort: 'rel' },
+  st: { q: '', where: 'all', kind: '', period: '', titles: false, sort: 'rel', bm: false },
   load() { try { Object.assign(this.st, JSON.parse(localStorage.getItem('ss-find') || '{}'), { q: this.st.q }); } catch (e) { } },
   save() { try { const { q, ...rest } = this.st; localStorage.setItem('ss-find', JSON.stringify(rest)); } catch (e) { } },
   pool() {
@@ -14,6 +14,7 @@ const FindView = {
     else { const ok = new Set(m.sections.map(x => x.id)); list = list.filter(s => ok.has(s.sec)); }
     const k = this.st.kind;
     if (k === 'book') list = list.filter(s => Book.is(s)); else if (k === 'none') list = list.filter(s => !Book.is(s) && !PageKinds.of(s)); else if (k) list = list.filter(s => PageKinds.of(s) === k);
+    if (this.st.bm) list = list.filter(s => Bookmark.has(s));
     const p = this.st.period;
     if (p) { const now = new Date(), from = p === 'year' ? `${now.getFullYear()}-01-01` : new Date(now - (+p) * 864e5).toISOString().slice(0, 10); list = list.filter(s => (s.date || '') >= from); }
     return list;
@@ -49,10 +50,12 @@ const FindView = {
     const period = el('select', { class: 'inp', title: 'Período (pela data da página)' }, opt('', 'Qualquer data', st.period), opt('30', 'Últimos 30 dias', st.period), opt('90', 'Últimos 3 meses', st.period), opt('365', 'Últimos 12 meses', st.period), opt('year', 'Este ano', st.period));
     const sort = el('select', { class: 'inp', title: 'Ordem' }, opt('rel', 'Mais relevantes', st.sort), opt('date', 'Mais recentes', st.sort));
     const titles = el('label', { class: 'fv-chk' }, el('input', { type: 'checkbox', checked: st.titles }), ' Só nos títulos');
+    const nBm = [...App.sermons.values()].filter(s => Bookmark.has(s)).length;
+    const bm = el('label', { class: 'fv-chk fv-bm' + (st.bm ? ' on' : ''), title: 'Só as páginas com o marcador “Parei aqui” — o que falta terminar' }, el('input', { type: 'checkbox', checked: st.bm }), ` 🔖 Para terminar${nBm ? ` (${nBm})` : ''}`);
     const out = el('div', { class: 'fv-results' });
     const go = () => {
-      Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked }); this.save();
-      out.innerHTML = ''; const filt = st.kind || st.period || st.where !== 'all';
+      Object.assign(st, { q: q.value.trim(), where: where.value, kind: kind.value, period: period.value, sort: sort.value, titles: titles.firstChild.checked, bm: bm.firstChild.checked }); bm.classList.toggle('on', st.bm); this.save();
+      out.innerHTML = ''; const filt = st.kind || st.period || st.bm || st.where !== 'all';
       if (!st.q && !filt) { out.append(el('div', { class: 'fv-help muted' }, el('p', { html: 'Digite palavras (em qualquer ordem) ou <b>"uma frase exata"</b> entre aspas. Acentos não importam.' }), el('p', { text: 'Ou escolha só um tipo — por exemplo “🌅 Devocional” — para ver todas as devocionais do app, de todos os cadernos.' }))); return; }
       if ((st.where === 'shared' && !App.meta.notebooks.some(n => n.shared || n.foreign)) || (st.where === 'withme' && !App.meta.notebooks.some(n => n.foreign))) {
         out.append(el('div', { class: 'fv-help muted' }, el('p', { text: st.where === 'withme' ? 'Ninguém compartilhou um caderno com você ainda. Quando compartilharem, as páginas aparecem aqui.' : 'Você ainda não tem cadernos compartilhados. Abra uma página e toque em “👥 Compartilhar”, ao lado do Tipo.' }))); return;
@@ -63,20 +66,21 @@ const FindView = {
         const s = r.s, row = el('button', { class: 'fv-row' + (App.cur?.id === s.id ? ' cur' : ''), onclick: () => this.openResult(s.id) },
           el('div', { class: 'fv-top' }, el('b', { class: 'fv-title', text: s.title || 'Sem título' }), r.hits ? el('span', { class: 'sr-n', text: r.hits }) : null),
           el('div', { class: 'fv-meta' }, PageKinds.badge(s), Translate.langBadge(s), Shared.inShared(s) ? el('span', { class: 'lang-badge', title: 'Caderno compartilhado', text: Shared.isAuthor(s) ? '👥' : '👥 de ' + Shared.authorName(s) }) : null, el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
-          r.ts.length ? Search.snippet(r.d, r.ts) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
+          r.ts.length ? Search.snippet(r.d, r.ts) : st.bm ? el('div', { class: 'fv-bmi' }, ...Bookmark.info(s).slice(0, 3).map(x => el('div', { class: 'page-sub' }, el('span', { class: 'bm-tag', text: '🔖' }), x.note ? el('b', { text: ' ' + x.note + ' — ' }) : ' ', el('span', { text: x.before ? '…' + x.before : '(no início do bloco)' }), x.at ? el('span', { class: 'muted', text: ' · ' + Recent.ago(x.at) }) : ''))) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
         out.append(row);
       }
       if (res.length > 300) out.append(el('p', { class: 'muted small', text: `Mostrando 300 de ${res.length}. Refine a busca.` }));
     };
     let t; q.oninput = () => { clearTimeout(t); t = setTimeout(go, 200); }; q.onkeydown = e => { if (e.key === 'Enter') { clearTimeout(t); go(); q.blur(); } };
-    for (const c of [where, kind, period, sort]) c.onchange = go; titles.firstChild.onchange = go;
+    for (const c of [where, kind, period, sort]) c.onchange = go; titles.firstChild.onchange = go; bm.firstChild.onchange = go;
     ed.append(el('div', { class: 'fv' },
       el('div', { class: 'fv-head' }, el('h2', { text: '🔎 Pesquisar' }), el('button', { class: 'btn sm', text: '✕ Fechar', title: 'Voltar para a página', onclick: () => { $('.rtab[data-tab="home"]').click(); } })),
-      q, el('div', { class: 'fv-filters' }, where, kind, period, sort, titles), out));
+      q, el('div', { class: 'fv-filters' }, bm, where, kind, period, sort, titles), out));
     go(); if (focus && !matchMedia('(pointer:coarse)').matches) setTimeout(() => { q.focus(); q.select(); }, 30);
   },
   openResult(id) {
     this.active = false; this.ran = true; this._opening = true; try { App.open(id); } finally { this._opening = false; }
+    if (this.st.bm && !this.st.q) setTimeout(() => Bookmark.goTo($('#blocks .ss-bm')), 120);
     const ts = Search.terms(this.st.q); setTimeout(() => Search.highlight(ts), 60);
   },
   // barra no topo da página aberta a partir da pesquisa
