@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.32 — 11/24/2026
+- **Mapa mental — ＋ na ponta do balão:** ao clicar num balão aparece um **＋** na ponta de fora dele (à direita nos galhos da direita, à esquerda nos da esquerda). Ele cria uma ideia saindo daquele balão, como no XMind. Tab faz o mesmo.
+
 ## 3.12.31 — 11/24/2026
 - **Mapa mental — arrastar:** arraste um balão para outro galho. Soltar no meio do balão põe dentro dele; em cima ou embaixo, muda a ordem. No celular: segure e arraste. Um galho não pode ser solto dentro dos próprios filhos.
 - **Mapa mental — escolher o lado:**

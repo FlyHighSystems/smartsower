@@ -32,7 +32,7 @@ const Mind = {
     svg.classList.add('mm-svg'); stage.append(svg);
     const bar = el('div', { class: 'mm-bar' });
     const fit = el('div', { class: 'mm-fit' }, stage);
-    box.append(bar, el('div', { class: 'mm-scroll' }, fit), el('div', { class: 'mm-hint muted small', text: 'Arraste um balão para outro galho (no celular: segure e arraste). Solte no meio para pôr dentro; em cima ou embaixo, para mudar a ordem.' }));
+    box.append(bar, el('div', { class: 'mm-scroll' }, fit), el('div', { class: 'mm-hint muted small', text: 'Clique num balão e use o ＋ da ponta (ou Tab) para criar ideias saindo dele; Enter cria ao lado. Arraste um balão para outro galho (no celular: segure e arraste).' }));
     const ctx = { b, box, stage, svg, bar, fit, sel: null };
     box._mm = ctx;
     const B = (t, title, fn, cls = '') => { const x = el('button', { class: 'btn sm ' + cls, text: t, title }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = fn; return x; };
@@ -49,6 +49,7 @@ const Mind = {
       el('span', { class: 'mm-sep' }),
       B('✦ IA', 'Gerar o mapa a partir da página, ou expandir o nó selecionado com ideias', () => this.ai(ctx), 'mm-ai'),
       B('⛶', 'Abrir o mapa em tela cheia', () => this.full(ctx)));
+    box.addEventListener('focusout', () => setTimeout(() => { if (!box.contains(document.activeElement) && !ctx.dragging) { ctx.stage.querySelector('.mm-plus')?.remove(); ctx.stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); ctx.sel = null; } }, 150));
     this.draw(ctx);
     new ResizeObserver(() => this.layout(ctx)).observe(box);
     return box;
@@ -60,7 +61,7 @@ const Mind = {
     const mk = (n, depth, color) => {
       const d = el('div', { class: `mm-node d${Math.min(depth, 3)}`, contentEditable: Shared.canEdit(App.cur) ? 'plaintext-only' : 'false', spellcheck: true, text: n.t });
       d.style.setProperty('--mc', color); this.r(n).el = d;
-      d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); });
+      d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); this.plus(ctx); });
       d.addEventListener('input', () => { n.t = d.textContent.replace(/\n/g, ' '); this.save(ctx, false); this.layout(ctx); });
       d.addEventListener('keydown', e => this.key(ctx, n, e));
       d.addEventListener('pointerdown', e => { if (e.button === 0) this.drag(ctx, n, d, e); });
@@ -117,6 +118,7 @@ const Mind = {
     const { P, SW, H, SIDE } = this.place(root, n => ({ w: this.r(n).el.offsetWidth, h: this.r(n).el.offsetHeight }), W);
     ctx.P = P; ctx.SIDE = SIDE;
     P.forEach((p, n) => { const e = this.r(n).el; e.style.left = p.x + 'px'; e.style.top = p.y + 'px'; });
+    this.plus(ctx);
     stage.style.width = SW + 'px'; stage.style.height = H + 'px';
     // encolhe para caber no bloco (até 60%); abaixo disso, rola de lado
     const s = SW > W ? Math.max(0.6, W / SW) : 1; ctx.scale = s;
@@ -228,6 +230,24 @@ const Mind = {
     if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
     if (par === ctx.b.mind && how !== 'child' && ctx.SIDE?.get(cur)) { this.freeze(ctx); n.side = cur.side; }   // ao lado de um galho principal: mesmo lado
     this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  /* botão ＋ na ponta do balão selecionado: cria uma ideia saindo dele (para fora do tema) */
+  plus(ctx) {
+    if (!Shared.canEdit(App.cur)) return;
+    let b = ctx.stage.querySelector('.mm-plus');
+    const n = ctx.sel, p = n && ctx.P?.get(n);
+    if (!p || !this.r(n).el?.isConnected) { b?.remove(); return; }
+    if (!b) {
+      b = el('button', { class: 'mm-plus', title: 'Nova ideia saindo deste balão (Tab)', text: '+' });
+      b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); });
+      b.onclick = e => { e.stopPropagation(); this.add(ctx, 'child'); };
+      ctx.stage.append(b);
+    }
+    const root = ctx.b.mind, top = n === root ? null : this.path(ctx, n)[1] || n;
+    const left = n !== root && ctx.SIDE?.get(top) === 'L';
+    const S = 22; b.style.top = (p.y + p.h / 2 - S / 2) + 'px';
+    b.style.left = (left ? p.x - S - 4 : p.x + p.w + 4) + 'px';
+    b.style.setProperty('--mc', getComputedStyle(this.r(n).el).getPropertyValue('--mc'));
   },
   /* fixa o lado atual de todos os galhos principais, para nenhum pular de lado quando outro muda */
   freeze(ctx) { (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); },

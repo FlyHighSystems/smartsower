@@ -877,3 +877,5 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .mm-node.mm-before{box-shadow:0 -4px 0 0 var(--accent)!important}.mm-node.mm-after{box-shadow:0 4px 0 0 var(--accent)!important}
 .mm-hint{margin-top:4px;opacity:0;transition:opacity .2s}.block.focus .mm-hint,.mm-big .mm-hint{opacity:.8}
 .mm-sep0{width:1px;height:20px;background:var(--line);margin:0 4px}
+.mm-plus{position:absolute;z-index:3;width:22px;height:22px;border-radius:50%;border:2px solid var(--mc,var(--accent));background:var(--panel);color:var(--mc,var(--accent));font:700 16px/1 system-ui,sans-serif;padding:0;display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.mm-plus:hover{background:var(--mc,var(--accent));color:#fff;transform:scale(1.12)}
