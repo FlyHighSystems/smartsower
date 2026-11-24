@@ -2,6 +2,16 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.36 — 11/24/2026
+- **▶ Pregar ▾ agora tem duas opções:**
+  - **Pregar neste dispositivo** (o teleprompter de sempre);
+  - **📺 Apresentar em tela externa**: abre os slides numa janela para o projetor ou TV (no Chrome/Edge, com permissão, ela já abre na outra tela) e mostra aqui o **painel do pregador**.
+- **Slides:** capa (título e texto-base), pontos, versículos, frases-chave, imagens, desenhos e diagramas. A letra se ajusta sozinha para caber.
+- **Painel do pregador:** o slide atual e o próximo, **suas anotações** (introdução, textos, ilustrações, conclusão, que não aparecem no telão), cronômetro, miniaturas para pular e ◀ ▶.
+  - Teclado e passador: → ↓ espaço PageDown avança; ← ↑ PageUp volta; **B** deixa a tela preta.
+  - Opções: “Projetar textos”, fundo claro ou escuro, e ⟳ Atualizar (pega as alterações da página).
+  - Se a janela do telão fechar, dá para reabrir. A tela do aparelho não apaga durante a apresentação.
+
 ## 3.12.35 — 11/24/2026
 - **🗒 Caderno de Anotações** (＋ Novo caderno): para reuniões, projetos e ideias.
   - As páginas são mais limpas: sem texto-base, duração, pregações, telão e revisão de sermão.

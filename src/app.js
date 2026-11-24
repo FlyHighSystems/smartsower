@@ -850,7 +850,7 @@ const Ribbon = {
     $('#ink-undo').onclick = () => App.lastInk ? App.lastInk.undo() : UI.toast('Desenhe algo primeiro');
     $('#ink-clear').onclick = async () => { if (App.lastInk && await UI.confirm('Limpar desenho', 'Apagar todos os traços deste desenho?', 'Limpar')) App.lastInk.clear(); };
     $('#btn-bible').onclick = () => BiblePane.toggle();
-    $('#btn-preach').onclick = () => App.cur && Reader.open(App.cur);
+    $('#btn-preach').onclick = e => App.cur && Present.menu(e.currentTarget);
     $('#btn-import').onclick = () => Porter.importDialog();
     $('#btn-export').onclick = () => Porter.exportDialog();
     this.renderCustom();

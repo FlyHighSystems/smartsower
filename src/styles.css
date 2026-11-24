@@ -894,3 +894,24 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .mm-svg{z-index:0}.mm-node{z-index:1}
 /* Página simples (caderno de Anotações; tipos Projeto, Anotação, Reunião) */
 body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.pg-simple #s-est, body.pg-simple #s-report, body.pg-simple #s-slide, body.pg-simple #s-review{display:none!important}
+/* 📺 Apresentação: painel do pregador */
+#pz-panel{position:fixed;inset:0;z-index:300;background:var(--bg,#1b1b1f);color:var(--fg,inherit);display:flex;flex-direction:column;gap:10px;padding:12px 16px}
+#pz-panel .pzp-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#pz-panel .pzp-sp{flex:1}.pzp-pos{font-weight:700;color:var(--accent)}.pzp-clock{font-variant-numeric:tabular-nums}
+#pz-panel .btn.on{background:#000;color:#fff}
+.pzp-main{flex:1;min-height:0;display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.pzp-left,.pzp-right{display:flex;flex-direction:column;gap:8px;min-height:0}
+.pzp-mini{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line);flex-shrink:0}
+.pzp-mini .pz{position:absolute;inset:0}
+.pzp-next .pzp-mini{opacity:.85}.pzp-end{padding:20px;text-align:center}
+.pzp-notes{flex:1;overflow:auto;font-size:calc(17px*var(--ez,1));line-height:1.5;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.pzp-notes p{margin:0 0 .7em}
+.pzp-nav{display:flex;gap:10px}.pzp-nav .btn{flex:1;font-size:18px;padding:14px}
+.pzp-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-shrink:0}
+.pzp-th{flex-shrink:0;display:flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 10px;font-size:12.5px;cursor:pointer;max-width:220px}
+.pzp-th.on{border-color:var(--accent);background:var(--accent-l)}.pzp-th .pzp-tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pzp-ck{display:flex;align-items:center;gap:4px;font-size:13px}
+#pz-lost{display:flex;gap:10px;align-items:center;background:#fff4ce;color:#3b2a00;border-radius:8px;padding:8px 12px}
+.pr-menu .mk-item kbd{font-size:11px}
+@media (max-width:800px){.pzp-main{grid-template-columns:1fr}.pzp-next{display:none}}
+
