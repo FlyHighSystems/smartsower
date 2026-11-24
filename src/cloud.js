@@ -106,7 +106,9 @@ const Cloud = {
       offline: ['☁', 'Offline' + (pend ? ` · ${pend} a enviar` : '')], error: ['☁!', 'Erro — toque para ver'], pending: ['☁', pend ? `${pend} a enviar` : 'Alterações pendentes'] }[s];
     b.dataset.state = s;
     if (s === 'syncing') { b.innerHTML = ''; b.append(this.ring(), el('span', { class: 'cl-t', text: L[1] })); }
-    else b.textContent = L[0] + ' ' + L[1];
+    else { b.innerHTML = ''; const [pre, tail] = s === 'ok' ? ['Sincronizado ', this.hhmm(this.st.at)] : ['', L[1]];
+      b.append(el('span', { class: 'cl-i', text: L[0] + ' ' }), pre ? el('span', { class: 'cl-x', text: pre }) : '', el('span', { class: 'cl-t', text: tail })); }
+    typeof TopFit !== 'undefined' && TopFit.fit();
     b.title = s === 'ok' ? `Tudo sincronizado às ${this.hhmm(this.st.at)}` : (extra || L[1]);
     this.paintBar(); this.listeners.forEach(f => f());
   },

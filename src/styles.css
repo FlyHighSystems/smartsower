@@ -835,3 +835,11 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .rv-new{color:#107c10;background:rgba(16,124,16,.08);border-radius:6px;padding:4px 8px;outline:none;white-space:pre-wrap}
 .rv-new:focus{box-shadow:0 0 0 2px var(--accent-l)}
 .rv-sw-a{margin-top:6px;flex-wrap:wrap;align-items:center}.rv-ok{color:#107c10;font-weight:600}
+/* Barra roxa: degraus de compactação (TopFit) */
+.rtabs{flex-shrink:0}.top-right{flex-shrink:0}
+.topbar.tf1{gap:6px}.topbar.tf1 .theme-btn{font-size:0!important;min-width:34px}.topbar.tf1 .theme-btn:before{content:"◐";font-size:16px}
+.topbar.tf2 .tb-l{display:none}.topbar.tf2 .top-right{gap:4px}.topbar.tf2 .top-right .tb{padding:5px 8px}
+.topbar.tf3 .brand{font-size:0;gap:0;margin-right:0}.topbar.tf3 .brand .logo{font-size:16px}.topbar.tf3 .rtab{padding:8px 9px}
+.topbar.tf4 .cl-x{display:none}.topbar.tf4 .pr-l{display:none}.topbar.tf4 .btn.preach{padding:6px 12px}
+.topbar.tf5 .cl-t{display:none}.topbar.tf5 .cloud-btn{padding-left:9px;padding-right:9px}.topbar.tf5 .rtab{padding:8px 6px;font-size:13px}.topbar.tf5 #btn-theme{display:none}
+.topbar.tf6{flex-wrap:wrap;height:auto;min-height:48px;row-gap:2px;padding-top:6px}.topbar.tf6 .top-right{margin-left:auto}.topbar.tf6 .rtabs{order:9;width:100%;height:40px}.topbar.tf6 .rtab{padding:8px 10px;font-size:14px}

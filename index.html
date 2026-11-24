@@ -846,6 +846,14 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .rv-new{color:#107c10;background:rgba(16,124,16,.08);border-radius:6px;padding:4px 8px;outline:none;white-space:pre-wrap}
 .rv-new:focus{box-shadow:0 0 0 2px var(--accent-l)}
 .rv-sw-a{margin-top:6px;flex-wrap:wrap;align-items:center}.rv-ok{color:#107c10;font-weight:600}
+/* Barra roxa: degraus de compactação (TopFit) */
+.rtabs{flex-shrink:0}.top-right{flex-shrink:0}
+.topbar.tf1{gap:6px}.topbar.tf1 .theme-btn{font-size:0!important;min-width:34px}.topbar.tf1 .theme-btn:before{content:"◐";font-size:16px}
+.topbar.tf2 .tb-l{display:none}.topbar.tf2 .top-right{gap:4px}.topbar.tf2 .top-right .tb{padding:5px 8px}
+.topbar.tf3 .brand{font-size:0;gap:0;margin-right:0}.topbar.tf3 .brand .logo{font-size:16px}.topbar.tf3 .rtab{padding:8px 9px}
+.topbar.tf4 .cl-x{display:none}.topbar.tf4 .pr-l{display:none}.topbar.tf4 .btn.preach{padding:6px 12px}
+.topbar.tf5 .cl-t{display:none}.topbar.tf5 .cloud-btn{padding-left:9px;padding-right:9px}.topbar.tf5 .rtab{padding:8px 6px;font-size:13px}.topbar.tf5 #btn-theme{display:none}
+.topbar.tf6{flex-wrap:wrap;height:auto;min-height:48px;row-gap:2px;padding-top:6px}.topbar.tf6 .top-right{margin-left:auto}.topbar.tf6 .rtabs{order:9;width:100%;height:40px}.topbar.tf6 .rtab{padding:8px 10px;font-size:14px}
 </style>
 </head>
 <body>
@@ -1050,7 +1058,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.26", "code": "b426d1", "at": "22/11 23:00", "notes": [{"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}, {"v": "3.12.15", "d": "22/11/2026", "items": ["Versículo no meio do texto vira bloco de versículo: selecione o trecho e toque em 📖 (barra de seleção) ou \"📖 Virar versículo\" (clique direito). O bloco é dividido em texto antes · versículo · texto depois. Se a referência estiver no trecho, vai para a caixa do versículo; sem referência, o app procura a frase na Bíblia; só a referência, busca o texto. Com Desfazer.", "✂ Dividir aqui / Separar em bloco no clique direito: parte um bloco grande em dois no cursor, ou põe o trecho selecionado num bloco próprio."]}]};
+<script>window.SS_BUILD = {"version": "3.12.27", "code": "1980ee", "at": "23/11 21:26", "notes": [{"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}, {"v": "3.12.17", "d": "22/11/2026", "items": ["Menu de correção na palavra marcada: depois de verificar (Abc ✓ ou F7), as marcas ficam no texto; clicar ou tocar numa palavra sublinhada abre um menu só de correção — sugestões, Ignorar e + Dicionário — em vez da barra de formatação. As marcas somem ao trocar de página."]}, {"v": "3.12.16", "d": "22/11/2026", "items": ["Alinhamento do texto: à esquerda, centralizado, à direita e justificado — na aba Formatação e no botão ≡ da barra de seleção. Vale no modo Pregar, no link de leitura e nas exportações do livro (PDF e Word).", "✦ Gerar resumo ao lado do resumo do capítulo: a IA lê o capítulo e escreve a sinopse em uma ou duas linhas, fiel ao texto; com Desfazer."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1723,6 +1731,32 @@ const Theme = {
   }
 };
 
+
+/* ===== Barra roxa sempre cabendo: compacta em degraus conforme o espaço (escala do Windows, janela menor, abas a mais) ===== */
+const TopFit = {
+  N: 6,
+  init() {
+    const t = $('.topbar'); if (!t) return;
+    new ResizeObserver(() => this.fit()).observe(t);
+    window.addEventListener('resize', () => this.fit());
+    document.fonts?.ready?.then(() => this.fit());
+    new MutationObserver(() => this.fit()).observe($('.rtabs'), { attributes: true, subtree: true, attributeFilter: ['hidden'] });
+    this.fit();
+  },
+  fit() {
+    if (this._busy) return; this._busy = true;
+    const t = $('.topbar'), B = t?.classList; if (!t) { this._busy = false; return; }
+    for (let i = 1; i <= this.N; i++) B.remove('tf' + i);
+    if (innerWidth > 600) {
+      const over = () => t.scrollWidth > t.clientWidth + 1;
+      for (let i = 1; i <= this.N && over(); i++) B.add('tf' + i);
+      // com as abas na 2ª linha sobra espaço: devolve o que der (rótulos, nome do app)
+      if (B.contains('tf6')) for (const i of [5, 4, 3, 2, 1]) { B.remove('tf' + i); if (over()) { B.add('tf' + i); break; } }
+    }
+    this._busy = false;
+  },
+};
+
 /* ===== Estimativa de duração =====
    Base: palavras faladas ÷ ritmo (130 palavras/min por padrão) + tempo extra para desenhos/imagens.
    Calibração: cada pregação registrada ensina o seu ritmo real (minutos por palavra das SUAS notas),
@@ -1917,7 +1951,7 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); ViewTab.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); Focus.init(); Split.init(); Recent.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
@@ -4124,7 +4158,9 @@ const Cloud = {
       offline: ['☁', 'Offline' + (pend ? ` · ${pend} a enviar` : '')], error: ['☁!', 'Erro — toque para ver'], pending: ['☁', pend ? `${pend} a enviar` : 'Alterações pendentes'] }[s];
     b.dataset.state = s;
     if (s === 'syncing') { b.innerHTML = ''; b.append(this.ring(), el('span', { class: 'cl-t', text: L[1] })); }
-    else b.textContent = L[0] + ' ' + L[1];
+    else { b.innerHTML = ''; const [pre, tail] = s === 'ok' ? ['Sincronizado ', this.hhmm(this.st.at)] : ['', L[1]];
+      b.append(el('span', { class: 'cl-i', text: L[0] + ' ' }), pre ? el('span', { class: 'cl-x', text: pre }) : '', el('span', { class: 'cl-t', text: tail })); }
+    typeof TopFit !== 'undefined' && TopFit.fit();
     b.title = s === 'ok' ? `Tudo sincronizado às ${this.hhmm(this.st.at)}` : (extra || L[1]);
     this.paintBar(); this.listeners.forEach(f => f());
   },

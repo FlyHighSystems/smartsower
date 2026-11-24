@@ -29,3 +29,29 @@ const Theme = {
     if (this.mq) this.mq.addEventListener ? this.mq.addEventListener('change', on) : this.mq.addListener(on);
   }
 };
+
+
+/* ===== Barra roxa sempre cabendo: compacta em degraus conforme o espaço (escala do Windows, janela menor, abas a mais) ===== */
+const TopFit = {
+  N: 6,
+  init() {
+    const t = $('.topbar'); if (!t) return;
+    new ResizeObserver(() => this.fit()).observe(t);
+    window.addEventListener('resize', () => this.fit());
+    document.fonts?.ready?.then(() => this.fit());
+    new MutationObserver(() => this.fit()).observe($('.rtabs'), { attributes: true, subtree: true, attributeFilter: ['hidden'] });
+    this.fit();
+  },
+  fit() {
+    if (this._busy) return; this._busy = true;
+    const t = $('.topbar'), B = t?.classList; if (!t) { this._busy = false; return; }
+    for (let i = 1; i <= this.N; i++) B.remove('tf' + i);
+    if (innerWidth > 600) {
+      const over = () => t.scrollWidth > t.clientWidth + 1;
+      for (let i = 1; i <= this.N && over(); i++) B.add('tf' + i);
+      // com as abas na 2ª linha sobra espaço: devolve o que der (rótulos, nome do app)
+      if (B.contains('tf6')) for (const i of [5, 4, 3, 2, 1]) { B.remove('tf' + i); if (over()) { B.add('tf' + i); break; } }
+    }
+    this._busy = false;
+  },
+};

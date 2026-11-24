@@ -2,6 +2,14 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.27 — 23/11/2026
+- **Barra roxa sempre cabendo:** com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:
+  - o tema vira ícone;
+  - Importar, Exportar e Bíblia viram ícones;
+  - o nome do app sai;
+  - o horário fica sem “Sincronizado”;
+  - em último caso, as abas passam para uma segunda linha.
+
 ## 3.12.26 — 22/11/2026
 - **Revisão com IA: trocas prontas.** A revisão agora traz a seção **Trocas sugeridas**: o trecho riscado e a reescrita. Cada troca tem:
   - **✓ Aplicar no texto**, que troca na hora e mantém a formatação em volta;
