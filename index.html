@@ -866,6 +866,22 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .bm-pop .inp{width:100%}
 .fv-bm.on{background:rgba(255,185,0,.18);border-radius:8px}.fv-bmi{display:flex;flex-direction:column;gap:2px;margin-top:2px}
 @media print{.ss-bm,.bm-bar{display:none!important}}
+/* 🧠 Mapa mental */
+.mm-wrap{position:relative;padding:4px 0 6px}
+.mm-bar{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:2px 0 6px;opacity:.35;transition:opacity .2s}
+.block.focus .mm-bar,.mm-wrap:hover .mm-bar,.mm-big .mm-bar{opacity:1}.mm-sep{flex:1}
+.mm-scroll{overflow:auto;max-width:100%}
+.mm-fit{position:relative;min-height:60px}.mm-stage{position:absolute;left:0;top:0;transform-origin:0 0}
+.mm-svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.mm-node{position:absolute;max-width:220px;padding:5px 12px;border-radius:16px;border:2px solid var(--mc);background:var(--panel);font-size:calc(14px*var(--ez,1));line-height:1.3;outline:none;cursor:text;white-space:pre-wrap;word-break:break-word;min-width:2.5em;text-align:center}
+.mm-node.d0{font-size:calc(17px*var(--ez,1));font-weight:700;padding:9px 18px;border-radius:22px;background:var(--accent);color:#fff;border-color:var(--accent);max-width:260px}
+.mm-node.d1{font-weight:600;background:color-mix(in srgb,var(--mc) 14%,var(--panel))}
+.mm-node.d2,.mm-node.d3{border-width:1.5px;font-size:calc(13.5px*var(--ez,1))}
+.mm-node:empty::before{content:"…";opacity:.4}
+.mm-node.on{box-shadow:0 0 0 3px color-mix(in srgb,var(--mc) 35%,transparent)}
+.mm-node.d0.on{box-shadow:0 0 0 3px var(--accent-l)}
+.mm-big .mm-scroll{max-height:72vh}
+.modal:has(.mm-big){width:min(1400px,96vw)!important;max-width:96vw!important}
 </style>
 </head>
 <body>
@@ -951,6 +967,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
     <div class="rgroup" id="rg-custom"></div>
     <div class="rgroup">
       <button data-insert="ink" class="rb t-ink">✎ Desenho</button>
+      <button data-insert="mind" class="rb t-mind" title="Mapa mental: tema no centro e ideias em galhos">🧠 Mapa mental</button>
       <button data-insert="image" class="rb">🖼 Imagem</button>
     </div>
     <div class="rgroup">
@@ -1073,7 +1090,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.29", "code": "949af0", "at": "24/11 10:10", "notes": [{"v": "3.12.29", "d": "11/24/2026", "items": ["Datas no padrão americano (MM/DD/AAAA) em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.", "Para voltar ao brasileiro: Exibir › Data › DD/MM/AAAA. A escolha vale para todos os seus aparelhos."]}, {"v": "3.12.28", "d": "24/11/2026", "items": ["🔖 Marcador “Parei aqui”: marca dentro do texto o ponto onde você parou."]}, {"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}, {"v": "3.12.18", "d": "22/11/2026", "items": ["Botão ＋ flutuante para adicionar: quando a barra “Adicionar” do fim da página sai da tela, aparece um ＋ ao lado do frame do texto, na altura do cursor. Ele abre as mesmas opções (Ponto, Versículo, Ilustração…; no livro: Intertítulo, Nota de rodapé, Do acervo…) e insere o bloco logo abaixo de onde você está escrevendo. Some quando a barra do fim volta a aparecer."]}]};
+<script>window.SS_BUILD = {"version": "3.12.30", "code": "de16cc", "at": "24/11 11:04", "notes": [{"v": "3.12.30", "d": "11/24/2026", "items": ["🧠 Bloco Mapa mental: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados."]}, {"v": "3.12.29", "d": "11/24/2026", "items": ["Datas no padrão americano (MM/DD/AAAA) em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.", "Para voltar ao brasileiro: Exibir › Data › DD/MM/AAAA. A escolha vale para todos os seus aparelhos."]}, {"v": "3.12.28", "d": "24/11/2026", "items": ["🔖 Marcador “Parei aqui”: marca dentro do texto o ponto onde você parou."]}, {"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1813,6 +1830,7 @@ const BLOCK_TYPES = {
   intro: { label: 'Introdução', ph: 'Como você vai abrir a mensagem? (gancho, história, pergunta)' },
   concl: { label: 'Conclusão', ph: 'Fechamento, apelo, oração final' },
   ink: { label: 'Desenho' },
+  mind: { label: 'Mapa mental' },
   image: { label: 'Imagem' },
 };
 /* Blocos de destaque (com rótulo e cor). Inclui os tipos criados pelo usuário. */
@@ -2281,7 +2299,7 @@ const App = {
     ed.append(el('div', { id: 'blocks' }));
     this.updateEstimate();
     const add = Book.is(s) ? Book.addBar(s) : el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
-      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
+      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'mind', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
       el('button', { class: 'chip', text: '⚙ Tipos…', title: 'Criar ou editar seus próprios tipos de bloco', onclick: () => TypeManager.open() }));
     ed.append(add);
     this.renderBlocks();
@@ -2323,6 +2341,7 @@ const App = {
       wrap.append(area, grip);
       return wrap;
     }
+    if (b.type === 'mind') { wrap.append(Mind.el(b)); return wrap; }
     if (b.type === 'image') {
       wrap.append(el('img', { class: 'b-img', src: b.src, alt: '' }));
       const cap = el('div', { class: 'b-body b-caption', contenteditable: 'true', 'data-ph': 'Legenda (opcional)', html: b.html || '' });
@@ -2424,6 +2443,7 @@ const App = {
     if (!this.cur) return;
     const b = Object.assign({ id: uid(), type, html: '' }, data);
     if (type === 'ink' && !b.ink) b.ink = { hr: 0.32, strokes: [] };
+    if (type === 'mind' && !b.mind) { b.mind = Mind.blank(this.cur.title); b.html = Mind.html(b.mind); }
     let i;
     if (at === Infinity) i = this.cur.blocks.length;
     else if (at === -1) i = 0;
@@ -2455,7 +2475,7 @@ const App = {
     if (!silent) UI.toast(`${BLOCK_TYPES[b.type].label} removido`, { label: 'Desfazer', fn: () => this.insertBlock(b.type, b, i) });
   },
   typeMenu(b, anchor) {
-    const types = [...TEXT_TYPES(), 'verse'];
+    const types = [...TEXT_TYPES(), 'verse', 'mind'];
     if (!types.includes(b.type)) { UI.toast('Desenhos e imagens não mudam de tipo'); return; }
     const m = UI.modal({ title: 'Mudar tipo do bloco', body: el('div', { class: 'type-grid' }, types.map(t => el('button', { class: 'chip t-' + t + (t === b.type ? ' on' : ''), style: isCallout(t) ? { color: blockColor(t) } : null, text: BLOCK_TYPES[t].label, onclick: () => {
       this.convertBlock(b, t);
@@ -2464,6 +2484,8 @@ const App = {
   },
   convertBlock(b, t) {
     if (t === b.type) return;
+    if (t === 'mind') { b.mind = Mind.fromHTML(b.html, this.cur?.title); b.type = 'mind'; b.html = Mind.html(b.mind); delete b.ref; return; }
+    if (b.type === 'mind') delete b.mind;
     const text = htmlToText(b.html);
     if (t === 'verse') {
       // "Jo 3:16 Porque Deus amou…" -> referência + texto
@@ -5917,6 +5939,7 @@ const Share = {
       if (b.type === 'point') { out.push(`\n${mk}*${++n}. ${htmlToText(b.html)}*`); continue; }
       if (b.type === 'verse') { if (!t && !b.ref) continue; if (!t) { out.push(`📖 *${b.ref}*`); continue; } out.push(t.split('\n').map(l => '> _' + l.replace(/_/g, '') + '_').join('\n') + (b.ref ? `\n> — *${b.ref}*${b.version ? ' (' + (Bible.info(b.version)?.short || '') + ')' : b.verLabel ? ' (' + b.verLabel + ')' : ''}` : '')); continue; }
       if (b.type === 'ink' || b.type === 'image') continue;
+      if (b.type === 'mind' && b.mind) { const lines = [`🧠 *${b.mind.t}*`]; const w = (k, d) => k.forEach(x => { lines.push('   '.repeat(d) + (d ? '◦ ' : '• ') + x.t); w(x.k || [], d + 1); }); w(b.mind.k || [], 0); out.push(mk + lines.join('\n')); continue; }
       if (!t) continue;
       if (isCallout(b.type)) { out.push(`${mk}*${(BLOCK_TYPES[b.type]?.label || '').toUpperCase()}:* ${t}`); continue; }
       out.push(mk + t);
@@ -8760,6 +8783,174 @@ const Bookmark = {
     document.addEventListener('input', e => { if (e.target.closest?.('#blocks') && this._had !== undefined) { const now = !!$('#blocks ' + this.SEL); if (now !== this._had) { this.paint(); App.renderPages(); } this._had = now; } }, true);
   },
   afterBlocks() { this._had = !!$('#blocks ' + this.SEL); this.paint(); },
+};
+
+/* ===== 🧠 Bloco Mapa mental =====
+   b.mind = { t, k:[{ t, k:[…], c? }] }  ·  b.html guarda o mesmo mapa como lista (tópicos), então
+   busca, contagem, IA, Word, PDF, Pregar e link de leitura já funcionam com ele. */
+const MIND_COLORS = ['#7719aa', '#0f6cbd', '#c25e00', '#107c10', '#b4009e', '#008575', '#d13438', '#4f6bed'];
+const Mind = {
+  R: new WeakMap(),
+  r(n) { let o = this.R.get(n); if (!o) this.R.set(n, o = {}); return o; },
+  blank(title = '') { return { t: title || 'Tema central', k: [{ t: 'Ideia 1', k: [] }, { t: 'Ideia 2', k: [] }, { t: 'Ideia 3', k: [] }] }; },
+  html(m) {
+    const li = n => `<li>${esc(n.t || '')}${n.k?.length ? '<ul>' + n.k.map(li).join('') + '</ul>' : ''}</li>`;
+    return `<div><b>${esc(m.t || '')}</b></div>` + (m.k?.length ? '<ul>' + m.k.map(li).join('') + '</ul>' : '');
+  },
+  /* texto com lista (ou linhas com recuo) → mapa */
+  fromHTML(html, fallback) {
+    const d = document.createElement('div'); d.innerHTML = html || '';
+    const ul = d.querySelector('ul,ol');
+    const walk = list => [...list.children].filter(x => x.tagName === 'LI').map(li => {
+      const sub = li.querySelector(':scope > ul, :scope > ol'); const c = li.cloneNode(true); c.querySelectorAll('ul,ol').forEach(x => x.remove());
+      return { t: c.textContent.trim(), k: sub ? walk(sub) : [] };
+    });
+    if (ul) { const t = (ul.previousElementSibling?.textContent || [...d.childNodes].find(n => n !== ul && n.textContent.trim())?.textContent || fallback || 'Tema central').trim(); return { t, k: walk(ul) }; }
+    const lines = htmlToText(html || '').split('\n').map(x => x.replace(/^[\s•\-–*\d.)]+/, '').trim()).filter(Boolean);
+    if (!lines.length) return this.blank(fallback);
+    return { t: lines[0], k: lines.slice(1).map(t => ({ t, k: [] })) };
+  },
+  /* ---------- editor ---------- */
+  el(b) {
+    if (!b.mind) b.mind = this.blank(App.cur?.title);
+    if (!b.html) b.html = this.html(b.mind);
+    const box = el('div', { class: 'mm-wrap' });
+    const stage = el('div', { class: 'mm-stage' }), svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('mm-svg'); stage.append(svg);
+    const bar = el('div', { class: 'mm-bar' });
+    const fit = el('div', { class: 'mm-fit' }, stage);
+    box.append(bar, el('div', { class: 'mm-scroll' }, fit));
+    const ctx = { b, box, stage, svg, bar, fit, sel: null };
+    box._mm = ctx;
+    const B = (t, title, fn, cls = '') => { const x = el('button', { class: 'btn sm ' + cls, text: t, title }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = fn; return x; };
+    bar.append(
+      B('＋ Ideia', 'Novo galho a partir do nó selecionado (Tab)', () => this.add(ctx, 'child')),
+      B('＋ Ao lado', 'Nova ideia no mesmo nível (Enter)', () => this.add(ctx, 'sib')),
+      B('↑', 'Subir na ordem (Ctrl+↑)', () => this.move(ctx, -1)), B('↓', 'Descer na ordem (Ctrl+↓)', () => this.move(ctx, 1)),
+      B('🎨', 'Trocar a cor do galho', () => this.recolor(ctx)),
+      B('✕', 'Apagar o nó e o que está abaixo dele', () => this.del(ctx)),
+      el('span', { class: 'mm-sep' }),
+      B('✦ IA', 'Gerar o mapa a partir da página, ou expandir o nó selecionado com ideias', () => this.ai(ctx), 'mm-ai'),
+      B('⛶', 'Abrir o mapa em tela cheia', () => this.full(ctx)));
+    this.draw(ctx);
+    new ResizeObserver(() => this.layout(ctx)).observe(box);
+    return box;
+  },
+  path(ctx, node) { const find = (n, p) => { if (n === node) return p; for (const k of n.k || []) { const r = find(k, [...p, n]); if (r) return r; } return null; }; return find(ctx.b.mind, []); },
+  save(ctx, redraw = true) { const b = ctx.b; b.html = this.html(b.mind); App.touch(); if (redraw) this.draw(ctx); },
+  draw(ctx) {
+    const { stage, b } = ctx; stage.querySelectorAll('.mm-node').forEach(n => n.remove());
+    const mk = (n, depth, color) => {
+      const d = el('div', { class: `mm-node d${Math.min(depth, 3)}`, contentEditable: Shared.canEdit(App.cur) ? 'plaintext-only' : 'false', spellcheck: true, text: n.t });
+      d.style.setProperty('--mc', color); this.r(n).el = d;
+      d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); });
+      d.addEventListener('input', () => { n.t = d.textContent.replace(/\n/g, ' '); this.save(ctx, false); this.layout(ctx); });
+      d.addEventListener('keydown', e => this.key(ctx, n, e));
+      stage.append(d);
+      (n.k || []).forEach((k, i) => mk(k, depth + 1, depth === 0 ? (k.c || MIND_COLORS[i % MIND_COLORS.length]) : color));
+    };
+    mk(b.mind, 0, 'var(--accent)');
+    this.layout(ctx);
+    if (ctx.sel && this.r(ctx.sel).el) this.r(ctx.sel).el.classList.add('on');
+  },
+  /* galhos divididos à direita e à esquerda do tema (como no XMind); em tela estreita, tudo à direita */
+  layout(ctx) {
+    const { stage, svg, b, box } = ctx, root = b.mind; if (!this.r(root).el) return;
+    const GX = 34, GY = 10, W = box.clientWidth || 600;
+    stage.style.width = '4000px'; stage.querySelectorAll('.mm-node').forEach(e => { e.style.left = '0px'; e.style.top = '0px'; });   // mede sem a borda apertar
+    const size = n => { this.r(n).w = this.r(n).el.offsetWidth; this.r(n).h = this.r(n).el.offsetHeight; (n.k || []).forEach(size); };
+    size(root);
+    const hgt = n => (this.r(n).sh = n.k?.length ? Math.max(this.r(n).h, n.k.reduce((s, k) => s + hgt(k), 0) + GY * (n.k.length - 1)) : this.r(n).h);
+    const kids = root.k || [];
+    const narrow = W < 560 || kids.length < 3;
+    const right = narrow ? kids : kids.slice(0, Math.ceil(kids.length / 2)), left = narrow ? [] : kids.slice(right.length);
+    const side = (list) => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
+    const hR = side(right), hL = side(left), H = Math.max(hR, hL, this.r(root).h) + 20;
+    const place = (n, x, yTop, dir) => {   // x = borda do nó do lado do pai
+      this.r(n).x = dir > 0 ? x : x - this.r(n).w; this.r(n).y = yTop + (this.r(n).sh - this.r(n).h) / 2;
+      let y = yTop + (this.r(n).sh - (n.k || []).reduce((s, k) => s + this.r(k).sh, 0) - GY * Math.max(0, (n.k || []).length - 1)) / 2;
+      for (const k of n.k || []) { place(k, dir > 0 ? this.r(n).x + this.r(n).w + GX : this.r(n).x - GX, y, dir); y += this.r(k).sh + GY; }
+    };
+    const depthW = (n) => this.r(n).w + (n.k?.length ? GX + Math.max(...n.k.map(depthW)) : 0);
+    const wL = left.length ? GX + Math.max(...left.map(depthW)) : 0;
+    this.r(root).x = wL + 10; this.r(root).y = 10 + (H - 20 - this.r(root).h) / 2;
+    let y = 10 + (H - 20 - hR) / 2; for (const k of right) { place(k, this.r(root).x + this.r(root).w + GX, y, 1); y += this.r(k).sh + GY; }
+    y = 10 + (H - 20 - hL) / 2; for (const k of left) { place(k, this.r(root).x - GX, y, -1); y += this.r(k).sh + GY; }
+    let maxX = 0; const put = n => { this.r(n).el.style.left = this.r(n).x + 'px'; this.r(n).el.style.top = this.r(n).y + 'px'; maxX = Math.max(maxX, this.r(n).x + this.r(n).w); (n.k || []).forEach(put); }; put(root);
+    const SW = maxX + 10; stage.style.width = SW + 'px'; stage.style.height = H + 'px';
+    // encolhe para caber no bloco (até 60%); abaixo disso, rola de lado
+    const s = SW > W ? Math.max(0.6, W / SW) : 1; ctx.scale = s;
+    stage.style.transform = s < 1 ? `scale(${s})` : '';
+    ctx.fit.style.width = Math.ceil(SW * s) + 'px'; ctx.fit.style.height = Math.ceil(H * s) + 'px';
+    ctx.fit.style.marginLeft = SW * s < W ? Math.max(0, (W - SW * s) / 2) + 'px' : '0';
+    svg.setAttribute('width', SW); svg.setAttribute('height', H); svg.innerHTML = '';
+    const line = (a, c) => {
+      const dir = this.r(c).x > this.r(a).x ? 1 : -1;
+      const x1 = dir > 0 ? this.r(a).x + this.r(a).w : this.r(a).x, y1 = this.r(a).y + this.r(a).h / 2, x2 = dir > 0 ? this.r(c).x : this.r(c).x + this.r(c).w, y2 = this.r(c).y + this.r(c).h / 2, mx = (x1 + x2) / 2;
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+      p.setAttribute('stroke', getComputedStyle(this.r(c).el).getPropertyValue('--mc').trim() || '#888'); p.setAttribute('fill', 'none'); p.setAttribute('stroke-width', a === root ? 3 : 2); p.setAttribute('stroke-linecap', 'round');
+      svg.append(p); (c.k || []).forEach(k => line(c, k));
+    };
+    (root.k || []).forEach(k => line(root, k));
+  },
+  focus(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); const s = getSelection(); s.removeAllRanges(); s.addRange(r); d.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); },
+  add(ctx, how) {
+    const cur = ctx.sel || ctx.b.mind, p = this.path(ctx, cur), par = p?.[p.length - 1];
+    const n = { t: '', k: [] };
+    if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
+    this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  del(ctx) {
+    const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('O tema central não pode ser apagado.');
+    const p = this.path(ctx, n), par = p[p.length - 1], i = par.k.indexOf(n); par.k.splice(i, 1);
+    ctx.sel = par.k[Math.max(0, i - 1)] || par; this.save(ctx); this.focus(ctx.sel);
+  },
+  move(ctx, d) {
+    const n = ctx.sel; if (!n || n === ctx.b.mind) return; const p = this.path(ctx, n), par = p[p.length - 1], i = par.k.indexOf(n), j = i + d;
+    if (j < 0 || j >= par.k.length) return; par.k.splice(i, 1); par.k.splice(j, 0, n); this.save(ctx); this.focus(n);
+  },
+  recolor(ctx) {
+    const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('Selecione um galho.');
+    const p = this.path(ctx, n), top = p.length > 1 ? p[1] : n;   // a cor é do galho principal
+    const cur = this.r(top).el ? getComputedStyle(this.r(top).el).getPropertyValue('--mc').trim() : ''; const i = MIND_COLORS.indexOf(cur);
+    top.c = MIND_COLORS[(i + 1) % MIND_COLORS.length]; this.save(ctx); this.focus(n);
+  },
+  key(ctx, n, e) {
+    if (e.key === 'Tab') { e.preventDefault(); if (e.shiftKey) { const p = this.path(ctx, n); if (p.length) this.focus(p[p.length - 1]); } else this.add(ctx, 'child'); }
+    else if (e.key === 'Enter') { e.preventDefault(); this.add(ctx, n === ctx.b.mind ? 'child' : 'sib'); }
+    else if ((e.key === 'Backspace' || e.key === 'Delete') && !this.r(n).el.textContent && n !== ctx.b.mind) { e.preventDefault(); this.del(ctx); }
+    else if (e.ctrlKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.move(ctx, e.key === 'ArrowUp' ? -1 : 1); }
+    else if (e.key === 'Escape') this.r(n).el.blur();
+  },
+  full(ctx) {
+    const ph = el('div'); ctx.box.replaceWith(ph);
+    const m = UI.modal({ title: '🧠 Mapa mental', wide: true, body: ctx.box, onClose: () => { ph.replaceWith(ctx.box); ctx.box.classList.remove('mm-big'); this.layout(ctx); } });
+    ctx.box.classList.add('mm-big'); setTimeout(() => this.layout(ctx), 50);
+  },
+  async ai(ctx) {
+    const prov = AI.has('claude') ? 'claude' : AI.has('gemini') ? 'gemini' : null;
+    if (!prov) return UI.toast('Configure uma IA (Claude ou Gemini) em ☁ › IA para usar isso.');
+    const root = ctx.b.mind, n = ctx.sel && ctx.sel !== root ? ctx.sel : null;
+    const empty = !root.k?.length || root.k.every(k => /^Ideia \d+$/.test(k.t) && !k.k?.length);
+    const page = (App.cur?.blocks || []).filter(x => x !== ctx.b).map(x => (x.ref ? x.ref + ' ' : '') + htmlToText(x.html || '')).join('\n').slice(0, 9000);
+    const sys = 'Você ajuda um pastor e escritor brasileiro a organizar ideias em mapas mentais. Responda SÓ com JSON válido, sem comentários. Formato: {"t":"texto","k":[{"t":"texto","k":[…]}]}. Textos curtos (2 a 7 palavras), em português, fiéis ao conteúdo e à Bíblia.';
+    let user, mode;
+    if (n) { mode = 'expand'; const p = this.path(ctx, n).map(x => x.t).concat(n.t).join(' › '); user = `Tema do mapa: ${root.t}\nCaminho do nó: ${p}\nIdeias que já existem nele: ${(n.k || []).map(k => k.t).join('; ') || '(nenhuma)'}\n\nConteúdo da página (contexto):\n${page || '(vazio)'}\n\nDevolva {"t":"${n.t}","k":[…]} com 3 a 5 NOVAS ideias para este nó (pode ter 1 nível abaixo).`; }
+    else { mode = empty ? 'build' : 'more'; user = `Título da página: ${App.cur?.title || ''}\nTema central do mapa: ${root.t}\n${empty ? '' : 'Galhos que já existem: ' + root.k.map(k => k.t).join('; ') + '\n'}\nConteúdo da página:\n${page || '(vazio — crie a partir do tema)'}\n\n${empty ? 'Monte o mapa mental completo: tema central, 3 a 6 galhos principais e 2 a 4 ideias em cada.' : 'Sugira 2 a 4 galhos principais NOVOS (com 2 a 3 ideias cada) que complementem os existentes.'}`; }
+    const btn = ctx.bar.querySelector('.mm-ai'); btn.disabled = true; btn.textContent = '✦ Pensando…';
+    try {
+      const raw = String(await AI.ask(prov, sys, user, { json: true, maxTokens: 1500 }));
+      const j = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
+      const clean = x => ({ t: String(x.t || '').slice(0, 120), k: (x.k || []).slice(0, 8).map(clean) });
+      const r = clean(j);
+      if (mode === 'build') { root.t = root.t === 'Tema central' && r.t ? r.t : root.t; root.k = r.k; }
+      else if (mode === 'more') root.k.push(...r.k);
+      else (n.k ||= []).push(...r.k);
+      this.save(ctx); UI.toast('Mapa atualizado — ajuste à vontade (Ctrl+Z não desfaz; use 🕘 Versões se precisar).');
+    } catch (e) { UI.toast('A IA não respondeu direito: ' + (e.message || e)); }
+    btn.disabled = false; btn.textContent = '✦ IA';
+  },
 };
 
 /* ===== Traduzir a página para inglês ou espanhol =====

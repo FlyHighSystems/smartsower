@@ -10,6 +10,7 @@ const BLOCK_TYPES = {
   intro: { label: 'Introdução', ph: 'Como você vai abrir a mensagem? (gancho, história, pergunta)' },
   concl: { label: 'Conclusão', ph: 'Fechamento, apelo, oração final' },
   ink: { label: 'Desenho' },
+  mind: { label: 'Mapa mental' },
   image: { label: 'Imagem' },
 };
 /* Blocos de destaque (com rótulo e cor). Inclui os tipos criados pelo usuário. */
@@ -478,7 +479,7 @@ const App = {
     ed.append(el('div', { id: 'blocks' }));
     this.updateEstimate();
     const add = Book.is(s) ? Book.addBar(s) : el('div', { class: 'add-bar' }, el('span', { class: 'muted', text: 'Adicionar:' }),
-      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
+      ...['point', 'intro', 'text', 'verse', 'illus', 'app', 'quote', 'concl', ...(this.meta.customTypes || []).map(c => c.id), 'ink', 'mind', 'image'].map(t => el('button', { class: 'chip t-' + t, 'data-t': t, style: isCallout(t) ? { color: blockColor(t) } : null, text: '+ ' + BLOCK_TYPES[t].label, onclick: () => t === 'image' ? Ribbon.insertImage(true) : this.insertBlock(t, {}, Infinity) })),
       el('button', { class: 'chip', text: '⚙ Tipos…', title: 'Criar ou editar seus próprios tipos de bloco', onclick: () => TypeManager.open() }));
     ed.append(add);
     this.renderBlocks();
@@ -520,6 +521,7 @@ const App = {
       wrap.append(area, grip);
       return wrap;
     }
+    if (b.type === 'mind') { wrap.append(Mind.el(b)); return wrap; }
     if (b.type === 'image') {
       wrap.append(el('img', { class: 'b-img', src: b.src, alt: '' }));
       const cap = el('div', { class: 'b-body b-caption', contenteditable: 'true', 'data-ph': 'Legenda (opcional)', html: b.html || '' });
@@ -621,6 +623,7 @@ const App = {
     if (!this.cur) return;
     const b = Object.assign({ id: uid(), type, html: '' }, data);
     if (type === 'ink' && !b.ink) b.ink = { hr: 0.32, strokes: [] };
+    if (type === 'mind' && !b.mind) { b.mind = Mind.blank(this.cur.title); b.html = Mind.html(b.mind); }
     let i;
     if (at === Infinity) i = this.cur.blocks.length;
     else if (at === -1) i = 0;
@@ -652,7 +655,7 @@ const App = {
     if (!silent) UI.toast(`${BLOCK_TYPES[b.type].label} removido`, { label: 'Desfazer', fn: () => this.insertBlock(b.type, b, i) });
   },
   typeMenu(b, anchor) {
-    const types = [...TEXT_TYPES(), 'verse'];
+    const types = [...TEXT_TYPES(), 'verse', 'mind'];
     if (!types.includes(b.type)) { UI.toast('Desenhos e imagens não mudam de tipo'); return; }
     const m = UI.modal({ title: 'Mudar tipo do bloco', body: el('div', { class: 'type-grid' }, types.map(t => el('button', { class: 'chip t-' + t + (t === b.type ? ' on' : ''), style: isCallout(t) ? { color: blockColor(t) } : null, text: BLOCK_TYPES[t].label, onclick: () => {
       this.convertBlock(b, t);
@@ -661,6 +664,8 @@ const App = {
   },
   convertBlock(b, t) {
     if (t === b.type) return;
+    if (t === 'mind') { b.mind = Mind.fromHTML(b.html, this.cur?.title); b.type = 'mind'; b.html = Mind.html(b.mind); delete b.ref; return; }
+    if (b.type === 'mind') delete b.mind;
     const text = htmlToText(b.html);
     if (t === 'verse') {
       // "Jo 3:16 Porque Deus amou…" -> referência + texto

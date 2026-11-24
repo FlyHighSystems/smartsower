@@ -28,6 +28,7 @@ const Share = {
       if (b.type === 'point') { out.push(`\n${mk}*${++n}. ${htmlToText(b.html)}*`); continue; }
       if (b.type === 'verse') { if (!t && !b.ref) continue; if (!t) { out.push(`📖 *${b.ref}*`); continue; } out.push(t.split('\n').map(l => '> _' + l.replace(/_/g, '') + '_').join('\n') + (b.ref ? `\n> — *${b.ref}*${b.version ? ' (' + (Bible.info(b.version)?.short || '') + ')' : b.verLabel ? ' (' + b.verLabel + ')' : ''}` : '')); continue; }
       if (b.type === 'ink' || b.type === 'image') continue;
+      if (b.type === 'mind' && b.mind) { const lines = [`🧠 *${b.mind.t}*`]; const w = (k, d) => k.forEach(x => { lines.push('   '.repeat(d) + (d ? '◦ ' : '• ') + x.t); w(x.k || [], d + 1); }); w(b.mind.k || [], 0); out.push(mk + lines.join('\n')); continue; }
       if (!t) continue;
       if (isCallout(b.type)) { out.push(`${mk}*${(BLOCK_TYPES[b.type]?.label || '').toUpperCase()}:* ${t}`); continue; }
       out.push(mk + t);

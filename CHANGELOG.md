@@ -2,6 +2,16 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.30 — 11/24/2026
+- **🧠 Bloco Mapa mental**: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados.
+  - Onde fica: Inserir › 🧠 Mapa mental, ou “+ Mapa mental” na barra de baixo.
+  - Teclado: clique e digite; **Tab** cria um galho, **Enter** uma ideia ao lado, **Ctrl+↑/↓** reordena e Backspace num nó vazio apaga.
+  - 🎨 troca a cor do galho e **⛶** abre em tela cheia.
+  - **✦ IA**: monta o mapa a partir do conteúdo da página ou expande o nó selecionado com novas ideias.
+  - Um bloco de texto com lista vira mapa pelo ⇄ (Mudar tipo), e o mapa volta a ser lista.
+  - O mapa encolhe para caber no bloco.
+  - Word, PDF, Pregar e link de leitura recebem o mapa como lista em tópicos; o WhatsApp, como lista com recuo.
+
 ## 3.12.29 — 11/24/2026
 - **Datas no padrão americano (MM/DD/AAAA)** em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.
 - Para voltar ao brasileiro: **Exibir › Data › DD/MM/AAAA**. A escolha vale para todos os seus aparelhos.
