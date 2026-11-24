@@ -532,7 +532,7 @@ const Archive = {
         const used = x.b.usedIn?.length ? '  · já usado no livro' : '';
         list.append(el('label', { class: 'ar-item' + (sel.has(x) ? ' on' : '') }, el('input', { type: 'checkbox', checked: sel.has(x), onchange: e => { e.target.checked ? sel.add(x) : sel.delete(x); e.target.closest('.ar-item').classList.toggle('on', e.target.checked); cnt.textContent = sel.size ? `${sel.size} selecionado(s)` : ''; } }),
           el('span', { class: 'ar-body' }, el('span', { class: 'ar-type', text: (BLOCK_TYPES[x.b.type]?.label || x.b.type) + (x.mk ? ' · 📚' : '') }), el('span', { class: 'ar-t', text: x.t.slice(0, 320) + (x.t.length > 320 ? '…' : '') }),
-            el('span', { class: 'ar-src', text: `${x.s.title || 'Sem título'}${x.s.date ? ' · ' + new Date(x.s.date + 'T12:00').toLocaleDateString('pt-BR') : ''}${used}` }))));
+            el('span', { class: 'ar-src', text: `${x.s.title || 'Sem título'}${x.s.date ? ' · ' + new Date(x.s.date + 'T12:00').toLocaleDateString(DL()) : ''}${used}` }))));
       }
     };
     const cnt = el('span', { class: 'muted small' });
@@ -587,7 +587,7 @@ const History = {
     const show = v => {
       left.querySelectorAll('.hs-v').forEach(x => x.classList.toggle('on', x._v === v));
       right.innerHTML = '';
-      right.append(el('div', { class: 'row-btns' }, el('b', { text: new Date(v.at).toLocaleString('pt-BR') }),
+      right.append(el('div', { class: 'row-btns' }, el('b', { text: new Date(v.at).toLocaleString(DL()) }),
         el('span', { class: 'muted small', text: 'Vermelho: só existia nesta versão · Verde: só existe agora' }),
         el('button', { class: 'btn sm primary', text: '↺ Restaurar esta versão', onclick: async () => {
           if (!await UI.confirm('Restaurar versão', 'Voltar o texto para esta versão? A versão atual fica guardada no histórico.', 'Restaurar')) return;
@@ -597,7 +597,7 @@ const History = {
     };
     if (arr.length < 2) left.append(el('p', { class: 'muted small', text: 'As versões são guardadas automaticamente enquanto você escreve (no máximo uma a cada 5 minutos) e ficam neste aparelho.' }));
     arr.forEach((v, i) => { const prev = arr[i + 1]; const d = prev ? v.words - prev.words : 0;
-      const it = el('button', { class: 'hs-v', onclick: () => show(v) }, el('b', { text: new Date(v.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) }),
+      const it = el('button', { class: 'hs-v', onclick: () => show(v) }, el('b', { text: new Date(v.at).toLocaleString(DL(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) }),
         el('span', { class: 'muted small', text: `${fmtN(v.words)} pal.${d ? ` (${d > 0 ? '+' : ''}${fmtN(d)})` : ''}${i === 0 ? ' · atual' : ''}` })); it._v = v; left.append(it); });
     const m = UI.modal({ title: '🕘 Versões — ' + (s.title || 'Sem título'), body: el('div', { class: 'hs' }, left, right), wide: true }); m.box.classList.add('xl');
     if (arr[1]) show(arr[1]); else if (arr[0]) show(arr[0]);
@@ -916,7 +916,7 @@ const BookAI = {
       e.target.disabled = true; out.innerHTML = ''; out.append(el('p', { class: 'muted', text: 'Lendo o livro… (pode levar 1 a 2 minutos)' }));
       try { const r = await this.analyze(nb, p, rep); nb.book.lastAnalysis = { at: Date.now(), p, r }; App.saveMeta(); this.show(out, r, p); }
       catch (err) { out.innerHTML = ''; out.append(el('p', { class: 'on-log', text: '⚠ ' + err.message })); } finally { e.target.disabled = false; } } }))), out);
-    const L = nb.book?.lastAnalysis; if (L) { out.append(el('p', { class: 'muted small', text: `Última análise: ${new Date(L.at).toLocaleString('pt-BR')} (${L.p === 'claude' ? 'Claude' : 'Gemini'})` })); this.show(out, L.r, L.p, true); }
+    const L = nb.book?.lastAnalysis; if (L) { out.append(el('p', { class: 'muted small', text: `Última análise: ${new Date(L.at).toLocaleString(DL())} (${L.p === 'claude' ? 'Claude' : 'Gemini'})` })); this.show(out, L.r, L.p, true); }
   },
   lab(c) { return c.num ? `Cap. ${c.num}` : `“${c.s.title}”`; },
   async analyze(nb, p, rep) {

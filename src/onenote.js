@@ -289,7 +289,7 @@ const OneNoteUI = {
     for (const nb of list) {
       const done = [...App.sermons.values()].filter(s => s.source?.nb === nb.id).length;
       box.append(el('button', { class: 'on-item', onclick: () => this.viewSections(nb) },
-        el('b', { text: nb.displayName }), el('span', { class: 'muted small', text: [nb.isShared ? 'compartilhado' : '', nb.lastModifiedDateTime ? 'alterado em ' + new Date(nb.lastModifiedDateTime).toLocaleDateString('pt-BR') : '', done ? `${done} já importada(s)` : ''].filter(Boolean).join(' · ') })));
+        el('b', { text: nb.displayName }), el('span', { class: 'muted small', text: [nb.isShared ? 'compartilhado' : '', nb.lastModifiedDateTime ? 'alterado em ' + new Date(nb.lastModifiedDateTime).toLocaleDateString(DL()) : '', done ? `${done} já importada(s)` : ''].filter(Boolean).join(' · ') })));
     }
     const link = el('input', { class: 'inp', placeholder: 'Ou cole o link do caderno compartilhado (conta de trabalho/escola)' });
     const go = el('button', { class: 'btn', text: 'Abrir link', onclick: async () => {

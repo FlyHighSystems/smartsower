@@ -296,7 +296,7 @@ Sobre "trocas" (até 8): são reescritas prontas para o autor aplicar com um cli
             const rev = await this.run(s, prov, (p, k) => line(p, `${p === 'claude' ? 'Claude' : 'Gemini'}: ${k === 'run' ? 'analisando…' : k === 'ok' ? 'pronto ✓' : k === 'retry' ? 'resposta veio mal formatada, pedindo de novo…' : 'erro ✗'}`));
             this.render(body, rev, s, start);
           } }),
-          s.reviews?.length ? el('button', { class: 'btn', text: `Ver última revisão (${new Date(s.reviews[0].at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`, onclick: () => this.render(body, s.reviews[0], s, start) }) : null));
+          s.reviews?.length ? el('button', { class: 'btn', text: `Ver última revisão (${new Date(s.reviews[0].at).toLocaleString(DL(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`, onclick: () => this.render(body, s.reviews[0], s, start) }) : null));
     };
     start();
   },
@@ -305,7 +305,7 @@ Sobre "trocas" (até 8): são reescritas prontas para o autor aplicar com um cli
     const P = rev.providers, R = rev.results;
     const name = p => p === 'claude' ? 'Claude' : 'Gemini';
     body.append(el('div', { class: 'row-btns', style: { justifyContent: 'space-between' } },
-      el('span', { class: 'muted small', text: `Revisão de ${new Date(rev.at).toLocaleString('pt-BR')}` + (rev.kind ? ' · ' + (REVIEW_KINDS.find(k => k[0] === rev.kind)?.[1] || '') : '') }),
+      el('span', { class: 'muted small', text: `Revisão de ${new Date(rev.at).toLocaleString(DL())}` + (rev.kind ? ' · ' + (REVIEW_KINDS.find(k => k[0] === rev.kind)?.[1] || '') : '') }),
       el('button', { class: 'btn sm', text: '↻ Nova revisão', onclick: back })));
     for (const p of P) if (!R[p]?.ok) body.append(el('p', { class: 'on-log', text: `⚠ ${name(p)}: ${R[p]?.error || 'falhou'}` }));
     const ok = P.filter(p => R[p]?.ok);

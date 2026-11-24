@@ -374,7 +374,7 @@ const DocxWriter = {
       return out.join('') || para('', o);
     };
     let body = para(run(s.title, {}), { style: 'Title' });
-    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join('   ·   ');
+    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join('   ·   ');
     if (meta) body += para(run(meta, { color: '605E5C' }), { spacing: 240 });
     let n = 0;
     for (const b of s.blocks) {
@@ -549,7 +549,7 @@ const Porter = {
   pdf(s) {
     const P = $('#print-area'); P.innerHTML = '';
     P.append(el('h1', { text: s.title }));
-    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join(' · ');
+    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join(' · ');
     if (meta) P.append(el('div', { class: 'p-meta', text: meta }));
     let n = 0;
     for (const b of s.blocks) {

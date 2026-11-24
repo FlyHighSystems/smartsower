@@ -60,7 +60,7 @@ const Bookmark = {
     note.onkeydown = e => { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); this.close(); this.goTo(m); } };
     const at = +m.dataset.at;
     const p = el('div', { class: 'bm-pop' },
-      el('div', { class: 'bm-pop-h' }, el('b', { text: '🔖 Parei aqui' }), at ? el('span', { class: 'muted small', text: ' · ' + (typeof Recent !== 'undefined' ? Recent.ago(at) : new Date(at).toLocaleString('pt-BR')) }) : null),
+      el('div', { class: 'bm-pop-h' }, el('b', { text: '🔖 Parei aqui' }), at ? el('span', { class: 'muted small', text: ' · ' + (typeof Recent !== 'undefined' ? Recent.ago(at) : new Date(at).toLocaleString(DL())) }) : null),
       note,
       el('div', { class: 'row-btns' },
         el('button', { class: 'btn sm primary', text: '✍ Continuar daqui', onclick: () => { this.close(); this.goTo(m); } }),

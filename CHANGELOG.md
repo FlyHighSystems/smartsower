@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.29 — 11/24/2026
+- **Datas no padrão americano (MM/DD/AAAA)** em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.
+- Para voltar ao brasileiro: **Exibir › Data › DD/MM/AAAA**. A escolha vale para todos os seus aparelhos.
+
 ## 3.12.28 — 24/11/2026
 - **🔖 Marcador “Parei aqui”**: marca dentro do texto o ponto onde você parou.
   - Para marcar: Ctrl+Alt+M, o botão direito, ou Inserir › 🔖 Parei aqui.

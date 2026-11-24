@@ -144,7 +144,7 @@ const App = {
     E.classList.remove('over');
     if (!Book.is(this.cur) && PageKinds.timeMode(this.cur) === 'nenhum') { E.textContent = `${e.words} palavras`; E.title = 'Insight: sem tempo de ministração'; return; }
     E.textContent = `≈ ${Estimate.fmt(e.minutes)} pregando`;
-    E.title = `${e.words} palavras · estimativa ${Estimate.label(e)}` + (last ? `\nÚltima vez: ${last.minutes} min em ${new Date(last.date + 'T12:00').toLocaleDateString('pt-BR')}` : '');
+    E.title = `${e.words} palavras · estimativa ${Estimate.label(e)}` + (last ? `\nÚltima vez: ${last.minutes} min em ${new Date(last.date + 'T12:00').toLocaleDateString(DL())}` : '');
   },
   _save: debounce(() => App.flush(), 600),
   flush() { for (const id of this.pending) { const s = this.sermons.get(id); if (s) DB.put('sermons', id, s); } this.pending.clear(); },
@@ -301,7 +301,7 @@ const App = {
           el('input', { type: 'checkbox', checked: on, onchange: e => {
             if (this._shift && this._lastSel != null) { const [a2, b2] = [Math.min(this._lastSel, myIdx), Math.max(this._lastSel, myIdx)]; for (let i = a2; i <= b2; i++) this.sel.add(vis[i]); this._shift = false; this._lastSel = myIdx; this.renderPages(); return; }
             e.target.checked ? this.sel.add(s.id) : this.sel.delete(s.id); this._lastSel = myIdx; this.renderBulk(); e.target.closest('.page').classList.toggle('active', e.target.checked); } }),
-          el('span', {}, el('div', { class: 'page-title' }, s.title || 'Sem título', Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''))));
+          el('span', {}, el('div', { class: 'page-title' }, s.title || 'Sem título', Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''), el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : ''))));
         continue;
       }
       const row = el('div', { class: `page lv${lv}` + (this.cur?.id === s.id ? ' active' : ''), 'data-id': s.id, draggable: 'true', onclick: e => { if (e.ctrlKey || e.metaKey || e.shiftKey) return this.startSelect(e.shiftKey && this.cur ? (() => { const v = items.map(x => x.id), i1 = v.indexOf(this.cur.id), i2 = v.indexOf(s.id); return i1 < 0 ? [s.id] : v.slice(Math.min(i1, i2), Math.max(i1, i2) + 1); })() : [this.cur?.id, s.id]); this.open(s.id); },
@@ -310,7 +310,7 @@ const App = {
         hasKids ? el('button', { class: 'pg-tog', title: s.collapsed ? 'Mostrar subpáginas' : 'Recolher subpáginas', text: s.collapsed ? '▸' : '▾', onclick: e => { e.stopPropagation(); this.toggleCollapse(s.id); } }) : el('span', { class: 'pg-tog sp' }),
         el('div', { class: 'pg-main' },
           el('div', { class: 'page-title' }, (s.title || 'Sem título') + (s.collapsed && hasKids ? ' …' : ''), Bookmark.has(s) ? el('span', { class: 'bm-ic', title: 'Tem marcador “Parei aqui”', text: ' 🔖' }) : ''),
-          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', preview].filter(Boolean).join(' · '))),
+          Book.is(s) ? Book.pageSub(s) : el('div', { class: 'page-sub' }, PageKinds.badge(s), Translate.langBadge(s), [s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : '', preview].filter(Boolean).join(' · '))),
         flat ? null : el('button', { class: 'pg-menu icon-btn sm', title: 'Ordem, subpágina, mover…', text: '⋯', onclick: e => { e.stopPropagation(); this.pageMenu(s); } }));
       if (!flat) {
         row.addEventListener('dragover', e => { if (!this._drag || this._drag === s.id) return; e.preventDefault(); const r = row.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2; row.classList.toggle('drop-after', after); row.classList.toggle('drop-before', !after); });

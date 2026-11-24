@@ -19,7 +19,7 @@ const Share = {
       return walk(d.content).replace(/[ \t ]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
     };
     const out = [`*${s.title}*`];
-    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', s.passage ? '📖 ' + s.passage : ''].filter(Boolean).join(' · ');
+    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : '', s.passage ? '📖 ' + s.passage : ''].filter(Boolean).join(' · ');
     if (meta) out.push(meta);
     let n = 0;
     for (const b of s.blocks) {
@@ -38,7 +38,7 @@ const Share = {
   html(s, { inkAsImage = true } = {}) {
     const box = document.createElement('div');
     box.append(el('h1', { text: s.title }));
-    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join(' · ');
+    const meta = [s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : '', s.passage ? 'Texto-base: ' + s.passage : ''].filter(Boolean).join(' · ');
     if (meta) box.append(el('p', { class: 'meta', text: meta }));
     let n = 0;
     for (const b of s.blocks) {
@@ -113,7 +113,7 @@ const Share = {
         const url = this.viewerURL(sh.id);
         const live = this.isLive(sh);
         out.append(el('div', { class: 'sh-row' },
-          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `${live ? '🔴 Ao vivo' : '📌 Fixo'} · criado ${new Date(sh.at).toLocaleString('pt-BR')}${sh.upd ? ' · atualizado ' + new Date(sh.upd).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString('pt-BR') : ''}` })),
+          el('div', { class: 'sh-url' }, el('code', { text: url }), el('div', { class: 'muted small', text: `${live ? '🔴 Ao vivo' : '📌 Fixo'} · criado ${new Date(sh.at).toLocaleString(DL())}${sh.upd ? ' · atualizado ' + new Date(sh.upd).toLocaleString(DL(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''} · ${sh.allowCopy ? 'cópia permitida' : 'cópia bloqueada'}${sh.expires ? ' · expira ' + new Date(sh.expires).toLocaleDateString(DL()) : ''}` })),
           el('div', { class: 'row-btns', style: { flexWrap: 'wrap' } },
             el('button', { class: 'btn sm', text: 'Copiar link', onclick: () => this.copyLink(sh.id) }),
             el('a', { class: 'btn sm', href: 'https://wa.me/?text=' + encodeURIComponent(`${s.title}\n${url}`), target: '_blank', rel: 'noopener', text: 'Enviar no WhatsApp' }),

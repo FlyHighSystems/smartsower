@@ -81,7 +81,7 @@ const Team = {
     const tbl = el('div', { class: 'team-list' });
     for (const m of list) {
       const isMe = m.email === me;
-      const st = m.registered ? (m.last_sign_in ? '✓ Último acesso ' + new Date(m.last_sign_in).toLocaleDateString('pt-BR') : '✓ Conta criada') : '⏳ Aguardando primeiro acesso';
+      const st = m.registered ? (m.last_sign_in ? '✓ Último acesso ' + new Date(m.last_sign_in).toLocaleDateString(DL()) : '✓ Conta criada') : '⏳ Aguardando primeiro acesso';
       tbl.append(el('div', { class: 'team-row' },
         el('div', { class: 'team-who' }, el('b', { text: (m.name || m.email.split('@')[0]) + (isMe ? ' (você)' : '') }), el('span', { class: 'muted small', text: m.email })),
         el('span', { class: 'team-badge ' + m.role, text: m.role === 'admin' ? 'Administrador' : 'Membro' }),

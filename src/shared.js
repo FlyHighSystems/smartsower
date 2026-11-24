@@ -255,7 +255,7 @@ const Shared = {
     for (const w of $$('#blocks .block')) {
       const b = s.blocks.find(x => x.id === w.dataset.id); if (!b) continue;
       if (b.conflict) { w.classList.add('b-conflict'); w.prepend(el('div', { class: 'conf-tag', html: b.conflict.by === this.myEmail() ? '⚠ <b>Sua versão</b> — você e outra pessoa mexeram neste trecho ao mesmo tempo; a versão dela está logo acima. Fique com a melhor e apague a outra.' : `⚠ <b>Versão de ${esc(this.nameOf(b.conflict.by))}</b> — ela e outra pessoa mexeram neste trecho ao mesmo tempo. Fique com a melhor e apague a outra.`, onclick: e => { if (e.target.closest('button')) return; } }, el('button', { class: 'btn sm', text: 'Manter esta e tirar o aviso', onclick: () => { delete b.conflict; App.touch(s); App.renderBlocks(); } }))); }
-      if (b.by && b.by !== s.author?.email) { const t = w.querySelector('.b-tag'); t && t.after(el('span', { class: 'by-tag', style: { '--by': this.color(b.by) }, text: '✎ ' + this.nameOf(b.by), title: 'Último a mexer neste bloco' + (b.at ? ' · ' + new Date(b.at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '') })); }
+      if (b.by && b.by !== s.author?.email) { const t = w.querySelector('.b-tag'); t && t.after(el('span', { class: 'by-tag', style: { '--by': this.color(b.by) }, text: '✎ ' + this.nameOf(b.by), title: 'Último a mexer neste bloco' + (b.at ? ' · ' + new Date(b.at).toLocaleString(DL(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '') })); }
     }
     this.lockEditor(s, true);
   },
@@ -325,7 +325,7 @@ const Authorship = {
     this.mo.takeRecords();
   },
   info(sp) {
-    const who = Shared.nameOf(sp.dataset.by), when = sp.dataset.at ? new Date(sp.dataset.at + 'T12:00').toLocaleDateString('pt-BR') : '';
+    const who = Shared.nameOf(sp.dataset.by), when = sp.dataset.at ? new Date(sp.dataset.at + 'T12:00').toLocaleDateString(DL()) : '';
     const s = App.cur, can = s && (Shared.isAuthor(s) || Shared.isNbOwner(s));
     UI.toast(`✎ Escrito por ${who}${when ? ' em ' + when : ''}`, can ? { label: 'Aceitar', fn: () => { const body = sp.closest('.b-body'); sp.replaceWith(...sp.childNodes); body?.dispatchEvent(new Event('input', { bubbles: true })); } } : undefined);
   },

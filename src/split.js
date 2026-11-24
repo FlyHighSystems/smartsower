@@ -85,7 +85,7 @@ const Split = {
       for (const x of items.slice(0, 150)) {
         const bring = el('button', { class: 'spl-bring', title: 'Trazer para baixo do cursor', text: '⇠ Trazer' });
         bring.addEventListener('pointerdown', e => e.preventDefault()); bring.onclick = () => { this.bring(x.b, x.s); paint(); };
-        const src = el('button', { class: 'btn link sm spa-src', title: 'Abrir este sermão inteiro ao lado', text: `${x.s.title || 'Sem título'}${x.s.date ? ' · ' + new Date(x.s.date + 'T12:00').toLocaleDateString('pt-BR') : ''} ↗`, onclick: () => this.open(x.s.id) });
+        const src = el('button', { class: 'btn link sm spa-src', title: 'Abrir este sermão inteiro ao lado', text: `${x.s.title || 'Sem título'}${x.s.date ? ' · ' + new Date(x.s.date + 'T12:00').toLocaleDateString(DL()) : ''} ↗`, onclick: () => this.open(x.s.id) });
         const used = App.cur && x.b.usedIn?.includes(App.cur.id);
         list.append(el('div', { class: `spl-b spl-${x.b.type}${isCallout(x.b.type) ? ' spl-call' : ''}`, style: isCallout(x.b.type) ? { '--bc': blockColor(x.b.type) } : null },
           el('div', { class: 'spl-tag', text: (BLOCK_TYPES[x.b.type]?.label || x.b.type) + (x.mk ? ' · 📚' : '') + (used ? ' · ✓ já neste capítulo' : x.b.usedIn?.length ? ' · já usado no livro' : '') }), bring,
@@ -146,7 +146,7 @@ const Recent = {
   ago(t) {
     const m = Math.round((Date.now() - t) / 60000);
     if (m < 1) return 'agora'; if (m < 60) return `há ${m} min`; const h = Math.round(m / 60); if (h < 24) return `há ${h} h`;
-    const d = Math.round(h / 24); return d === 1 ? 'ontem' : d < 7 ? `há ${d} dias` : new Date(t).toLocaleDateString('pt-BR');
+    const d = Math.round(h / 24); return d === 1 ? 'ontem' : d < 7 ? `há ${d} dias` : new Date(t).toLocaleDateString(DL());
   },
   init() {
     const add = $('#page-add');

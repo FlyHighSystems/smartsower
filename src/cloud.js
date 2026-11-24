@@ -177,7 +177,7 @@ const Cloud = {
   /* Cadernos/seções/tipos: une por id; o mais recente vence nos itens em comum; exclusões viajam como lista */
   metaPayload() {
     const m = App.meta;
-    return { notebooks: m.notebooks.filter(n => !n.foreign), sections: m.sections.filter(x => !x.foreign), customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
+    return { notebooks: m.notebooks.filter(n => !n.foreign), sections: m.sections.filter(x => !x.foreign), customTypes: m.customTypes || [], deleted: m.deleted || {}, theme: m.theme, dateFmt: m.dateFmt, readerTheme: m.readerTheme, readerSerif: !!m.readerSerif, dict: m.dict || [], groupNames: m.groupNames || {}, tourDone: m.tourDone || 0, follow: { on: !!m.follow, onT: m.followT || 0, last: m.follow ? (m.lastOpen || {}) : undefined }, ai: (typeof AI !== 'undefined' && AI.cloudPayload()) || undefined };
   },
   async syncMeta() {
     const r = await this.rest('/rest/v1/user_meta?select=data,updated_at,server_updated');
@@ -206,7 +206,7 @@ const Cloud = {
       m.notebooks = merge(m.notebooks, rd.notebooks, 'notebooks');
       m.sections = merge(m.sections.map(s => ({ ...s, nb: this.remapNb[s.nb] || s.nb })), rd.sections, 'sections');
       m.customTypes = merge(m.customTypes || [], rd.customTypes, 'customTypes');
-      if (remote.updated_at > m.metaUpdated) { if (rd.theme) m.theme = rd.theme; if (rd.readerTheme) m.readerTheme = rd.readerTheme; if (rd.readerSerif != null) m.readerSerif = rd.readerSerif; }
+      if (remote.updated_at > m.metaUpdated) { if (rd.theme) m.theme = rd.theme; if (rd.dateFmt) m.dateFmt = rd.dateFmt; if (rd.readerTheme) m.readerTheme = rd.readerTheme; if (rd.readerSerif != null) m.readerSerif = rd.readerSerif; }
       try { AI.fromCloud(rd.ai); } catch (e) { }
       if (rd.groupNames && remote.updated_at > m.metaUpdated) m.groupNames = rd.groupNames;
       if (rd.tourDone && !m.tourDone) m.tourDone = rd.tourDone;
@@ -271,7 +271,7 @@ const Cloud = {
           const local = App.sermons.get(row.id);
           if (Shared.inShared(row.data) || (local && Shared.inShared(local))) { await Shared.receive(row); n++; continue; } // caderno compartilhado: junta bloco a bloco
           if (local && conflictIds.has(row.id)) { // os dois lados mudaram: a versão da nuvem fica, a deste aparelho vira cópia
-            const copy = structuredClone(local); copy.id = uid(); copy.title = `${local.title} (conflito — outra versão, ${new Date(local.updated).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`; copy.updated = Date.now();
+            const copy = structuredClone(local); copy.id = uid(); copy.title = `${local.title} (conflito — outra versão, ${new Date(local.updated).toLocaleString(DL(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})`; copy.updated = Date.now();
             App.sermons.set(copy.id, copy); await DB.put('sermons', copy.id, copy); conflicts++;
           }
           const s = row.data; s.id = row.id; s.updated = row.updated_at;
@@ -412,7 +412,7 @@ const CloudUI = {
         else if (Cloud.last) { const L = Cloud.last; live.append(el('div', { class: 'sync-row ok' }, el('b', { text: '✓ Sincronizado às ' + Cloud.hhmm(L.at) }),
           el('span', { class: 'muted', text: [L.down ? `${L.down} recebida(s)` : 'nada novo da nuvem', L.up ? `${L.up} enviada(s)` : 'nada a enviar', L.conflicts ? `${L.conflicts} conflito(s) guardado(s) como cópia` : ''].filter(Boolean).join(' · ') })));
           if (pend) live.append(el('p', { class: 'muted small', text: `${pend} alteração(ões) nova(s) desde então — sobem em alguns segundos.` })); }
-        else live.append(el('p', { class: 'muted', text: Cloud.st.at ? `Última sincronização: ${new Date(Cloud.st.at).toLocaleString('pt-BR')}${pend ? ` · ${pend} alteração(ões) aguardando envio` : ''}` : 'Ainda não sincronizado neste aparelho.' }));
+        else live.append(el('p', { class: 'muted', text: Cloud.st.at ? `Última sincronização: ${new Date(Cloud.st.at).toLocaleString(DL())}${pend ? ` · ${pend} alteração(ões) aguardando envio` : ''}` : 'Ainda não sincronizado neste aparelho.' }));
       }
     };
     this.set(

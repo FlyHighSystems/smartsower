@@ -298,7 +298,7 @@ const MarkSummary = {
       const row = it => el('button', { class: 'mks-item', onclick: () => { m.close(); this.goto(it.s.id, it.b.id); } },
         el('span', { class: 'mks-badges' }, ...it.b.marks.map(id => Marks.get(id)).filter(Boolean).map(mm => this.badge(mm))),
         el('span', { class: 'mks-body' }, el('span', { class: 'mks-t', text: this.text(it.b).slice(0, 280) || '(vazio)' }),
-          el('span', { class: 'mks-src', text: [it.s.title || 'Sem título', it.s.date ? new Date(it.s.date + 'T12:00').toLocaleDateString('pt-BR') : '', p.scope !== 'sec' && p.scope !== 'page' ? Search.where(it.s) : ''].filter(Boolean).join(' · ') })));
+          el('span', { class: 'mks-src', text: [it.s.title || 'Sem título', it.s.date ? new Date(it.s.date + 'T12:00').toLocaleDateString(DL()) : '', p.scope !== 'sec' && p.scope !== 'page' ? Search.where(it.s) : ''].filter(Boolean).join(' · ') })));
       if (p.group === 'page') {
         const by = new Map(); shown.forEach(it => { if (!by.has(it.s.id)) by.set(it.s.id, []); by.get(it.s.id).push(it); });
         for (const arr of by.values()) list.append(el('h4', { class: 'mks-h', text: arr[0].s.title || 'Sem título' }), ...arr.map(row));
@@ -327,7 +327,7 @@ const MarkSummary = {
     for (const it of items) {
       const nb = structuredClone(it.b); nb.id = uid(); if (nb.type === 'point') nb.type = 'text';
       blocks.push(nb);
-      blocks.push({ id: uid(), type: 'text', html: `<i>— de “${esc(it.s.title || 'Sem título')}”${it.s.date ? ', ' + new Date(it.s.date + 'T12:00').toLocaleDateString('pt-BR') : ''}</i>` });
+      blocks.push({ id: uid(), type: 'text', html: `<i>— de “${esc(it.s.title || 'Sem título')}”${it.s.date ? ', ' + new Date(it.s.date + 'T12:00').toLocaleDateString(DL()) : ''}</i>` });
     }
     App.newSermon({ title: `Resumo de marcações — ${labels}`, passage: '', blocks, duration: 0 });
     UI.toast('Página criada com ' + items.length + ' item(ns).');
@@ -1038,6 +1038,7 @@ const ViewTab = {
       g('Largura', ...EditorView.WIDTHS.map(([id, ic, t]) => rb(ic + ' ' + { normal: 'Normal', wide: 'Ampla', full: 'Tela toda' }[id], t, () => EditorView.setWidth(id), 'w:' + id))),
       g('Letra', rb('A−', 'Diminuir (Ctrl+Alt+−)', () => EditorView.zoom(-0.1)), this.zv, rb('A+', 'Aumentar (Ctrl+Alt+=)', () => EditorView.zoom(0.1))),
       g('Mostrar', ck('nav', 'Cadernos e páginas', 'Painéis da esquerda (☰)'), ck('meta', 'Dados da página', 'Linha com tipo, data, passagem, situação e botões da página'), ck('tags', 'Nomes dos blocos', 'Rótulos como TEXTO, VERSÍCULO, ILUSTRAÇÃO acima de cada bloco')),
+      g('Data', ...[['us', 'MM/DD/AAAA', 'Padrão americano: 11/24/2026'], ['br', 'DD/MM/AAAA', 'Padrão brasileiro: 24/11/2026']].map(([id, l, t]) => rb(l, t + ' — vale para a tela, WhatsApp, Word, PDF e link', () => { App.meta.dateFmt = id; App.saveMeta(); App.renderPages(); App.renderEditor(); }, 'd:' + id))),
       g('Tema', ...[['auto', '◐ Automático'], ['light', '☀ Claro'], ['dark', '☾ Escuro']].map(([id, l]) => rb(l, 'Tema do app', () => { App.meta.theme = id; App.saveMeta(); Theme.apply(); }, 't:' + id))));
     document.addEventListener('fullscreenchange', () => this.sync());
     new MutationObserver(() => this.sync()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
@@ -1046,7 +1047,7 @@ const ViewTab = {
   sync() {
     const P = $('.rpanel[data-panel="view"]'); if (!P || !P.childElementCount) return;
     const v = EditorView.get(), B = document.body.classList;
-    const on = k => k === 'split' ? Split.on : k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : false;
+    const on = k => k === 'split' ? Split.on : k === 'focus' ? Focus.on : k === 'fs' ? !!document.fullscreenElement : k.startsWith('w:') ? v.w === k.slice(2) : k.startsWith('t:') ? Theme.mode() === k.slice(2) : k.startsWith('d:') ? (App.meta.dateFmt === 'br' ? 'br' : 'us') === k.slice(2) : false;
     P.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', on(b.dataset.v)));
     const ch = { nav: !B.contains('nav-collapsed'), meta: v.meta !== false, tags: v.tags !== false };
     P.querySelectorAll('input[data-v]').forEach(i => { i.checked = ch[i.dataset.v]; });

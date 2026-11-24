@@ -132,3 +132,6 @@ function ensureContrast(root) {
   }
   return changed;
 }
+
+/* formato de data do app: padrão americano (MM/DD/YYYY); dá para voltar ao brasileiro em Exibir › Data */
+const DL = () => (typeof App !== 'undefined' && App.meta?.dateFmt === 'br') ? 'pt-BR' : 'en-US';

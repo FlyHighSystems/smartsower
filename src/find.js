@@ -65,7 +65,7 @@ const FindView = {
       for (const r of res.slice(0, 300)) {
         const s = r.s, row = el('button', { class: 'fv-row' + (App.cur?.id === s.id ? ' cur' : ''), onclick: () => this.openResult(s.id) },
           el('div', { class: 'fv-top' }, el('b', { class: 'fv-title', text: s.title || 'Sem título' }), r.hits ? el('span', { class: 'sr-n', text: r.hits }) : null),
-          el('div', { class: 'fv-meta' }, PageKinds.badge(s), Translate.langBadge(s), Shared.inShared(s) ? el('span', { class: 'lang-badge', title: 'Caderno compartilhado', text: Shared.isAuthor(s) ? '👥' : '👥 de ' + Shared.authorName(s) }) : null, el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString('pt-BR') : ''].filter(Boolean).join(' · ') })),
+          el('div', { class: 'fv-meta' }, PageKinds.badge(s), Translate.langBadge(s), Shared.inShared(s) ? el('span', { class: 'lang-badge', title: 'Caderno compartilhado', text: Shared.isAuthor(s) ? '👥' : '👥 de ' + Shared.authorName(s) }) : null, el('span', { text: [Search.where(s), s.date ? new Date(s.date + 'T12:00').toLocaleDateString(DL()) : ''].filter(Boolean).join(' · ') })),
           r.ts.length ? Search.snippet(r.d, r.ts) : st.bm ? el('div', { class: 'fv-bmi' }, ...Bookmark.info(s).slice(0, 3).map(x => el('div', { class: 'page-sub' }, el('span', { class: 'bm-tag', text: '🔖' }), x.note ? el('b', { text: ' ' + x.note + ' — ' }) : ' ', el('span', { text: x.before ? '…' + x.before : '(no início do bloco)' }), x.at ? el('span', { class: 'muted', text: ' · ' + Recent.ago(x.at) }) : ''))) : el('div', { class: 'page-sub sr-snip', text: (s.passage ? s.passage + ' · ' : '') + r.d.raw.slice(0, 110) }));
         out.append(row);
       }

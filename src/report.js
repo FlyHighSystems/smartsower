@@ -56,7 +56,7 @@ const PostReport = {
       if (!list.length) { body.append(el('p', { class: 'muted', text: 'Ainda não há pregações registradas. No modo leitura, a duração de cada ponto é medida sozinha; toque em 🎙 para transcrever.' })); return; }
       body.append(el('p', { class: 'muted', text: 'Cada vez que você usa o modo leitura por 3 minutos ou mais, o SmartSower guarda quanto tempo passou em cada ponto (e a transcrição, se o 🎙 estiver ligado).' }));
       for (const { p, i } of list) body.append(el('button', { class: 'on-item', onclick: () => this.detail(body, s, i, showList) },
-        el('b', { text: `${new Date(p.at || (p.date + 'T12:00')).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} · ${p.minutes} min` }),
+        el('b', { text: `${new Date(p.at || (p.date + 'T12:00')).toLocaleString(DL(), { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} · ${p.minutes} min` }),
         el('span', { class: 'muted small', text: [p.per ? 'tempo por ponto' : '', p.transcript?.length ? `transcrição (${p.transcript.length} trechos)` : '', p.analysis ? 'analisada' : '', p.calib === false ? 'não usada na estimativa' : 'usada na estimativa'].filter(Boolean).join(' · ') })));
     };
     idx != null ? this.detail(body, s, idx, showList) : showList();
@@ -73,7 +73,7 @@ const PostReport = {
     const segs = this.segmentsPlan(s); const factor = (s.duration || 0) && segs.reduce((n, g) => n + g.planned, 0) ? s.duration / segs.reduce((n, g) => n + g.planned, 0) : 1;
     body.append(el('div', { class: 'row-btns', style: { justifyContent: 'space-between' } },
       el('button', { class: 'btn link', text: '‹ Todas as pregações', onclick: back }),
-      el('span', { class: 'muted small', text: new Date(p.at || (p.date + 'T12:00')).toLocaleString('pt-BR') })));
+      el('span', { class: 'muted small', text: new Date(p.at || (p.date + 'T12:00')).toLocaleString(DL()) })));
     const calib = el('input', { type: 'checkbox', checked: p.calib !== false, onchange: e => { p.calib = e.target.checked; App.touch(s); App.updateEstimate(); } });
     body.append(el('div', { class: 'rp-head' },
       el('div', { class: 'rp-big' }, el('b', { text: `${p.minutes} min` }), el('span', { class: 'muted small', text: 'pregados' })),
@@ -135,6 +135,6 @@ Responda SOMENTE com JSON:
     if (a.resumo_redes?.length) { box.append(el('h5', { text: 'Para as redes sociais' })); a.resumo_redes.forEach(t => box.append(el('div', { class: 'rp-post' }, el('p', { text: t }), copy(t)))); }
     if (a.devocional) box.append(el('h5', { text: 'Devocional da semana' }), el('div', { class: 'rp-post' }, el('p', { text: a.devocional }), copy(a.devocional)));
     sec('Para a próxima vez', a.sugestoes);
-    box.append(el('p', { class: 'muted small', text: `Análise por ${a.provider === 'gemini' ? 'Gemini' : 'Claude'} em ${new Date(a.at).toLocaleString('pt-BR')}.` }));
+    box.append(el('p', { class: 'muted small', text: `Análise por ${a.provider === 'gemini' ? 'Gemini' : 'Claude'} em ${new Date(a.at).toLocaleString(DL())}.` }));
   }
 };
