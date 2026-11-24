@@ -2,6 +2,15 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.31 — 11/24/2026
+- **Mapa mental — arrastar:** arraste um balão para outro galho. Soltar no meio do balão põe dentro dele; em cima ou embaixo, muda a ordem. No celular: segure e arraste. Um galho não pode ser solto dentro dos próprios filhos.
+- **Mapa mental — escolher o lado:**
+  - **⬅ ＋** e **＋ ➡** (ou Alt+← / Alt+→) criam uma ideia principal à esquerda ou à direita do tema;
+  - **⇆ Lado** passa o galho para o outro lado;
+  - Enter numa ideia principal cria a próxima do mesmo lado;
+  - arrastar um galho até o tema e soltar do lado esquerdo ou direito também escolhe o lado.
+- **Mapa desenhado nas exportações:** Word, PDF, PDF do livro, link de leitura e cópia formatada agora levam o mapa como **imagem**, com as mesmas cores e galhos, e não mais como lista. O WhatsApp continua em lista com recuo.
+
 ## 3.12.30 — 11/24/2026
 - **🧠 Bloco Mapa mental**: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados.
   - Onde fica: Inserir › 🧠 Mapa mental, ou “+ Mapa mental” na barra de baixo.

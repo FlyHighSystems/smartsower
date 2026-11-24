@@ -882,6 +882,12 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .mm-node.d0.on{box-shadow:0 0 0 3px var(--accent-l)}
 .mm-big .mm-scroll{max-height:72vh}
 .modal:has(.mm-big){width:min(1400px,96vw)!important;max-width:96vw!important}
+.mm-node{touch-action:pan-x pan-y;user-select:text}.mm-node.mm-drag{opacity:.35}
+.mm-ghost{position:fixed;z-index:200;pointer-events:none;padding:5px 12px;border-radius:16px;background:var(--accent);color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mm-node.mm-drop{box-shadow:0 0 0 3px var(--accent)!important;transform:scale(1.06)}
+.mm-node.mm-before{box-shadow:0 -4px 0 0 var(--accent)!important}.mm-node.mm-after{box-shadow:0 4px 0 0 var(--accent)!important}
+.mm-hint{margin-top:4px;opacity:0;transition:opacity .2s}.block.focus .mm-hint,.mm-big .mm-hint{opacity:.8}
+.mm-sep0{width:1px;height:20px;background:var(--line);margin:0 4px}
 </style>
 </head>
 <body>
@@ -1090,7 +1096,7 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.30", "code": "de16cc", "at": "24/11 11:04", "notes": [{"v": "3.12.30", "d": "11/24/2026", "items": ["🧠 Bloco Mapa mental: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados."]}, {"v": "3.12.29", "d": "11/24/2026", "items": ["Datas no padrão americano (MM/DD/AAAA) em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.", "Para voltar ao brasileiro: Exibir › Data › DD/MM/AAAA. A escolha vale para todos os seus aparelhos."]}, {"v": "3.12.28", "d": "24/11/2026", "items": ["🔖 Marcador “Parei aqui”: marca dentro do texto o ponto onde você parou."]}, {"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}, {"v": "3.12.19", "d": "22/11/2026", "items": ["Modo foco (◎ na barra roxa, ◎ no canto do editor ou Ctrl+Alt+F): esconde barras, cadernos, lista de páginas e dados da página; fica só o título e o texto, numa coluna confortável e em tela cheia. A formatação aparece ao selecionar um trecho, o ＋ flutuante continua para adicionar blocos, e um mostrador discreto (que some enquanto você digita) traz palavras e tempo. Opção Destacar trecho atual esmaece os outros blocos. Esc sai."]}]};
+<script>window.SS_BUILD = {"version": "3.12.31", "code": "0c9bce", "at": "24/11 11:15", "notes": [{"v": "3.12.31", "d": "11/24/2026", "items": ["Mapa mental — arrastar: arraste um balão para outro galho. Soltar no meio do balão põe dentro dele; em cima ou embaixo, muda a ordem. No celular: segure e arraste. Um galho não pode ser solto dentro dos próprios filhos.", "Mapa mental — escolher o lado:", "Mapa desenhado nas exportações: Word, PDF, PDF do livro, link de leitura e cópia formatada agora levam o mapa como imagem, com as mesmas cores e galhos, e não mais como lista. O WhatsApp continua em lista com recuo."]}, {"v": "3.12.30", "d": "11/24/2026", "items": ["🧠 Bloco Mapa mental: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados."]}, {"v": "3.12.29", "d": "11/24/2026", "items": ["Datas no padrão americano (MM/DD/AAAA) em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.", "Para voltar ao brasileiro: Exibir › Data › DD/MM/AAAA. A escolha vale para todos os seus aparelhos."]}, {"v": "3.12.28", "d": "24/11/2026", "items": ["🔖 Marcador “Parei aqui”: marca dentro do texto o ponto onde você parou."]}, {"v": "3.12.27", "d": "23/11/2026", "items": ["Barra roxa sempre cabendo: com a aba Exibir, a escala do Windows em 125–150% ou a janela menor, o lado direito (Pregar) cortava. Agora a barra se compacta sozinha, em degraus:"]}, {"v": "3.12.26", "d": "22/11/2026", "items": ["Revisão com IA: trocas prontas. A revisão agora traz a seção Trocas sugeridas: o trecho riscado e a reescrita. Cada troca tem:", "Também dá para ajustar a reescrita antes de aplicar e usar Aplicar todas. Nos Pontos de atenção, o 👁 leva ao trecho. Isso vale para as revisões novas.", "Link de leitura ao vivo: o link acompanha as alterações, republicando uns 15 s depois que você para de escrever. Quem está lendo vê a mudança sozinho, sem perder o ponto da leitura, com o aviso “● Atualizado agora”. 📌 Congelar fixa o conteúdo; 🔴 Deixar ao vivo volta. Os links antigos passam a ser ao vivo."]}, {"v": "3.12.25", "d": "22/11/2026", "items": ["🕘 Páginas recentes: pelo botão 🕘 ao lado de “＋ Página” ou com Ctrl+K de qualquer lugar, aparecem as páginas que você abriu neste aparelho, de todos os cadernos, com o “há quanto tempo”."]}, {"v": "3.12.24", "d": "22/11/2026", "items": ["📚 Do acervo, lado a lado: no livro, o botão agora abre o acervo de sermões no painel da direita, e não mais numa janela. Você continua escrevendo à esquerda e, no painel:", "A janela antiga, para marcar vários blocos de uma vez, continua no botão ☑."]}, {"v": "3.12.23", "d": "22/11/2026", "items": ["Tela dividida (◫ Lado a lado): abra outra página ao lado da que você está escrevendo, para consultar e trazer conteúdo."]}, {"v": "3.12.22", "d": "22/11/2026", "items": ["Correção com o botão direito: em qualquer palavra errada (inclusive as sublinhadas pelo navegador), o menu agora traz as sugestões de correção no topo, mais o + Dicionário. Só a linha clicada é enviada ao corretor, por isso é rápido.", "Nas palavras marcadas pelo Abc ✓ (F7), o botão direito ou o clique abre só o menu de correção, sem a formatação."]}, {"v": "3.12.21", "d": "22/11/2026", "items": ["Modo foco em tela grande: a coluna agora segue a Largura escolhida (▭ Normal, ▬ Ampla, ⛶ Tela toda) e cresce junto com a letra (A+). O mostrador do foco ganhou esses controles, para ajustar sem sair."]}, {"v": "3.12.20", "d": "22/11/2026", "items": ["Nova aba Exibir (como a do OneNote), reunindo:", "As escolhas ficam salvas no aparelho.", "O Modo foco agora isola a página inteira. Saiu o destaque por bloco, e o ◎ passou da barra roxa para a aba Exibir (continua também no canto do editor e no Ctrl+Alt+F)."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -3513,6 +3519,7 @@ const DocxWriter = {
         body += para(run((BLOCK_TYPES[b.type]?.label || 'Destaque').toUpperCase(), { b: 1, color: col, sz: 18 }), { ind: 360, border: col, spacing: 0 });
         body += htmlParas(b.html, { ind: 360, border: col }, b.type === 'quote' ? { b: 1 } : {});
       } else if (b.type === 'image' && b.src) { const src = await toPNGIfNeeded(b.src); if (src) { const [w, h] = await imgSize(src); body += para(image(src, w, h)); } if (b.html) body += htmlParas(b.html, {}, { i: 1 }); }
+      else if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); const w = Math.min(600, im.w); body += para(image(im.src, w, Math.round(im.h * w / im.w))); }
       else if (b.type === 'ink' && b.ink?.strokes?.length) { const view = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; body += para(image(inkToDataURL(view, 1200, '#ffffff'), 600, 600 * view.hr)); }
     }
     const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`;
@@ -3684,6 +3691,7 @@ const Porter = {
       else if (b.type === 'verse') P.append(Marks.tag(el('blockquote', { class: 'p-verse' }, el('b', { text: (b.ref || '') + (b.version ? ' (' + (Bible.info(b.version)?.short || '') + ')' : '') }), el('div', { html: b.html || '' })), b));
       else if (isCallout(b.type)) P.append(Marks.tag(el('div', { class: 'p-call p-' + b.type, style: { borderColor: blockColor(b.type) } }, el('small', { text: BLOCK_TYPES[b.type]?.label || '', style: { color: blockColor(b.type) } }), el('div', { html: b.html || '' })), b));
       else if (b.type === 'image') P.append(Marks.tag(el('figure', {}, el('img', { src: b.src }), b.html ? el('figcaption', { html: b.html }) : null), b));
+      else if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); P.append(Marks.tag(el('img', { class: 'p-ink p-mind', src: im.src, style: { width: Math.min(100, im.w / 7) + '%' } }), b)); }
       else if (b.type === 'ink' && b.ink?.strokes?.length) { const v = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; P.append(el('img', { class: 'p-ink', src: inkToDataURL(v, 1400) })); }
       else P.append(Marks.tag(el('div', { class: 'p-text', html: b.html || '' }), b));
     }
@@ -5954,11 +5962,12 @@ const Share = {
     if (meta) box.append(el('p', { class: 'meta', text: meta }));
     let n = 0;
     for (const b of s.blocks) {
-      if (b.type !== 'image' && b.type !== 'ink' && !htmlToText(b.html) && !b.ref) continue;
+      if (b.type !== 'image' && b.type !== 'ink' && b.type !== 'mind' && !htmlToText(b.html) && !b.ref) continue;
       if (b.type === 'point') box.append(Marks.tag(el('h2', { text: `${++n}. ${htmlToText(b.html)}` }), b, true));
       else if (b.type === 'verse') box.append(Marks.tag(el('blockquote', { class: 'verse' }, el('div', { class: 'ref', text: (b.ref || '') + (b.version ? ' · ' + (Bible.info(b.version)?.short || '') : b.verLabel ? ' · ' + b.verLabel : '') }), el('div', { html: sanitizeHTML(b.html || '') })), b, true));
       else if (isCallout(b.type)) box.append(Marks.tag(el('div', { class: 'call', 'data-c': blockColor(b.type) }, el('small', { text: BLOCK_TYPES[b.type]?.label || '' }), el('div', { html: sanitizeHTML(b.html || '') })), b, true));
       else if (b.type === 'image' && b.src) box.append(Marks.tag(el('figure', {}, el('img', { src: b.src, alt: '' }), b.html ? el('figcaption', { text: htmlToText(b.html) }) : null), b, true));
+      else if (b.type === 'mind' && b.mind && inkAsImage) { const im = Mind.png(b.mind); box.append(Marks.tag(el('figure', { class: 'mind' }, el('img', { class: 'mind', src: im.src, width: im.w, alt: 'Mapa mental: ' + htmlToText(b.html || '').replace(/\n+/g, ' · ') })), b, true)); }
       else if (b.type === 'ink' && b.ink?.strokes?.length && inkAsImage) box.append(Marks.tag(el('img', { class: 'ink', src: inkToDataURL({ hr: inkContentHR(b.ink), strokes: b.ink.strokes }, 1000, '#ffffff'), alt: 'Desenho' }), b, true));
       else box.append(Marks.tag(el('div', { class: 'text', html: sanitizeHTML(b.html || '') }), b, true));
     }
@@ -7923,6 +7932,7 @@ const BookExport = {
     const out = [];
     for (const b of s.blocks) {
       if (b.type === 'ink') { if (b.ink?.strokes?.length) { const v = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; out.push({ k: 'img', src: inkToDataURL(v, 1200, '#ffffff'), w: 600, h: 600 * v.hr }); } continue; }
+      if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); out.push({ k: 'img', src: im.src, w: Math.min(600, im.w), h: Math.round(im.h * Math.min(600, im.w) / im.w) }); continue; }
       if (b.type === 'image') { if (b.src) out.push({ k: 'img', src: b.src, cap: b.html }); continue; }
       if (!htmlToText(b.html || '') && !b.ref) continue;
       if (b.type === 'subhead' || b.type === 'point') out.push({ k: 'h', html: b.html });
@@ -8819,11 +8829,15 @@ const Mind = {
     svg.classList.add('mm-svg'); stage.append(svg);
     const bar = el('div', { class: 'mm-bar' });
     const fit = el('div', { class: 'mm-fit' }, stage);
-    box.append(bar, el('div', { class: 'mm-scroll' }, fit));
+    box.append(bar, el('div', { class: 'mm-scroll' }, fit), el('div', { class: 'mm-hint muted small', text: 'Arraste um balão para outro galho (no celular: segure e arraste). Solte no meio para pôr dentro; em cima ou embaixo, para mudar a ordem.' }));
     const ctx = { b, box, stage, svg, bar, fit, sel: null };
     box._mm = ctx;
     const B = (t, title, fn, cls = '') => { const x = el('button', { class: 'btn sm ' + cls, text: t, title }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = fn; return x; };
     bar.append(
+      B('⬅ ＋', 'Nova ideia principal do lado ESQUERDO do tema (Alt+←)', () => this.addMain(ctx, 'L')),
+      B('＋ ➡', 'Nova ideia principal do lado DIREITO do tema (Alt+→)', () => this.addMain(ctx, 'R')),
+      B('⇆ Lado', 'Passar o galho selecionado para o outro lado do tema', () => this.flip(ctx)),
+      el('span', { class: 'mm-sep0' }),
       B('＋ Ideia', 'Novo galho a partir do nó selecionado (Tab)', () => this.add(ctx, 'child')),
       B('＋ Ao lado', 'Nova ideia no mesmo nível (Enter)', () => this.add(ctx, 'sib')),
       B('↑', 'Subir na ordem (Ctrl+↑)', () => this.move(ctx, -1)), B('↓', 'Descer na ordem (Ctrl+↓)', () => this.move(ctx, 1)),
@@ -8846,6 +8860,7 @@ const Mind = {
       d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); });
       d.addEventListener('input', () => { n.t = d.textContent.replace(/\n/g, ' '); this.save(ctx, false); this.layout(ctx); });
       d.addEventListener('keydown', e => this.key(ctx, n, e));
+      d.addEventListener('pointerdown', e => { if (e.button === 0) this.drag(ctx, n, d, e); });
       stage.append(d);
       (n.k || []).forEach((k, i) => mk(k, depth + 1, depth === 0 ? (k.c || MIND_COLORS[i % MIND_COLORS.length]) : color));
     };
@@ -8853,31 +8868,53 @@ const Mind = {
     this.layout(ctx);
     if (ctx.sel && this.r(ctx.sel).el) this.r(ctx.sel).el.classList.add('on');
   },
-  /* galhos divididos à direita e à esquerda do tema (como no XMind); em tela estreita, tudo à direita */
+  /* posições do mapa. size(n) → {w,h}. Galhos divididos à direita e à esquerda do tema (como no XMind);
+     em espaço estreito ou com poucos galhos, tudo à direita. Devolve { P: Map(nó → {x,y,w,h}), SW, H } */
+  place(root, size, W, allowSplit = true) {
+    const GX = 34, GY = 10, P = new Map(), S = new Map();
+    const sz = n => { P.set(n, { ...size(n) }); (n.k || []).forEach(sz); }; sz(root);
+    const hgt = n => { const p = P.get(n), k = n.k || []; const h = k.length ? Math.max(p.h, k.reduce((s, x) => s + hgt(x), 0) + GY * (k.length - 1)) : p.h; S.set(n, h); return h; };
+    const kids = root.k || [];
+    // lado de cada galho principal: o escolhido (side: 'L'|'R') ou, se não houver, distribuição automática
+    const free = kids.filter(k => !k.side), split = allowSplit && !(W < 560 || kids.length < 3);
+    const nR = kids.filter(k => k.side === 'R').length, nL = kids.filter(k => k.side === 'L').length;
+    const autoR = split ? Math.max(0, Math.ceil(kids.length / 2) - nR) : free.length;
+    const SIDE = new Map(); let a = 0; for (const k of kids) SIDE.set(k, k.side || (a++ < autoR ? 'R' : 'L'));
+    const right = kids.filter(k => SIDE.get(k) === 'R'), left = kids.filter(k => SIDE.get(k) === 'L');
+    const side = list => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
+    const R0 = P.get(root), hR = side(right), hL = side(left), H = Math.max(hR, hL, R0.h) + 20;
+    const put = (n, x, yTop, dir) => {
+      const p = P.get(n), k = n.k || []; p.x = dir > 0 ? x : x - p.w; p.y = yTop + (S.get(n) - p.h) / 2;
+      let y = yTop + (S.get(n) - k.reduce((s, c) => s + S.get(c), 0) - GY * Math.max(0, k.length - 1)) / 2;
+      for (const c of k) { put(c, dir > 0 ? p.x + p.w + GX : p.x - GX, y, dir); y += S.get(c) + GY; }
+    };
+    const depthW = n => P.get(n).w + (n.k?.length ? GX + Math.max(...n.k.map(depthW)) : 0);
+    const wL = left.length ? GX + Math.max(...left.map(depthW)) : 0;
+    R0.x = wL + 10; R0.y = 10 + (H - 20 - R0.h) / 2;
+    let y = 10 + (H - 20 - hR) / 2; for (const k of right) { put(k, R0.x + R0.w + GX, y, 1); y += S.get(k) + GY; }
+    y = 10 + (H - 20 - hL) / 2; for (const k of left) { put(k, R0.x - GX, y, -1); y += S.get(k) + GY; }
+    let SW = 0; P.forEach(p => { SW = Math.max(SW, p.x + p.w); });
+    return { P, SW: SW + 10, H, SIDE };
+  },
+  /* cor de cada nó: o tema usa a cor do app; cada galho principal tem a sua (ou a escolhida no 🎨) */
+  colors(root, rootColor) {
+    const C = new Map([[root, rootColor]]);
+    (root.k || []).forEach((k, i) => { const c = k.c || MIND_COLORS[i % MIND_COLORS.length]; const w = n => { C.set(n, c); (n.k || []).forEach(w); }; w(k); });
+    return C;
+  },
+  curve(a, c) {
+    const dir = c.x > a.x ? 1 : -1;
+    const x1 = dir > 0 ? a.x + a.w : a.x, y1 = a.y + a.h / 2, x2 = dir > 0 ? c.x : c.x + c.w, y2 = c.y + c.h / 2, mx = (x1 + x2) / 2;
+    return [x1, y1, mx, y1, mx, y2, x2, y2];
+  },
   layout(ctx) {
     const { stage, svg, b, box } = ctx, root = b.mind; if (!this.r(root).el) return;
-    const GX = 34, GY = 10, W = box.clientWidth || 600;
+    const W = box.clientWidth || 600;
     stage.style.width = '4000px'; stage.querySelectorAll('.mm-node').forEach(e => { e.style.left = '0px'; e.style.top = '0px'; });   // mede sem a borda apertar
-    const size = n => { this.r(n).w = this.r(n).el.offsetWidth; this.r(n).h = this.r(n).el.offsetHeight; (n.k || []).forEach(size); };
-    size(root);
-    const hgt = n => (this.r(n).sh = n.k?.length ? Math.max(this.r(n).h, n.k.reduce((s, k) => s + hgt(k), 0) + GY * (n.k.length - 1)) : this.r(n).h);
-    const kids = root.k || [];
-    const narrow = W < 560 || kids.length < 3;
-    const right = narrow ? kids : kids.slice(0, Math.ceil(kids.length / 2)), left = narrow ? [] : kids.slice(right.length);
-    const side = (list) => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
-    const hR = side(right), hL = side(left), H = Math.max(hR, hL, this.r(root).h) + 20;
-    const place = (n, x, yTop, dir) => {   // x = borda do nó do lado do pai
-      this.r(n).x = dir > 0 ? x : x - this.r(n).w; this.r(n).y = yTop + (this.r(n).sh - this.r(n).h) / 2;
-      let y = yTop + (this.r(n).sh - (n.k || []).reduce((s, k) => s + this.r(k).sh, 0) - GY * Math.max(0, (n.k || []).length - 1)) / 2;
-      for (const k of n.k || []) { place(k, dir > 0 ? this.r(n).x + this.r(n).w + GX : this.r(n).x - GX, y, dir); y += this.r(k).sh + GY; }
-    };
-    const depthW = (n) => this.r(n).w + (n.k?.length ? GX + Math.max(...n.k.map(depthW)) : 0);
-    const wL = left.length ? GX + Math.max(...left.map(depthW)) : 0;
-    this.r(root).x = wL + 10; this.r(root).y = 10 + (H - 20 - this.r(root).h) / 2;
-    let y = 10 + (H - 20 - hR) / 2; for (const k of right) { place(k, this.r(root).x + this.r(root).w + GX, y, 1); y += this.r(k).sh + GY; }
-    y = 10 + (H - 20 - hL) / 2; for (const k of left) { place(k, this.r(root).x - GX, y, -1); y += this.r(k).sh + GY; }
-    let maxX = 0; const put = n => { this.r(n).el.style.left = this.r(n).x + 'px'; this.r(n).el.style.top = this.r(n).y + 'px'; maxX = Math.max(maxX, this.r(n).x + this.r(n).w); (n.k || []).forEach(put); }; put(root);
-    const SW = maxX + 10; stage.style.width = SW + 'px'; stage.style.height = H + 'px';
+    const { P, SW, H, SIDE } = this.place(root, n => ({ w: this.r(n).el.offsetWidth, h: this.r(n).el.offsetHeight }), W);
+    ctx.P = P; ctx.SIDE = SIDE;
+    P.forEach((p, n) => { const e = this.r(n).el; e.style.left = p.x + 'px'; e.style.top = p.y + 'px'; });
+    stage.style.width = SW + 'px'; stage.style.height = H + 'px';
     // encolhe para caber no bloco (até 60%); abaixo disso, rola de lado
     const s = SW > W ? Math.max(0.6, W / SW) : 1; ctx.scale = s;
     stage.style.transform = s < 1 ? `scale(${s})` : '';
@@ -8885,21 +8922,124 @@ const Mind = {
     ctx.fit.style.marginLeft = SW * s < W ? Math.max(0, (W - SW * s) / 2) + 'px' : '0';
     svg.setAttribute('width', SW); svg.setAttribute('height', H); svg.innerHTML = '';
     const line = (a, c) => {
-      const dir = this.r(c).x > this.r(a).x ? 1 : -1;
-      const x1 = dir > 0 ? this.r(a).x + this.r(a).w : this.r(a).x, y1 = this.r(a).y + this.r(a).h / 2, x2 = dir > 0 ? this.r(c).x : this.r(c).x + this.r(c).w, y2 = this.r(c).y + this.r(c).h / 2, mx = (x1 + x2) / 2;
+      const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(c));
       const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+      p.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
       p.setAttribute('stroke', getComputedStyle(this.r(c).el).getPropertyValue('--mc').trim() || '#888'); p.setAttribute('fill', 'none'); p.setAttribute('stroke-width', a === root ? 3 : 2); p.setAttribute('stroke-linecap', 'round');
       svg.append(p); (c.k || []).forEach(k => line(c, k));
     };
     (root.k || []).forEach(k => line(root, k));
+  },
+  /* ---------- arrastar um balão para outro galho (ou mudar a ordem) ---------- */
+  drag(ctx, n, d, e) {
+    if (n === ctx.b.mind || !Shared.canEdit(App.cur)) return;
+    if (document.activeElement === d && e.pointerType !== 'touch') return;   // editando o texto: deixa selecionar
+    const x0 = e.clientX, y0 = e.clientY, touch = e.pointerType === 'touch'; let on = false, hold = null, ghost, target = null, where = null;
+    const sub = new Set(); const w = x => { sub.add(x); (x.k || []).forEach(w); }; w(n);
+    const start = () => {
+      on = true; ctx.dragging = true; d.classList.add('mm-drag');
+      ghost = el('div', { class: 'mm-ghost', text: n.t || '…' }); document.body.append(ghost);
+      if (touch) navigator.vibrate?.(15);
+    };
+    let lastX = x0;
+    const pick = (x, y) => {
+      lastX = x;
+      ghost.style.left = x + 12 + 'px'; ghost.style.top = y + 8 + 'px';
+      ctx.stage.querySelectorAll('.mm-drop,.mm-before,.mm-after').forEach(z => z.classList.remove('mm-drop', 'mm-before', 'mm-after'));
+      ghost.hidden = true; const hit = document.elementFromPoint(x, y)?.closest?.('.mm-node'); ghost.hidden = false;
+      target = null; where = null;
+      if (!hit || !ctx.stage.contains(hit)) return;
+      let t = null; ctx.P?.forEach((_, k) => { if (this.r(k).el === hit) t = k; }); if (!t || sub.has(t)) return;
+      const r = hit.getBoundingClientRect(), f = (y - r.top) / r.height;
+      where = t === ctx.b.mind ? 'in' : f < 0.28 ? 'before' : f > 0.72 ? 'after' : 'in';
+      target = t; hit.classList.add(where === 'in' ? 'mm-drop' : where === 'before' ? 'mm-before' : 'mm-after');
+    };
+    const mv = ev => {
+      const dx = ev.clientX - x0, dy = ev.clientY - y0, far = Math.hypot(dx, dy) > 6;
+      if (!on) { if (touch) { if (far && hold) { clearTimeout(hold); hold = null; end(); } return; } if (!far) return; start(); }
+      ev.preventDefault(); pick(ev.clientX, ev.clientY);
+    };
+    const end = () => {
+      clearTimeout(hold); document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', end, true);
+      ctx.stage.removeEventListener('touchmove', stop, { passive: false });
+      ghost?.remove(); d.classList.remove('mm-drag'); ctx.stage.querySelectorAll('.mm-drop,.mm-before,.mm-after').forEach(z => z.classList.remove('mm-drop', 'mm-before', 'mm-after'));
+      setTimeout(() => { ctx.dragging = false; }, 0);
+    };
+    const up = () => {
+      const was = on, t = target, wh = where; end();
+      if (!was) { if (!touch) this.focusEnd(n); return; }
+      if (!t) return;
+      const p = this.path(ctx, n), par = p[p.length - 1]; par.k.splice(par.k.indexOf(n), 1);
+      if (wh === 'in') { (t.k ||= []).push(n); if (t === ctx.b.mind) { const r = this.r(t).el.getBoundingClientRect(); (t.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); n.side = lastX < r.left + r.width / 2 ? 'L' : 'R'; } }
+      else { const tp = this.path(ctx, t), tpar = tp[tp.length - 1]; tpar.k.splice(tpar.k.indexOf(t) + (wh === 'after' ? 1 : 0), 0, n); if (tpar === ctx.b.mind) { (tpar.k || []).forEach(k => { if (k !== n) k.side ||= ctx.SIDE?.get(k) || 'R'; }); n.side = t.side; } }
+      if (this.path(ctx, n).length > 1) delete n.side;   // só galho principal tem lado
+      ctx.sel = n; this.save(ctx); UI.toast(wh === 'in' ? `“${n.t}” agora fica dentro de “${t.t}”` : 'Ordem alterada');
+    };
+    const stop = ev => { if (on) ev.preventDefault(); };
+    if (touch) { hold = setTimeout(() => { hold = null; start(); pick(x0, y0); }, 320); ctx.stage.addEventListener('touchmove', stop, { passive: false }); }
+    else e.preventDefault();   // não põe o cursor no texto ainda: pode ser um arrasto
+    document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', end, true);
+  },
+  focusEnd(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); },
+  /* ---------- imagem do mapa (Word, PDF, link): desenhado em canvas, fundo branco ---------- */
+  png(mind, maxW = 1100) {
+    if (!mind) return null;
+    const F = 'Segoe UI, system-ui, -apple-system, Roboto, Arial, sans-serif', S = 2;
+    const c = document.createElement('canvas'), g = c.getContext('2d');
+    const font = d => d === 0 ? `700 17px ${F}` : d === 1 ? `600 14px ${F}` : `400 13.5px ${F}`;
+    const depth = new Map(); const dw = (n, d) => { depth.set(n, d); (n.k || []).forEach(k => dw(k, d + 1)); }; dw(mind, 0);
+    const lines = new Map();
+    const wrap = (n) => {
+      const d = depth.get(n), max = d === 0 ? 230 : 196; g.font = font(d);
+      const words = String(n.t || '…').split(/\s+/); const out = []; let cur = '';
+      for (const w of words) { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > max && cur) { out.push(cur); cur = w; } else cur = t; }
+      out.push(cur); lines.set(n, out);
+      const tw = Math.max(...out.map(l => g.measureText(l).width));
+      const px = d === 0 ? 20 : 13, py = d === 0 ? 10 : 6, lh = d === 0 ? 22 : 18;
+      return { w: Math.ceil(tw + px * 2 + 4), h: Math.ceil(out.length * lh + py * 2 + 4) };
+    };
+    const { P, SW, H } = this.place(mind, wrap, 99999);
+    const C = this.colors(mind, '#7719aa');
+    c.width = Math.ceil(SW * S); c.height = Math.ceil(H * S); g.scale(S, S);
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, SW, H);
+    const lineTo = (a, k) => { const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(k)); g.beginPath(); g.moveTo(x1, y1); g.bezierCurveTo(cx1, cy1, cx2, cy2, x2, y2); g.strokeStyle = C.get(k); g.lineWidth = a === mind ? 3 : 2; g.lineCap = 'round'; g.stroke(); (k.k || []).forEach(z => lineTo(k, z)); };
+    (mind.k || []).forEach(k => lineTo(mind, k));
+    const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+    const mix = (hex, a) => { const n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255; return `rgb(${Math.round(255 - (255 - r) * a)},${Math.round(255 - (255 - gg) * a)},${Math.round(255 - (255 - b) * a)})`; };
+    P.forEach((p, n) => {
+      const d = depth.get(n), col = C.get(n);
+      rr(p.x, p.y, p.w, p.h, Math.min(p.h / 2, d === 0 ? 22 : 16));
+      g.fillStyle = d === 0 ? col : d === 1 ? mix(col, 0.14) : '#ffffff'; g.fill();
+      g.strokeStyle = col; g.lineWidth = d >= 2 ? 1.5 : 2; g.stroke();
+      g.font = font(d); g.fillStyle = d === 0 ? '#ffffff' : '#1b1b1b'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      const L = lines.get(n), lh = d === 0 ? 22 : 18, top = p.y + p.h / 2 - (L.length - 1) * lh / 2;
+      L.forEach((l, i) => g.fillText(l, p.x + p.w / 2, top + i * lh));
+    });
+    const w = Math.min(maxW, SW);
+    return { src: c.toDataURL('image/png'), w, h: Math.round(H * w / SW) };
   },
   focus(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); const s = getSelection(); s.removeAllRanges(); s.addRange(r); d.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); },
   add(ctx, how) {
     const cur = ctx.sel || ctx.b.mind, p = this.path(ctx, cur), par = p?.[p.length - 1];
     const n = { t: '', k: [] };
     if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
+    if (par === ctx.b.mind && how !== 'child' && ctx.SIDE?.get(cur)) { this.freeze(ctx); n.side = cur.side; }   // ao lado de um galho principal: mesmo lado
     this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  /* fixa o lado atual de todos os galhos principais, para nenhum pular de lado quando outro muda */
+  freeze(ctx) { (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); },
+  addMain(ctx, side) {
+    this.freeze(ctx); const n = { t: '', k: [], side }; (ctx.b.mind.k ||= []).push(n);
+    this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  /* galho principal do nó selecionado vai para o outro lado */
+  flip(ctx) {
+    const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('Selecione um galho (não o tema central).');
+    const p = this.path(ctx, n), top = p.length > 1 ? p[1] : n;
+    // fixa o lado de todos os galhos (para os outros não pularem de lado com a mudança)
+    (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; });
+    top.side = top.side === 'L' ? 'R' : 'L';
+    this.save(ctx); this.focus(n); UI.toast(`“${top.t}” foi para a ${top.side === 'L' ? 'esquerda' : 'direita'}`);
   },
   del(ctx) {
     const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('O tema central não pode ser apagado.');
@@ -8921,6 +9061,7 @@ const Mind = {
     else if (e.key === 'Enter') { e.preventDefault(); this.add(ctx, n === ctx.b.mind ? 'child' : 'sib'); }
     else if ((e.key === 'Backspace' || e.key === 'Delete') && !this.r(n).el.textContent && n !== ctx.b.mind) { e.preventDefault(); this.del(ctx); }
     else if (e.ctrlKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.move(ctx, e.key === 'ArrowUp' ? -1 : 1); }
+    else if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); this.addMain(ctx, e.key === 'ArrowLeft' ? 'L' : 'R'); }
     else if (e.key === 'Escape') this.r(n).el.blur();
   },
   full(ctx) {

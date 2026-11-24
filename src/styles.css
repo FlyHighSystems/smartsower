@@ -871,3 +871,9 @@ body.focus-mode #split-pane .split-head{margin-top:52px}
 .mm-node.d0.on{box-shadow:0 0 0 3px var(--accent-l)}
 .mm-big .mm-scroll{max-height:72vh}
 .modal:has(.mm-big){width:min(1400px,96vw)!important;max-width:96vw!important}
+.mm-node{touch-action:pan-x pan-y;user-select:text}.mm-node.mm-drag{opacity:.35}
+.mm-ghost{position:fixed;z-index:200;pointer-events:none;padding:5px 12px;border-radius:16px;background:var(--accent);color:#fff;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mm-node.mm-drop{box-shadow:0 0 0 3px var(--accent)!important;transform:scale(1.06)}
+.mm-node.mm-before{box-shadow:0 -4px 0 0 var(--accent)!important}.mm-node.mm-after{box-shadow:0 4px 0 0 var(--accent)!important}
+.mm-hint{margin-top:4px;opacity:0;transition:opacity .2s}.block.focus .mm-hint,.mm-big .mm-hint{opacity:.8}
+.mm-sep0{width:1px;height:20px;background:var(--line);margin:0 4px}

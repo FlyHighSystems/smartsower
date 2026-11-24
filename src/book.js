@@ -629,6 +629,7 @@ const BookExport = {
     const out = [];
     for (const b of s.blocks) {
       if (b.type === 'ink') { if (b.ink?.strokes?.length) { const v = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; out.push({ k: 'img', src: inkToDataURL(v, 1200, '#ffffff'), w: 600, h: 600 * v.hr }); } continue; }
+      if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); out.push({ k: 'img', src: im.src, w: Math.min(600, im.w), h: Math.round(im.h * Math.min(600, im.w) / im.w) }); continue; }
       if (b.type === 'image') { if (b.src) out.push({ k: 'img', src: b.src, cap: b.html }); continue; }
       if (!htmlToText(b.html || '') && !b.ref) continue;
       if (b.type === 'subhead' || b.type === 'point') out.push({ k: 'h', html: b.html });

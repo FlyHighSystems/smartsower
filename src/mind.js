@@ -32,11 +32,15 @@ const Mind = {
     svg.classList.add('mm-svg'); stage.append(svg);
     const bar = el('div', { class: 'mm-bar' });
     const fit = el('div', { class: 'mm-fit' }, stage);
-    box.append(bar, el('div', { class: 'mm-scroll' }, fit));
+    box.append(bar, el('div', { class: 'mm-scroll' }, fit), el('div', { class: 'mm-hint muted small', text: 'Arraste um balão para outro galho (no celular: segure e arraste). Solte no meio para pôr dentro; em cima ou embaixo, para mudar a ordem.' }));
     const ctx = { b, box, stage, svg, bar, fit, sel: null };
     box._mm = ctx;
     const B = (t, title, fn, cls = '') => { const x = el('button', { class: 'btn sm ' + cls, text: t, title }); x.addEventListener('pointerdown', e => e.preventDefault()); x.onclick = fn; return x; };
     bar.append(
+      B('⬅ ＋', 'Nova ideia principal do lado ESQUERDO do tema (Alt+←)', () => this.addMain(ctx, 'L')),
+      B('＋ ➡', 'Nova ideia principal do lado DIREITO do tema (Alt+→)', () => this.addMain(ctx, 'R')),
+      B('⇆ Lado', 'Passar o galho selecionado para o outro lado do tema', () => this.flip(ctx)),
+      el('span', { class: 'mm-sep0' }),
       B('＋ Ideia', 'Novo galho a partir do nó selecionado (Tab)', () => this.add(ctx, 'child')),
       B('＋ Ao lado', 'Nova ideia no mesmo nível (Enter)', () => this.add(ctx, 'sib')),
       B('↑', 'Subir na ordem (Ctrl+↑)', () => this.move(ctx, -1)), B('↓', 'Descer na ordem (Ctrl+↓)', () => this.move(ctx, 1)),
@@ -59,6 +63,7 @@ const Mind = {
       d.addEventListener('focus', () => { ctx.sel = n; stage.querySelectorAll('.mm-node.on').forEach(x => x.classList.remove('on')); d.classList.add('on'); });
       d.addEventListener('input', () => { n.t = d.textContent.replace(/\n/g, ' '); this.save(ctx, false); this.layout(ctx); });
       d.addEventListener('keydown', e => this.key(ctx, n, e));
+      d.addEventListener('pointerdown', e => { if (e.button === 0) this.drag(ctx, n, d, e); });
       stage.append(d);
       (n.k || []).forEach((k, i) => mk(k, depth + 1, depth === 0 ? (k.c || MIND_COLORS[i % MIND_COLORS.length]) : color));
     };
@@ -66,31 +71,53 @@ const Mind = {
     this.layout(ctx);
     if (ctx.sel && this.r(ctx.sel).el) this.r(ctx.sel).el.classList.add('on');
   },
-  /* galhos divididos à direita e à esquerda do tema (como no XMind); em tela estreita, tudo à direita */
+  /* posições do mapa. size(n) → {w,h}. Galhos divididos à direita e à esquerda do tema (como no XMind);
+     em espaço estreito ou com poucos galhos, tudo à direita. Devolve { P: Map(nó → {x,y,w,h}), SW, H } */
+  place(root, size, W, allowSplit = true) {
+    const GX = 34, GY = 10, P = new Map(), S = new Map();
+    const sz = n => { P.set(n, { ...size(n) }); (n.k || []).forEach(sz); }; sz(root);
+    const hgt = n => { const p = P.get(n), k = n.k || []; const h = k.length ? Math.max(p.h, k.reduce((s, x) => s + hgt(x), 0) + GY * (k.length - 1)) : p.h; S.set(n, h); return h; };
+    const kids = root.k || [];
+    // lado de cada galho principal: o escolhido (side: 'L'|'R') ou, se não houver, distribuição automática
+    const free = kids.filter(k => !k.side), split = allowSplit && !(W < 560 || kids.length < 3);
+    const nR = kids.filter(k => k.side === 'R').length, nL = kids.filter(k => k.side === 'L').length;
+    const autoR = split ? Math.max(0, Math.ceil(kids.length / 2) - nR) : free.length;
+    const SIDE = new Map(); let a = 0; for (const k of kids) SIDE.set(k, k.side || (a++ < autoR ? 'R' : 'L'));
+    const right = kids.filter(k => SIDE.get(k) === 'R'), left = kids.filter(k => SIDE.get(k) === 'L');
+    const side = list => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
+    const R0 = P.get(root), hR = side(right), hL = side(left), H = Math.max(hR, hL, R0.h) + 20;
+    const put = (n, x, yTop, dir) => {
+      const p = P.get(n), k = n.k || []; p.x = dir > 0 ? x : x - p.w; p.y = yTop + (S.get(n) - p.h) / 2;
+      let y = yTop + (S.get(n) - k.reduce((s, c) => s + S.get(c), 0) - GY * Math.max(0, k.length - 1)) / 2;
+      for (const c of k) { put(c, dir > 0 ? p.x + p.w + GX : p.x - GX, y, dir); y += S.get(c) + GY; }
+    };
+    const depthW = n => P.get(n).w + (n.k?.length ? GX + Math.max(...n.k.map(depthW)) : 0);
+    const wL = left.length ? GX + Math.max(...left.map(depthW)) : 0;
+    R0.x = wL + 10; R0.y = 10 + (H - 20 - R0.h) / 2;
+    let y = 10 + (H - 20 - hR) / 2; for (const k of right) { put(k, R0.x + R0.w + GX, y, 1); y += S.get(k) + GY; }
+    y = 10 + (H - 20 - hL) / 2; for (const k of left) { put(k, R0.x - GX, y, -1); y += S.get(k) + GY; }
+    let SW = 0; P.forEach(p => { SW = Math.max(SW, p.x + p.w); });
+    return { P, SW: SW + 10, H, SIDE };
+  },
+  /* cor de cada nó: o tema usa a cor do app; cada galho principal tem a sua (ou a escolhida no 🎨) */
+  colors(root, rootColor) {
+    const C = new Map([[root, rootColor]]);
+    (root.k || []).forEach((k, i) => { const c = k.c || MIND_COLORS[i % MIND_COLORS.length]; const w = n => { C.set(n, c); (n.k || []).forEach(w); }; w(k); });
+    return C;
+  },
+  curve(a, c) {
+    const dir = c.x > a.x ? 1 : -1;
+    const x1 = dir > 0 ? a.x + a.w : a.x, y1 = a.y + a.h / 2, x2 = dir > 0 ? c.x : c.x + c.w, y2 = c.y + c.h / 2, mx = (x1 + x2) / 2;
+    return [x1, y1, mx, y1, mx, y2, x2, y2];
+  },
   layout(ctx) {
     const { stage, svg, b, box } = ctx, root = b.mind; if (!this.r(root).el) return;
-    const GX = 34, GY = 10, W = box.clientWidth || 600;
+    const W = box.clientWidth || 600;
     stage.style.width = '4000px'; stage.querySelectorAll('.mm-node').forEach(e => { e.style.left = '0px'; e.style.top = '0px'; });   // mede sem a borda apertar
-    const size = n => { this.r(n).w = this.r(n).el.offsetWidth; this.r(n).h = this.r(n).el.offsetHeight; (n.k || []).forEach(size); };
-    size(root);
-    const hgt = n => (this.r(n).sh = n.k?.length ? Math.max(this.r(n).h, n.k.reduce((s, k) => s + hgt(k), 0) + GY * (n.k.length - 1)) : this.r(n).h);
-    const kids = root.k || [];
-    const narrow = W < 560 || kids.length < 3;
-    const right = narrow ? kids : kids.slice(0, Math.ceil(kids.length / 2)), left = narrow ? [] : kids.slice(right.length);
-    const side = (list) => list.reduce((s, k) => s + hgt(k), 0) + GY * Math.max(0, list.length - 1);
-    const hR = side(right), hL = side(left), H = Math.max(hR, hL, this.r(root).h) + 20;
-    const place = (n, x, yTop, dir) => {   // x = borda do nó do lado do pai
-      this.r(n).x = dir > 0 ? x : x - this.r(n).w; this.r(n).y = yTop + (this.r(n).sh - this.r(n).h) / 2;
-      let y = yTop + (this.r(n).sh - (n.k || []).reduce((s, k) => s + this.r(k).sh, 0) - GY * Math.max(0, (n.k || []).length - 1)) / 2;
-      for (const k of n.k || []) { place(k, dir > 0 ? this.r(n).x + this.r(n).w + GX : this.r(n).x - GX, y, dir); y += this.r(k).sh + GY; }
-    };
-    const depthW = (n) => this.r(n).w + (n.k?.length ? GX + Math.max(...n.k.map(depthW)) : 0);
-    const wL = left.length ? GX + Math.max(...left.map(depthW)) : 0;
-    this.r(root).x = wL + 10; this.r(root).y = 10 + (H - 20 - this.r(root).h) / 2;
-    let y = 10 + (H - 20 - hR) / 2; for (const k of right) { place(k, this.r(root).x + this.r(root).w + GX, y, 1); y += this.r(k).sh + GY; }
-    y = 10 + (H - 20 - hL) / 2; for (const k of left) { place(k, this.r(root).x - GX, y, -1); y += this.r(k).sh + GY; }
-    let maxX = 0; const put = n => { this.r(n).el.style.left = this.r(n).x + 'px'; this.r(n).el.style.top = this.r(n).y + 'px'; maxX = Math.max(maxX, this.r(n).x + this.r(n).w); (n.k || []).forEach(put); }; put(root);
-    const SW = maxX + 10; stage.style.width = SW + 'px'; stage.style.height = H + 'px';
+    const { P, SW, H, SIDE } = this.place(root, n => ({ w: this.r(n).el.offsetWidth, h: this.r(n).el.offsetHeight }), W);
+    ctx.P = P; ctx.SIDE = SIDE;
+    P.forEach((p, n) => { const e = this.r(n).el; e.style.left = p.x + 'px'; e.style.top = p.y + 'px'; });
+    stage.style.width = SW + 'px'; stage.style.height = H + 'px';
     // encolhe para caber no bloco (até 60%); abaixo disso, rola de lado
     const s = SW > W ? Math.max(0.6, W / SW) : 1; ctx.scale = s;
     stage.style.transform = s < 1 ? `scale(${s})` : '';
@@ -98,21 +125,124 @@ const Mind = {
     ctx.fit.style.marginLeft = SW * s < W ? Math.max(0, (W - SW * s) / 2) + 'px' : '0';
     svg.setAttribute('width', SW); svg.setAttribute('height', H); svg.innerHTML = '';
     const line = (a, c) => {
-      const dir = this.r(c).x > this.r(a).x ? 1 : -1;
-      const x1 = dir > 0 ? this.r(a).x + this.r(a).w : this.r(a).x, y1 = this.r(a).y + this.r(a).h / 2, x2 = dir > 0 ? this.r(c).x : this.r(c).x + this.r(c).w, y2 = this.r(c).y + this.r(c).h / 2, mx = (x1 + x2) / 2;
+      const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(c));
       const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('d', `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+      p.setAttribute('d', `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
       p.setAttribute('stroke', getComputedStyle(this.r(c).el).getPropertyValue('--mc').trim() || '#888'); p.setAttribute('fill', 'none'); p.setAttribute('stroke-width', a === root ? 3 : 2); p.setAttribute('stroke-linecap', 'round');
       svg.append(p); (c.k || []).forEach(k => line(c, k));
     };
     (root.k || []).forEach(k => line(root, k));
+  },
+  /* ---------- arrastar um balão para outro galho (ou mudar a ordem) ---------- */
+  drag(ctx, n, d, e) {
+    if (n === ctx.b.mind || !Shared.canEdit(App.cur)) return;
+    if (document.activeElement === d && e.pointerType !== 'touch') return;   // editando o texto: deixa selecionar
+    const x0 = e.clientX, y0 = e.clientY, touch = e.pointerType === 'touch'; let on = false, hold = null, ghost, target = null, where = null;
+    const sub = new Set(); const w = x => { sub.add(x); (x.k || []).forEach(w); }; w(n);
+    const start = () => {
+      on = true; ctx.dragging = true; d.classList.add('mm-drag');
+      ghost = el('div', { class: 'mm-ghost', text: n.t || '…' }); document.body.append(ghost);
+      if (touch) navigator.vibrate?.(15);
+    };
+    let lastX = x0;
+    const pick = (x, y) => {
+      lastX = x;
+      ghost.style.left = x + 12 + 'px'; ghost.style.top = y + 8 + 'px';
+      ctx.stage.querySelectorAll('.mm-drop,.mm-before,.mm-after').forEach(z => z.classList.remove('mm-drop', 'mm-before', 'mm-after'));
+      ghost.hidden = true; const hit = document.elementFromPoint(x, y)?.closest?.('.mm-node'); ghost.hidden = false;
+      target = null; where = null;
+      if (!hit || !ctx.stage.contains(hit)) return;
+      let t = null; ctx.P?.forEach((_, k) => { if (this.r(k).el === hit) t = k; }); if (!t || sub.has(t)) return;
+      const r = hit.getBoundingClientRect(), f = (y - r.top) / r.height;
+      where = t === ctx.b.mind ? 'in' : f < 0.28 ? 'before' : f > 0.72 ? 'after' : 'in';
+      target = t; hit.classList.add(where === 'in' ? 'mm-drop' : where === 'before' ? 'mm-before' : 'mm-after');
+    };
+    const mv = ev => {
+      const dx = ev.clientX - x0, dy = ev.clientY - y0, far = Math.hypot(dx, dy) > 6;
+      if (!on) { if (touch) { if (far && hold) { clearTimeout(hold); hold = null; end(); } return; } if (!far) return; start(); }
+      ev.preventDefault(); pick(ev.clientX, ev.clientY);
+    };
+    const end = () => {
+      clearTimeout(hold); document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', end, true);
+      ctx.stage.removeEventListener('touchmove', stop, { passive: false });
+      ghost?.remove(); d.classList.remove('mm-drag'); ctx.stage.querySelectorAll('.mm-drop,.mm-before,.mm-after').forEach(z => z.classList.remove('mm-drop', 'mm-before', 'mm-after'));
+      setTimeout(() => { ctx.dragging = false; }, 0);
+    };
+    const up = () => {
+      const was = on, t = target, wh = where; end();
+      if (!was) { if (!touch) this.focusEnd(n); return; }
+      if (!t) return;
+      const p = this.path(ctx, n), par = p[p.length - 1]; par.k.splice(par.k.indexOf(n), 1);
+      if (wh === 'in') { (t.k ||= []).push(n); if (t === ctx.b.mind) { const r = this.r(t).el.getBoundingClientRect(); (t.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); n.side = lastX < r.left + r.width / 2 ? 'L' : 'R'; } }
+      else { const tp = this.path(ctx, t), tpar = tp[tp.length - 1]; tpar.k.splice(tpar.k.indexOf(t) + (wh === 'after' ? 1 : 0), 0, n); if (tpar === ctx.b.mind) { (tpar.k || []).forEach(k => { if (k !== n) k.side ||= ctx.SIDE?.get(k) || 'R'; }); n.side = t.side; } }
+      if (this.path(ctx, n).length > 1) delete n.side;   // só galho principal tem lado
+      ctx.sel = n; this.save(ctx); UI.toast(wh === 'in' ? `“${n.t}” agora fica dentro de “${t.t}”` : 'Ordem alterada');
+    };
+    const stop = ev => { if (on) ev.preventDefault(); };
+    if (touch) { hold = setTimeout(() => { hold = null; start(); pick(x0, y0); }, 320); ctx.stage.addEventListener('touchmove', stop, { passive: false }); }
+    else e.preventDefault();   // não põe o cursor no texto ainda: pode ser um arrasto
+    document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', end, true);
+  },
+  focusEnd(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); },
+  /* ---------- imagem do mapa (Word, PDF, link): desenhado em canvas, fundo branco ---------- */
+  png(mind, maxW = 1100) {
+    if (!mind) return null;
+    const F = 'Segoe UI, system-ui, -apple-system, Roboto, Arial, sans-serif', S = 2;
+    const c = document.createElement('canvas'), g = c.getContext('2d');
+    const font = d => d === 0 ? `700 17px ${F}` : d === 1 ? `600 14px ${F}` : `400 13.5px ${F}`;
+    const depth = new Map(); const dw = (n, d) => { depth.set(n, d); (n.k || []).forEach(k => dw(k, d + 1)); }; dw(mind, 0);
+    const lines = new Map();
+    const wrap = (n) => {
+      const d = depth.get(n), max = d === 0 ? 230 : 196; g.font = font(d);
+      const words = String(n.t || '…').split(/\s+/); const out = []; let cur = '';
+      for (const w of words) { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > max && cur) { out.push(cur); cur = w; } else cur = t; }
+      out.push(cur); lines.set(n, out);
+      const tw = Math.max(...out.map(l => g.measureText(l).width));
+      const px = d === 0 ? 20 : 13, py = d === 0 ? 10 : 6, lh = d === 0 ? 22 : 18;
+      return { w: Math.ceil(tw + px * 2 + 4), h: Math.ceil(out.length * lh + py * 2 + 4) };
+    };
+    const { P, SW, H } = this.place(mind, wrap, 99999);
+    const C = this.colors(mind, '#7719aa');
+    c.width = Math.ceil(SW * S); c.height = Math.ceil(H * S); g.scale(S, S);
+    g.fillStyle = '#ffffff'; g.fillRect(0, 0, SW, H);
+    const lineTo = (a, k) => { const [x1, y1, cx1, cy1, cx2, cy2, x2, y2] = this.curve(P.get(a), P.get(k)); g.beginPath(); g.moveTo(x1, y1); g.bezierCurveTo(cx1, cy1, cx2, cy2, x2, y2); g.strokeStyle = C.get(k); g.lineWidth = a === mind ? 3 : 2; g.lineCap = 'round'; g.stroke(); (k.k || []).forEach(z => lineTo(k, z)); };
+    (mind.k || []).forEach(k => lineTo(mind, k));
+    const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+    const mix = (hex, a) => { const n = parseInt(hex.slice(1), 16), r = n >> 16, gg = (n >> 8) & 255, b = n & 255; return `rgb(${Math.round(255 - (255 - r) * a)},${Math.round(255 - (255 - gg) * a)},${Math.round(255 - (255 - b) * a)})`; };
+    P.forEach((p, n) => {
+      const d = depth.get(n), col = C.get(n);
+      rr(p.x, p.y, p.w, p.h, Math.min(p.h / 2, d === 0 ? 22 : 16));
+      g.fillStyle = d === 0 ? col : d === 1 ? mix(col, 0.14) : '#ffffff'; g.fill();
+      g.strokeStyle = col; g.lineWidth = d >= 2 ? 1.5 : 2; g.stroke();
+      g.font = font(d); g.fillStyle = d === 0 ? '#ffffff' : '#1b1b1b'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      const L = lines.get(n), lh = d === 0 ? 22 : 18, top = p.y + p.h / 2 - (L.length - 1) * lh / 2;
+      L.forEach((l, i) => g.fillText(l, p.x + p.w / 2, top + i * lh));
+    });
+    const w = Math.min(maxW, SW);
+    return { src: c.toDataURL('image/png'), w, h: Math.round(H * w / SW) };
   },
   focus(n) { const d = this.r(n).el; if (!d) return; d.focus({ preventScroll: true }); const r = document.createRange(); r.selectNodeContents(d); const s = getSelection(); s.removeAllRanges(); s.addRange(r); d.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); },
   add(ctx, how) {
     const cur = ctx.sel || ctx.b.mind, p = this.path(ctx, cur), par = p?.[p.length - 1];
     const n = { t: '', k: [] };
     if (how === 'child' || !par) (cur.k ||= []).push(n); else par.k.splice(par.k.indexOf(cur) + 1, 0, n);
+    if (par === ctx.b.mind && how !== 'child' && ctx.SIDE?.get(cur)) { this.freeze(ctx); n.side = cur.side; }   // ao lado de um galho principal: mesmo lado
     this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  /* fixa o lado atual de todos os galhos principais, para nenhum pular de lado quando outro muda */
+  freeze(ctx) { (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; }); },
+  addMain(ctx, side) {
+    this.freeze(ctx); const n = { t: '', k: [], side }; (ctx.b.mind.k ||= []).push(n);
+    this.save(ctx); ctx.sel = n; this.focus(n);
+  },
+  /* galho principal do nó selecionado vai para o outro lado */
+  flip(ctx) {
+    const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('Selecione um galho (não o tema central).');
+    const p = this.path(ctx, n), top = p.length > 1 ? p[1] : n;
+    // fixa o lado de todos os galhos (para os outros não pularem de lado com a mudança)
+    (ctx.b.mind.k || []).forEach(k => { k.side ||= ctx.SIDE?.get(k) || 'R'; });
+    top.side = top.side === 'L' ? 'R' : 'L';
+    this.save(ctx); this.focus(n); UI.toast(`“${top.t}” foi para a ${top.side === 'L' ? 'esquerda' : 'direita'}`);
   },
   del(ctx) {
     const n = ctx.sel; if (!n || n === ctx.b.mind) return UI.toast('O tema central não pode ser apagado.');
@@ -134,6 +264,7 @@ const Mind = {
     else if (e.key === 'Enter') { e.preventDefault(); this.add(ctx, n === ctx.b.mind ? 'child' : 'sib'); }
     else if ((e.key === 'Backspace' || e.key === 'Delete') && !this.r(n).el.textContent && n !== ctx.b.mind) { e.preventDefault(); this.del(ctx); }
     else if (e.ctrlKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) { e.preventDefault(); this.move(ctx, e.key === 'ArrowUp' ? -1 : 1); }
+    else if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); this.addMain(ctx, e.key === 'ArrowLeft' ? 'L' : 'R'); }
     else if (e.key === 'Escape') this.r(n).el.blur();
   },
   full(ctx) {

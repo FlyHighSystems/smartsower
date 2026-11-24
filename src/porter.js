@@ -388,6 +388,7 @@ const DocxWriter = {
         body += para(run((BLOCK_TYPES[b.type]?.label || 'Destaque').toUpperCase(), { b: 1, color: col, sz: 18 }), { ind: 360, border: col, spacing: 0 });
         body += htmlParas(b.html, { ind: 360, border: col }, b.type === 'quote' ? { b: 1 } : {});
       } else if (b.type === 'image' && b.src) { const src = await toPNGIfNeeded(b.src); if (src) { const [w, h] = await imgSize(src); body += para(image(src, w, h)); } if (b.html) body += htmlParas(b.html, {}, { i: 1 }); }
+      else if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); const w = Math.min(600, im.w); body += para(image(im.src, w, Math.round(im.h * w / im.w))); }
       else if (b.type === 'ink' && b.ink?.strokes?.length) { const view = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; body += para(image(inkToDataURL(view, 1200, '#ffffff'), 600, 600 * view.hr)); }
     }
     const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`;
@@ -559,6 +560,7 @@ const Porter = {
       else if (b.type === 'verse') P.append(Marks.tag(el('blockquote', { class: 'p-verse' }, el('b', { text: (b.ref || '') + (b.version ? ' (' + (Bible.info(b.version)?.short || '') + ')' : '') }), el('div', { html: b.html || '' })), b));
       else if (isCallout(b.type)) P.append(Marks.tag(el('div', { class: 'p-call p-' + b.type, style: { borderColor: blockColor(b.type) } }, el('small', { text: BLOCK_TYPES[b.type]?.label || '', style: { color: blockColor(b.type) } }), el('div', { html: b.html || '' })), b));
       else if (b.type === 'image') P.append(Marks.tag(el('figure', {}, el('img', { src: b.src }), b.html ? el('figcaption', { html: b.html }) : null), b));
+      else if (b.type === 'mind' && b.mind) { const im = Mind.png(b.mind); P.append(Marks.tag(el('img', { class: 'p-ink p-mind', src: im.src, style: { width: Math.min(100, im.w / 7) + '%' } }), b)); }
       else if (b.type === 'ink' && b.ink?.strokes?.length) { const v = { hr: inkContentHR(b.ink), strokes: b.ink.strokes }; P.append(el('img', { class: 'p-ink', src: inkToDataURL(v, 1400) })); }
       else P.append(Marks.tag(el('div', { class: 'p-text', html: b.html || '' }), b));
     }
