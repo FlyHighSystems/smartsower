@@ -915,3 +915,9 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 .pr-menu .mk-item kbd{font-size:11px}
 @media (max-width:800px){.pzp-main{grid-template-columns:1fr}.pzp-next{display:none}}
 
+/* nuvem discreta (depois de abrir o app) */
+.cloud-btn[data-quiet]{background:transparent!important;border-color:transparent!important;padding:5px 8px;font-size:16px!important;position:relative;opacity:.85}
+.cloud-btn[data-quiet]:hover{background:rgba(255,255,255,.15)!important;opacity:1}
+.cloud-btn[data-quiet]:before{content:none!important}
+.cl-dot{position:absolute;right:4px;top:5px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px var(--accent)}
+.cl-dot.error{background:#ff4d4f}.cl-dot.offline{background:#ffb900}

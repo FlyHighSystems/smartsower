@@ -105,6 +105,15 @@ const Cloud = {
     const L = { setup: ['☁', 'Configurar nuvem'], out: ['☁', 'Entrar'], syncing: ['⟳', this.progText() || 'Sincronizando…'], ok: ['☁✓', 'Sincronizado ' + this.hhmm(this.st.at)],
       offline: ['☁', 'Offline' + (pend ? ` · ${pend} a enviar` : '')], error: ['☁!', 'Erro — toque para ver'], pending: ['☁', pend ? `${pend} a enviar` : 'Alterações pendentes'] }[s];
     b.dataset.state = s;
+    // depois da 1ª sincronização ao abrir o app, fica discreto: só o ícone, sem texto nem animação
+    if (s === 'ok' && !this.quiet && !this._qt) this._qt = setTimeout(() => { this.quiet = true; this.setStatus(this.status); }, 4000);
+    if (this.quiet && ['syncing', 'ok', 'pending', 'offline', 'error'].includes(s)) {
+      b.innerHTML = ''; b.dataset.quiet = '1';
+      b.append(el('span', { class: 'cl-i', text: '☁' }), s === 'error' || s === 'offline' ? el('span', { class: 'cl-dot ' + s }) : '');
+      b.title = s === 'ok' ? `Tudo sincronizado às ${this.hhmm(this.st.at)} — clique para detalhes` : s === 'syncing' ? 'Sincronizando em segundo plano…' : (extra || L[1]);
+      typeof TopFit !== 'undefined' && TopFit.fit(); this.listeners.forEach(f => f()); return;
+    }
+    delete b.dataset.quiet;
     if (s === 'syncing') { b.innerHTML = ''; b.append(this.ring(), el('span', { class: 'cl-t', text: L[1] })); }
     else { b.innerHTML = ''; const [pre, tail] = s === 'ok' ? ['Sincronizado ', this.hhmm(this.st.at)] : ['', L[1]];
       b.append(el('span', { class: 'cl-i', text: L[0] + ' ' }), pre ? el('span', { class: 'cl-x', text: pre }) : '', el('span', { class: 'cl-t', text: tail })); }

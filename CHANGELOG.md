@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.37 — 11/26/2026
+- **Nuvem discreta:** a sincronização só aparece ao abrir o app. Uns segundos depois de sincronizar, o botão vira só o ícone ☁, e as próximas sincronizações acontecem sem texto nem animação. Para ver o horário e os detalhes, clique no ☁ ou passe o mouse.
+- Se der erro ou ficar sem internet, aparece só um pontinho no ícone (vermelho para erro, amarelo para offline).
+
 ## 3.12.36 — 11/24/2026
 - **▶ Pregar ▾ agora tem duas opções:**
   - **Pregar neste dispositivo** (o teleprompter de sempre);
