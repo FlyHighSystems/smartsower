@@ -35,9 +35,37 @@ const Present = {
       else if (b.type === 'image' && b.src) S.push({ k: 'img', src: b.src, notes: t ? [t] : [] });
       else if (b.type === 'mind' && b.mind) S.push({ k: 'img', src: Mind.png(b.mind, 1800).src, notes: [] });
       else if (b.type === 'ink' && b.ink?.strokes?.length) S.push({ k: 'img', src: inkToDataURL({ hr: inkContentHR(b.ink), strokes: b.ink.strokes }, 1600, '#ffffff'), notes: [] });
-      else if (t) { const lab = BLOCK_TYPES[b.type]?.label || ''; if (withText) S.push({ k: 'text', lab: b.type === 'text' ? '' : lab, html: sanitizeHTML(b.html || ''), notes: [] }); else last.notes.push((b.type === 'text' ? '' : lab.toUpperCase() + ': ') + t); }
+      else if (t) {
+        const lab = BLOCK_TYPES[b.type]?.label || '', pre = b.type === 'text' ? '' : lab.toUpperCase() + ': ';
+        // pontos escritos dentro do texto (título ou linha toda em negrito, como vem do OneNote) também viram slide
+        const parts = this.split(b.html || '');
+        if (!parts.some(x => x.head)) { if (withText) S.push({ k: 'text', lab: b.type === 'text' ? '' : lab, html: sanitizeHTML(b.html || ''), notes: [] }); else S[S.length - 1].notes.push(pre + t); continue; }
+        let buf = [], first = true;
+        const flush = () => { if (!buf.length) return; const html = buf.join(''), tt = htmlToText(html).trim(); if (tt) { if (withText) S.push({ k: 'text', lab: first && b.type !== 'text' ? lab : '', html: sanitizeHTML(html), notes: [] }); else S[S.length - 1].notes.push((first ? pre : '') + tt); } buf = []; first = false; };
+        for (const x of parts) { if (x.head) { flush(); S.push({ k: 'point', t: x.text, notes: [] }); first = false; } else buf.push(x.html); }
+        flush();
+      }
     }
     return S;
+  },
+  /* divide um bloco de texto em parágrafos e marca os que são “ponto”: título (h1–h4) ou parágrafo curto todo em negrito */
+  split(html) {
+    const d = document.createElement('div'); d.innerHTML = html; const out = [];
+    const isHead = e => {
+      const tx = (e.textContent || '').replace(/\s+/g, ' ').trim(); if (!tx || tx.length > 140) return false;
+      if (/^H[1-4]$/.test(e.tagName)) return true;
+      let bold = ''; e.querySelectorAll('b,strong').forEach(x => { if (!x.parentElement.closest('b,strong') || x.parentElement === e) bold += x.textContent; });
+      const st = e.getAttribute?.('style') || ''; if (/font-weight:\s*(bold|[6-9]00)/.test(st)) return true;
+      return bold.replace(/\s+/g, ' ').trim().length >= tx.replace(/[\s:.\-–—]+$/, '').length * 0.95;
+    };
+    const nodes = d.children.length ? [...d.childNodes] : [d];
+    for (const n of nodes) {
+      if (n.nodeType === 3) { if (n.data.trim()) out.push({ html: n.data }); continue; }
+      if (n.nodeType !== 1) continue;
+      if (/^(UL|OL)$/.test(n.tagName)) { out.push({ html: n.outerHTML }); continue; }
+      const head = isHead(n); out.push(head ? { head: true, text: n.textContent.replace(/\s+/g, ' ').trim().replace(/[:.]$/, '') } : { html: n.outerHTML });
+    }
+    return out;
   },
   slideEl(doc, sl, theme) {
     const E = (tag, cls, txt) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };

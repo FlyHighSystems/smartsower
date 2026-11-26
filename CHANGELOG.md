@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.43 — 11/26/2026
+- **Apresentar: pontos escritos dentro do texto viram slide.** Além do bloco Ponto, agora entram os títulos e as linhas inteiras em **negrito** dentro do texto (como “1. O cativeiro mata os sonhos”, muito comum no que veio do OneNote). O texto entre um ponto e outro vai para as suas anotações no painel.
+
 ## 3.12.42 — 11/26/2026
 - **Botão « na divisa** entre a lista de páginas e o texto: recolhe os painéis de cadernos e páginas, como o ☰. Recolhido, vira **»** na borda esquerda para abrir de novo.
 
