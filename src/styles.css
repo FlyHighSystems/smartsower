@@ -928,3 +928,6 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 @media (hover:hover){.ed-view:hover .ev-items{max-width:320px;opacity:1}}
 .ed-view .ev-tog{font-weight:700;font-size:14px;letter-spacing:-.02em}
 .ed-view.open .ev-tog,.ed-view:hover .ev-tog{color:var(--accent)}
+#boot-err{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);display:grid;place-items:center;padding:16px}
+#boot-err .be-card{background:var(--panel,#fff);color:var(--fg,#1b1b1b);border-radius:14px;padding:18px 20px;max-width:560px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+#boot-err pre{white-space:pre-wrap;font-size:12.5px;background:var(--panel2,#f3f2f1);border-radius:8px;padding:10px;max-height:40vh;overflow:auto}

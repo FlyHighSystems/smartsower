@@ -29,25 +29,29 @@ const App = {
   meta: null, sermons: new Map(), cur: null, focusId: null, inkSurfaces: [], lastInk: null, scroller: null,
   ink: { tool: 'pen', color: '#1b1b1b', hlColor: '#ffd400', size: 2.2, finger: false },
 
+  /* abertura blindada: se uma parte falhar, o resto abre e o erro aparece num aviso */
+  bootErrors: [], step: 'início',
+  safe(name, fn) { try { fn(); } catch (e) { console.error(name, e); this.bootErrors.push(`${name}: ${e.message}`); } },
   async init() {
-    this.bootT = Date.now(); Gate.early();
+    this.bootT = Date.now(); Gate.early(); Boot.watch();
     if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
-    await DB.init();
-    this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
+    this.step = 'banco local'; await DB.init();
+    this.step = 'lendo seus cadernos'; this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
     for (const s of await DB.all('sermons')) this.sermons.set(s.id, s);
     if (!this.sermons.size) { const w = welcomeSermon(this.meta.sections[0].id); this.sermons.set(w.id, w); await DB.put('sermons', w.id, w); this.meta.currentSermon = w.id; }
     await this.saveMeta();
     this.scroller = $('#editor');
     this.meta.customTypes ||= []; registerCustomTypes();
-    Theme.init(); Ribbon.bind(); BiblePane.bind(); this.bindNav();
-    await Bible.init();
-    this.renderNav();
-    await Cloud.init();
+    this.step = 'montando a tela'; this.safe('Theme', () => Theme.init()); this.safe('Ribbon', () => Ribbon.bind()); this.safe('BiblePane', () => BiblePane.bind()); this.safe('bindNav', () => this.bindNav());
+    this.step = 'Bíblias'; try { await Promise.race([Bible.init(), new Promise(r => setTimeout(r, 5000))]); } catch (e) { this.bootErrors.push('Bible: ' + e.message); }
+    this.step = 'cadernos'; this.safe('renderNav', () => this.renderNav());
+    this.step = 'nuvem'; await Cloud.init();
     if (Gate.need()) await Gate.wait();
     const first = this.sermons.get(this.meta.currentSermon) || this.sectionSermons(this.meta.currentSec)[0] || [...this.sermons.values()][0];
-    first ? this.open(first.id, true) : this.renderEditor();
-    Split.restore();
+    this.step = 'abrindo a página'; try { first ? this.open(first.id, true) : this.renderEditor(); } catch (e) { this.bootErrors.push('abrir página: ' + e.message); try { this.renderEditor(); } catch (e2) { } }
+    this.safe('Split', () => Split.restore());
+    this.booted = true; Boot.done();
     if (DB.volatile) UI.toast('Atenção: armazenamento local indisponível aqui. Faça backup (Exportar › Backup).');
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); this.flush(); UI.toast('Salvo'); }
@@ -168,7 +172,8 @@ const App = {
     Search.init();
     $('#page-select').onclick = () => { this.selMode = !this.selMode; this.sel = new Set(); this.renderPages(); };
     $('#toggle-nav').onclick = () => document.body.classList.toggle('nav-collapsed');
-    EditorView.init(); Marks.init(); MarkSummary.init(); Spell.init(); Footnotes.init(); NbPanel.init(); PaneResize.init(); FloatBar.init(); AddFloat.init(); CaretKeep.init(); Focus.init(); Split.init(); Recent.init(); Bookmark.init(); ViewTab.init(); TopFit.init(); Team.init(); Emoji.init(); Shared.init(); Updater.checkSeen(); Updater.initPoll(); { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); }
+    for (const [n, f] of [['EditorView', () => EditorView.init()], ['Marks', () => Marks.init()], ['MarkSummary', () => MarkSummary.init()], ['Spell', () => Spell.init()], ['Footnotes', () => Footnotes.init()], ['NbPanel', () => NbPanel.init()], ['PaneResize', () => PaneResize.init()], ['FloatBar', () => FloatBar.init()], ['AddFloat', () => AddFloat.init()], ['CaretKeep', () => CaretKeep.init()], ['Focus', () => Focus.init()], ['Split', () => Split.init()], ['Recent', () => Recent.init()], ['Bookmark', () => Bookmark.init()], ['ViewTab', () => ViewTab.init()], ['TopFit', () => TopFit.init()], ['Team', () => Team.init()], ['Emoji', () => Emoji.init()], ['Shared', () => Shared.init()]]) this.safe(n, f);
+    this.safe('Updater', () => { Updater.checkSeen(); Updater.initPoll(); }); this.safe('versão', () => { const v = $('#app-ver'); if (v) { v.textContent = 'SmartSower ' + Updater.ver(); v.onclick = () => Updater.notes(); } const g = $('#app-guide'); if (g) g.onclick = () => Tour.start(); Tour.maybeStart(); });
     $('#editor').addEventListener('pointerdown', () => { if (window.innerWidth < 980) document.body.classList.add('nav-collapsed'); });
     if (window.innerWidth < 980) document.body.classList.add('nav-collapsed');
     // dobrar/desdobrar (Galaxy Fold), girar a tela: reajusta como se tivesse aberto naquele tamanho
