@@ -921,3 +921,10 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 .cloud-btn[data-quiet]:before{content:none!important}
 .cl-dot{position:absolute;right:4px;top:5px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px var(--accent)}
 .cl-dot.error{background:#ff4d4f}.cl-dot.offline{background:#ffb900}
+/* barra de visualização recolhida num ícone */
+.ed-view{gap:0}
+.ed-view .ev-items{display:flex;align-items:center;gap:2px;max-width:0;overflow:hidden;opacity:0;transition:max-width .25s ease,opacity .2s}
+.ed-view.open .ev-items{max-width:320px;opacity:1}
+@media (hover:hover){.ed-view:hover .ev-items{max-width:320px;opacity:1}}
+.ed-view .ev-tog{font-weight:700;font-size:14px;letter-spacing:-.02em}
+.ed-view.open .ev-tog,.ed-view:hover .ev-tog{color:var(--accent)}

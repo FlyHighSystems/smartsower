@@ -913,10 +913,15 @@ const EditorView = {
     const ed = $('#editor'); if (!ed || this.bar) return;
     this.val = el('button', { class: 'ez-val', title: 'Voltar para 100%', onclick: () => this.set({ ez: 1 }) });
     this.wb = el('button', { onclick: () => this.cycleWidth() });
-    this.bar = el('div', { class: 'ed-view', role: 'toolbar', 'aria-label': 'Visualização do editor' },
+    const items = el('div', { class: 'ev-items' },
       el('button', { text: 'A−', title: 'Diminuir letra (Ctrl+Alt+−)', onclick: () => this.zoom(-0.1) }), this.val,
       el('button', { text: 'A+', title: 'Aumentar letra (Ctrl+Alt+=)', onclick: () => this.zoom(0.1) }), this.wb,
       el('button', { class: 'ev-focus', text: '◎', title: 'Modo foco — só o texto (Ctrl+Alt+F)', onclick: () => Focus.toggle() }));
+    // recolhida num ícone: abre ao passar o mouse ou ao tocar; fecha ao sair / tocar fora
+    const tog = el('button', { class: 'ev-tog', title: 'Letra, largura e modo foco', text: 'Aa', onclick: () => this.bar.classList.toggle('open') });
+    this.bar = el('div', { class: 'ed-view', role: 'toolbar', 'aria-label': 'Visualização do editor' }, items, tog);
+    this.bar.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') this.bar.classList.remove('open'); });
+    document.addEventListener('pointerdown', e => { if (this.bar && !this.bar.contains(e.target)) this.bar.classList.remove('open'); }, true);
     ed.append(this.bar);
     if (this.get().w === 'full') document.body.classList.add('nav-collapsed');
     this.apply();
