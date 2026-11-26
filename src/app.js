@@ -36,20 +36,21 @@ const App = {
     this.bootT = Date.now(); Gate.early(); Boot.watch();
     if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
-    this.step = 'banco local'; await DB.init();
-    this.step = 'lendo seus cadernos'; this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
+    this.step = 'banco local'; Splash.set('Abrindo o banco de dados…', 10); await DB.init();
+    this.step = 'lendo seus cadernos'; Splash.set('Lendo seus cadernos…', 22); this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
     for (const s of await DB.all('sermons')) this.sermons.set(s.id, s);
     if (!this.sermons.size) { const w = welcomeSermon(this.meta.sections[0].id); this.sermons.set(w.id, w); await DB.put('sermons', w.id, w); this.meta.currentSermon = w.id; }
     await this.saveMeta();
+    Splash.set(null, 35, `${this.meta.notebooks.length} caderno(s) · ${this.sermons.size} página(s)`);
     this.scroller = $('#editor');
     this.meta.customTypes ||= []; registerCustomTypes();
-    this.step = 'montando a tela'; this.safe('Theme', () => Theme.init()); this.safe('Ribbon', () => Ribbon.bind()); this.safe('BiblePane', () => BiblePane.bind()); this.safe('bindNav', () => this.bindNav());
-    this.step = 'Bíblias'; try { await Promise.race([Bible.init(), new Promise(r => setTimeout(r, 5000))]); } catch (e) { this.bootErrors.push('Bible: ' + e.message); }
-    this.step = 'cadernos'; this.safe('renderNav', () => this.renderNav());
-    this.step = 'nuvem'; await Cloud.init();
+    this.step = 'montando a tela'; Splash.set('Montando a tela…', 45); this.safe('Theme', () => Theme.init()); this.safe('Ribbon', () => Ribbon.bind()); this.safe('BiblePane', () => BiblePane.bind()); this.safe('bindNav', () => this.bindNav());
+    this.step = 'Bíblias'; Splash.set('Carregando as Bíblias…', 58); try { await Promise.race([Bible.init(), new Promise(r => setTimeout(r, 5000))]); } catch (e) { this.bootErrors.push('Bible: ' + e.message); }
+    this.step = 'cadernos'; Splash.set('Organizando cadernos e seções…', 66); this.safe('renderNav', () => this.renderNav());
+    this.step = 'nuvem'; Splash.set('Conectando à nuvem…', 74); await Cloud.init();
     if (Gate.need()) await Gate.wait();
     const first = this.sermons.get(this.meta.currentSermon) || this.sectionSermons(this.meta.currentSec)[0] || [...this.sermons.values()][0];
-    this.step = 'abrindo a página'; try { first ? this.open(first.id, true) : this.renderEditor(); } catch (e) { this.bootErrors.push('abrir página: ' + e.message); try { this.renderEditor(); } catch (e2) { } }
+    this.step = 'abrindo a página'; Splash.set('Abrindo sua última página…', 88); try { first ? this.open(first.id, true) : this.renderEditor(); } catch (e) { this.bootErrors.push('abrir página: ' + e.message); try { this.renderEditor(); } catch (e2) { } }
     this.safe('Split', () => Split.restore());
     this.booted = true; Boot.done();
     if (DB.volatile) UI.toast('Atenção: armazenamento local indisponível aqui. Faça backup (Exportar › Backup).');

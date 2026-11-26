@@ -448,7 +448,7 @@ const Gate = {
   },
   need() { return this.on() && !Cloud.session; },
   wait() {
-    this.active = true; document.body.classList.add('gated');
+    this.active = true; document.body.classList.add('gated'); Splash.hide();
     const card = el('div', { class: 'gate-card' });
     this.box = el('div', { id: 'gate' }, card); document.body.append(this.box);
     card.append(el('div', { class: 'gate-logo', html: '<img src="icon-192.png" alt="">' }), el('h1', { text: 'SmartSower' }));
@@ -463,6 +463,7 @@ const Gate = {
     if (!await Team.enforce()) return;
     this.active = false; this.box?.remove(); document.body.classList.remove('gated'); CloudUI.body = this._prev;
     Cloud.setStatus('pending'); Cloud.schedule(100); UI.toast('Bem-vindo! Sincronizando seus cadernos…');
+    if (!$('#splash') && document.body) { /* depois do login: mostra o progresso da 1ª sincronização */ document.body.insertAdjacentHTML('afterbegin', '<div id="splash" role="status"><div class="sp-card"><img src="icon-192.png" alt=""><div class="sp-name">SmartSower</div><div class="sp-step" id="sp-step">Trazendo seus cadernos…</div><div class="sp-bar"><i id="sp-fill"></i></div><div class="sp-sub" id="sp-sub"></div><button class="sp-skip" id="sp-skip" hidden>Usar enquanto carrega</button></div></div>'); Splash.on = true; Splash.set(null, 75); setTimeout(() => Splash.syncMode(), 50); }
     this._res?.(); setTimeout(() => Tour.maybeStart(), 2500);
   },
   async wipe() {

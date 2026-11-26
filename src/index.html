@@ -9,9 +9,22 @@
 <title>SmartSower</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237719aa'/%3E%3Cpath d='M46 22c-2-4-7-7-14-7-9 0-15 5-15 11 0 13 28 8 28 20 0 6-6 10-14 10-7 0-12-3-15-8' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>#splash{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;background:linear-gradient(160deg,#5a0f86 0%,#7719aa 55%,#9b3fd0 100%);color:#fff;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;transition:opacity .35s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash .sp-card{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(340px,86vw);text-align:center}
+#splash img{width:84px;height:84px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:sp-pulse 1.8s ease-in-out infinite}
+@keyframes sp-pulse{50%{transform:scale(1.05)}}
+#splash .sp-name{font-size:26px;font-weight:700;letter-spacing:.3px}
+#splash .sp-step{font-size:15px;opacity:.95;min-height:1.3em}
+#splash .sp-bar{width:100%;height:6px;border-radius:6px;background:rgba(255,255,255,.22);overflow:hidden}
+#splash .sp-bar i{display:block;height:100%;width:4%;border-radius:6px;background:#fff;transition:width .35s ease}
+#splash .sp-sub{font-size:12.5px;opacity:.75;min-height:1.2em}
+#splash .sp-skip{margin-top:6px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:20px;padding:8px 16px;font:inherit;font-size:13.5px;cursor:pointer}
+#splash .sp-skip:hover{background:rgba(255,255,255,.12)}</style>
 <style>/*CSS*/</style>
 </head>
 <body>
+<div id="splash" role="status" aria-live="polite"><div class="sp-card"><img src="icon-192.png" alt=""><div class="sp-name">SmartSower</div><div class="sp-step" id="sp-step">Abrindo…</div><div class="sp-bar"><i id="sp-fill"></i></div><div class="sp-sub" id="sp-sub"></div><button class="sp-skip" id="sp-skip" hidden>Usar enquanto carrega</button></div></div>
 <header class="topbar">
   <button class="icon-btn" id="toggle-nav" title="Mostrar/ocultar cadernos" aria-label="Menu">☰</button>
   <div class="brand"><span class="logo">S</span> SmartSower</div>

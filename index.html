@@ -9,6 +9,18 @@
 <title>SmartSower</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237719aa'/%3E%3Cpath d='M46 22c-2-4-7-7-14-7-9 0-15 5-15 11 0 13 28 8 28 20 0 6-6 10-14 10-7 0-12-3-15-8' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>#splash{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;background:linear-gradient(160deg,#5a0f86 0%,#7719aa 55%,#9b3fd0 100%);color:#fff;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;transition:opacity .35s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash .sp-card{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(340px,86vw);text-align:center}
+#splash img{width:84px;height:84px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:sp-pulse 1.8s ease-in-out infinite}
+@keyframes sp-pulse{50%{transform:scale(1.05)}}
+#splash .sp-name{font-size:26px;font-weight:700;letter-spacing:.3px}
+#splash .sp-step{font-size:15px;opacity:.95;min-height:1.3em}
+#splash .sp-bar{width:100%;height:6px;border-radius:6px;background:rgba(255,255,255,.22);overflow:hidden}
+#splash .sp-bar i{display:block;height:100%;width:4%;border-radius:6px;background:#fff;transition:width .35s ease}
+#splash .sp-sub{font-size:12.5px;opacity:.75;min-height:1.2em}
+#splash .sp-skip{margin-top:6px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:20px;padding:8px 16px;font:inherit;font-size:13.5px;cursor:pointer}
+#splash .sp-skip:hover{background:rgba(255,255,255,.12)}</style>
 <style>:root{
   --accent:#7719aa;--accent-d:#5c1385;--accent-l:#f3e9f8;--bg:#f5f4f3;--panel:#fff;--panel2:#faf9f8;--line:#e3e1df;--text:#201f1e;--muted:#69676a;
   --c-point:#7719aa;--c-verse:#0f6cbd;--c-illus:#c25e00;--c-app:#107c10;--c-quote:#008575;--c-ink:#5c2e91;--c-image:#8a8886;--c-text:#8a8886;
@@ -945,6 +957,7 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 </style>
 </head>
 <body>
+<div id="splash" role="status" aria-live="polite"><div class="sp-card"><img src="icon-192.png" alt=""><div class="sp-name">SmartSower</div><div class="sp-step" id="sp-step">Abrindo…</div><div class="sp-bar"><i id="sp-fill"></i></div><div class="sp-sub" id="sp-sub"></div><button class="sp-skip" id="sp-skip" hidden>Usar enquanto carrega</button></div></div>
 <header class="topbar">
   <button class="icon-btn" id="toggle-nav" title="Mostrar/ocultar cadernos" aria-label="Menu">☰</button>
   <div class="brand"><span class="logo">S</span> SmartSower</div>
@@ -1152,7 +1165,7 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 <div id="print-area"></div>
 <div id="toasts"></div>
 <script src="config.js"></script>
-<script>window.SS_BUILD = {"version": "3.12.40", "code": "1e5198", "at": "26/11 09:41", "notes": [{"v": "3.12.40", "d": "11/26/2026", "items": ["Abertura blindada: se uma parte do app falhar ao abrir, o resto abre normalmente (cadernos, páginas e nuvem), e aparece um aviso com o detalhe. Antes, um erro numa parte deixava a tela vazia.", "Se o app não conseguir abrir ou demorar mais de 15 s, aparece uma janela com o erro, a etapa em que parou e os botões ⟳ Tentar de novo, Atualizar limpo e 📋 Copiar detalhes."]}, {"v": "3.12.39", "d": "11/26/2026", "items": ["A linha que você escreve fica sempre à vista: quando o cursor chega perto do fim da tela, o texto sobe sozinho e deixa cerca de 1/3 da tela livre abaixo. Também vale com o teclado do celular aberto. A página ganhou espaço em branco depois do fim para isso funcionar até a última linha."]}, {"v": "3.12.38", "d": "11/26/2026", "items": ["A barrinha do canto (A−, 100%, A+, largura, modo foco) ficou recolhida num ícone “Aa”. Ela abre ao passar o mouse (ou ao tocar, no celular) e fecha sozinha ao sair."]}, {"v": "3.12.37", "d": "11/26/2026", "items": ["Nuvem discreta: a sincronização só aparece ao abrir o app. Uns segundos depois de sincronizar, o botão vira só o ícone ☁, e as próximas sincronizações acontecem sem texto nem animação. Para ver o horário e os detalhes, clique no ☁ ou passe o mouse.", "Se der erro ou ficar sem internet, aparece só um pontinho no ícone (vermelho para erro, amarelo para offline)."]}, {"v": "3.12.36", "d": "11/24/2026", "items": ["▶ Pregar ▾ agora tem duas opções:", "Slides: capa (título e texto-base), pontos, versículos, frases-chave, imagens, desenhos e diagramas. A letra se ajusta sozinha para caber.", "Painel do pregador: o slide atual e o próximo, suas anotações (introdução, textos, ilustrações, conclusão, que não aparecem no telão), cronômetro, miniaturas para pular e ◀ ▶."]}, {"v": "3.12.35", "d": "11/24/2026", "items": ["🗒 Caderno de Anotações (＋ Novo caderno): para reuniões, projetos e ideias.", "📐 Página Projeto, também disponível nos cadernos de ministração. A barra de adicionar traz Título, Texto, Versículo, 🧠 Mapa, 🏢 Organograma, 🔀 Fluxo, ✎ Desenho e 🖼 Imagem / print.", "Organograma e Fluxo são novos estilos do bloco de diagrama, com o mesmo arrastar, ＋, cores e IA do mapa.", "Prints: colar uma imagem ou captura de tela (Ctrl+V) dentro de um texto cria um bloco de imagem."]}, {"v": "3.12.34", "d": "11/24/2026", "items": ["Mapa mental: o tema central tem um ＋ de cada lado. O da direita cria à direita e o da esquerda, à esquerda. Antes, o ＋ do tema podia mandar a ideia para o lado “mais vazio”. Tab, Enter e ↳ Ramo no tema criam à direita, e os galhos que já existem não mudam de lado."]}, {"v": "3.12.33", "d": "11/24/2026", "items": ["Mapa mental: os botões ficaram mais claros. ↳ Ramo abre uma árvore saindo do balão selecionado, com quantos níveis quiser, e ＋ Mesmo nível cria ao lado."]}, {"v": "3.12.32", "d": "11/24/2026", "items": ["Mapa mental — ＋ na ponta do balão: ao clicar num balão aparece um ＋ na ponta de fora dele (à direita nos galhos da direita, à esquerda nos da esquerda). Ele cria uma ideia saindo daquele balão, como no XMind. Tab faz o mesmo."]}, {"v": "3.12.31", "d": "11/24/2026", "items": ["Mapa mental — arrastar: arraste um balão para outro galho. Soltar no meio do balão põe dentro dele; em cima ou embaixo, muda a ordem. No celular: segure e arraste. Um galho não pode ser solto dentro dos próprios filhos.", "Mapa mental — escolher o lado:", "Mapa desenhado nas exportações: Word, PDF, PDF do livro, link de leitura e cópia formatada agora levam o mapa como imagem, com as mesmas cores e galhos, e não mais como lista. O WhatsApp continua em lista com recuo."]}, {"v": "3.12.30", "d": "11/24/2026", "items": ["🧠 Bloco Mapa mental: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados."]}, {"v": "3.12.29", "d": "11/24/2026", "items": ["Datas no padrão americano (MM/DD/AAAA) em todo o app: lista de páginas, pesquisa, cópia para o WhatsApp, Word, PDF, link de leitura, versões e relatórios.", "Para voltar ao brasileiro: Exibir › Data › DD/MM/AAAA. A escolha vale para todos os seus aparelhos."]}]};
+<script>window.SS_BUILD = {"version": "3.12.41", "code": "e4417e", "at": "26/11 10:02", "notes": [{"v": "3.12.41", "d": "11/26/2026", "items": ["Tela de abertura: aparece na hora em que o app abre, com o logo, a etapa atual e uma barra de progresso (banco de dados, cadernos, Bíblias, nuvem, última página) e a contagem de cadernos e páginas. Assim o app não parece travado enquanto carrega.", "Se a nuvem tiver muito a trazer (primeira vez no aparelho, depois do login, ou muita coisa nova), a tela mostra o progresso da sincronização (“Recebendo páginas 120 de 480”). Depois de alguns segundos aparece Usar enquanto carrega, e a sincronização continua em segundo plano."]}, {"v": "3.12.40", "d": "11/26/2026", "items": ["Abertura blindada: se uma parte do app falhar ao abrir, o resto abre normalmente (cadernos, páginas e nuvem), e aparece um aviso com o detalhe. Antes, um erro numa parte deixava a tela vazia.", "Se o app não conseguir abrir ou demorar mais de 15 s, aparece uma janela com o erro, a etapa em que parou e os botões ⟳ Tentar de novo, Atualizar limpo e 📋 Copiar detalhes."]}, {"v": "3.12.39", "d": "11/26/2026", "items": ["A linha que você escreve fica sempre à vista: quando o cursor chega perto do fim da tela, o texto sobe sozinho e deixa cerca de 1/3 da tela livre abaixo. Também vale com o teclado do celular aberto. A página ganhou espaço em branco depois do fim para isso funcionar até a última linha."]}, {"v": "3.12.38", "d": "11/26/2026", "items": ["A barrinha do canto (A−, 100%, A+, largura, modo foco) ficou recolhida num ícone “Aa”. Ela abre ao passar o mouse (ou ao tocar, no celular) e fecha sozinha ao sair."]}, {"v": "3.12.37", "d": "11/26/2026", "items": ["Nuvem discreta: a sincronização só aparece ao abrir o app. Uns segundos depois de sincronizar, o botão vira só o ícone ☁, e as próximas sincronizações acontecem sem texto nem animação. Para ver o horário e os detalhes, clique no ☁ ou passe o mouse.", "Se der erro ou ficar sem internet, aparece só um pontinho no ícone (vermelho para erro, amarelo para offline)."]}, {"v": "3.12.36", "d": "11/24/2026", "items": ["▶ Pregar ▾ agora tem duas opções:", "Slides: capa (título e texto-base), pontos, versículos, frases-chave, imagens, desenhos e diagramas. A letra se ajusta sozinha para caber.", "Painel do pregador: o slide atual e o próximo, suas anotações (introdução, textos, ilustrações, conclusão, que não aparecem no telão), cronômetro, miniaturas para pular e ◀ ▶."]}, {"v": "3.12.35", "d": "11/24/2026", "items": ["🗒 Caderno de Anotações (＋ Novo caderno): para reuniões, projetos e ideias.", "📐 Página Projeto, também disponível nos cadernos de ministração. A barra de adicionar traz Título, Texto, Versículo, 🧠 Mapa, 🏢 Organograma, 🔀 Fluxo, ✎ Desenho e 🖼 Imagem / print.", "Organograma e Fluxo são novos estilos do bloco de diagrama, com o mesmo arrastar, ＋, cores e IA do mapa.", "Prints: colar uma imagem ou captura de tela (Ctrl+V) dentro de um texto cria um bloco de imagem."]}, {"v": "3.12.34", "d": "11/24/2026", "items": ["Mapa mental: o tema central tem um ＋ de cada lado. O da direita cria à direita e o da esquerda, à esquerda. Antes, o ＋ do tema podia mandar a ideia para o lado “mais vazio”. Tab, Enter e ↳ Ramo no tema criam à direita, e os galhos que já existem não mudam de lado."]}, {"v": "3.12.33", "d": "11/24/2026", "items": ["Mapa mental: os botões ficaram mais claros. ↳ Ramo abre uma árvore saindo do balão selecionado, com quantos níveis quiser, e ＋ Mesmo nível cria ao lado."]}, {"v": "3.12.32", "d": "11/24/2026", "items": ["Mapa mental — ＋ na ponta do balão: ao clicar num balão aparece um ＋ na ponta de fora dele (à direita nos galhos da direita, à esquerda nos da esquerda). Ele cria uma ideia saindo daquele balão, como no XMind. Tab faz o mesmo."]}, {"v": "3.12.31", "d": "11/24/2026", "items": ["Mapa mental — arrastar: arraste um balão para outro galho. Soltar no meio do balão põe dentro dele; em cima ou embaixo, muda a ordem. No celular: segure e arraste. Um galho não pode ser solto dentro dos próprios filhos.", "Mapa mental — escolher o lado:", "Mapa desenhado nas exportações: Word, PDF, PDF do livro, link de leitura e cópia formatada agora levam o mapa como imagem, com as mesmas cores e galhos, e não mais como lista. O WhatsApp continua em lista com recuo."]}, {"v": "3.12.30", "d": "11/24/2026", "items": ["🧠 Bloco Mapa mental: tema no centro e ideias em galhos coloridos, com conectores curvos e galhos divididos dos dois lados."]}]};
 'use strict';
 /* ===== Utilidades básicas ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1918,20 +1931,21 @@ const App = {
     this.bootT = Date.now(); Gate.early(); Boot.watch();
     if (/[?&]v=\d/.test(location.search)) { history.replaceState(null, '', location.pathname + location.hash); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) this._hiddenAt = Date.now(); else if (Date.now() - (this._hiddenAt || Date.now()) > 120000) { this.bootT = Date.now(); this._typed = false; } });
-    this.step = 'banco local'; await DB.init();
-    this.step = 'lendo seus cadernos'; this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
+    this.step = 'banco local'; Splash.set('Abrindo o banco de dados…', 10); await DB.init();
+    this.step = 'lendo seus cadernos'; Splash.set('Lendo seus cadernos…', 22); this.meta = (await DB.get('kv', 'meta')) || this.seedMeta();
     for (const s of await DB.all('sermons')) this.sermons.set(s.id, s);
     if (!this.sermons.size) { const w = welcomeSermon(this.meta.sections[0].id); this.sermons.set(w.id, w); await DB.put('sermons', w.id, w); this.meta.currentSermon = w.id; }
     await this.saveMeta();
+    Splash.set(null, 35, `${this.meta.notebooks.length} caderno(s) · ${this.sermons.size} página(s)`);
     this.scroller = $('#editor');
     this.meta.customTypes ||= []; registerCustomTypes();
-    this.step = 'montando a tela'; this.safe('Theme', () => Theme.init()); this.safe('Ribbon', () => Ribbon.bind()); this.safe('BiblePane', () => BiblePane.bind()); this.safe('bindNav', () => this.bindNav());
-    this.step = 'Bíblias'; try { await Promise.race([Bible.init(), new Promise(r => setTimeout(r, 5000))]); } catch (e) { this.bootErrors.push('Bible: ' + e.message); }
-    this.step = 'cadernos'; this.safe('renderNav', () => this.renderNav());
-    this.step = 'nuvem'; await Cloud.init();
+    this.step = 'montando a tela'; Splash.set('Montando a tela…', 45); this.safe('Theme', () => Theme.init()); this.safe('Ribbon', () => Ribbon.bind()); this.safe('BiblePane', () => BiblePane.bind()); this.safe('bindNav', () => this.bindNav());
+    this.step = 'Bíblias'; Splash.set('Carregando as Bíblias…', 58); try { await Promise.race([Bible.init(), new Promise(r => setTimeout(r, 5000))]); } catch (e) { this.bootErrors.push('Bible: ' + e.message); }
+    this.step = 'cadernos'; Splash.set('Organizando cadernos e seções…', 66); this.safe('renderNav', () => this.renderNav());
+    this.step = 'nuvem'; Splash.set('Conectando à nuvem…', 74); await Cloud.init();
     if (Gate.need()) await Gate.wait();
     const first = this.sermons.get(this.meta.currentSermon) || this.sectionSermons(this.meta.currentSec)[0] || [...this.sermons.values()][0];
-    this.step = 'abrindo a página'; try { first ? this.open(first.id, true) : this.renderEditor(); } catch (e) { this.bootErrors.push('abrir página: ' + e.message); try { this.renderEditor(); } catch (e2) { } }
+    this.step = 'abrindo a página'; Splash.set('Abrindo sua última página…', 88); try { first ? this.open(first.id, true) : this.renderEditor(); } catch (e) { this.bootErrors.push('abrir página: ' + e.message); try { this.renderEditor(); } catch (e2) { } }
     this.safe('Split', () => Split.restore());
     this.booted = true; Boot.done();
     if (DB.volatile) UI.toast('Atenção: armazenamento local indisponível aqui. Faça backup (Exportar › Backup).');
@@ -4625,7 +4639,7 @@ const Gate = {
   },
   need() { return this.on() && !Cloud.session; },
   wait() {
-    this.active = true; document.body.classList.add('gated');
+    this.active = true; document.body.classList.add('gated'); Splash.hide();
     const card = el('div', { class: 'gate-card' });
     this.box = el('div', { id: 'gate' }, card); document.body.append(this.box);
     card.append(el('div', { class: 'gate-logo', html: '<img src="icon-192.png" alt="">' }), el('h1', { text: 'SmartSower' }));
@@ -4640,6 +4654,7 @@ const Gate = {
     if (!await Team.enforce()) return;
     this.active = false; this.box?.remove(); document.body.classList.remove('gated'); CloudUI.body = this._prev;
     Cloud.setStatus('pending'); Cloud.schedule(100); UI.toast('Bem-vindo! Sincronizando seus cadernos…');
+    if (!$('#splash') && document.body) { /* depois do login: mostra o progresso da 1ª sincronização */ document.body.insertAdjacentHTML('afterbegin', '<div id="splash" role="status"><div class="sp-card"><img src="icon-192.png" alt=""><div class="sp-name">SmartSower</div><div class="sp-step" id="sp-step">Trazendo seus cadernos…</div><div class="sp-bar"><i id="sp-fill"></i></div><div class="sp-sub" id="sp-sub"></div><button class="sp-skip" id="sp-skip" hidden>Usar enquanto carrega</button></div></div>'); Splash.on = true; Splash.set(null, 75); setTimeout(() => Splash.syncMode(), 50); }
     this._res?.(); setTimeout(() => Tour.maybeStart(), 2500);
   },
   async wipe() {
@@ -10096,7 +10111,7 @@ const OneNoteImport = {
 /* ===== Inicialização ===== */
 window.addEventListener('DOMContentLoaded', () => {
   if (handleAuthPopup()) return;
-  App.init().catch(e => { console.error(e); Boot.fail(e); });
+  App.init().catch(e => { console.error(e); Splash.hide(); Boot.fail(e); });
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && window.top === window && !/claude|anthropic/.test(location.hostname)) {
     navigator.serviceWorker.register('sw.js').catch(() => { });
   }
@@ -10104,9 +10119,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* ===== Aviso de abertura: mostra o erro (ou a etapa que está demorando) e oferece tentar de novo ===== */
 const Boot = {
-  watch() { this.t = setTimeout(() => { if (!App.booted) this.show('O app está demorando para abrir.', `Parado em: ${App.step}`, true); }, 15000); },
+  watch() { this.t = setTimeout(() => { if (!App.booted) Splash.hide(), this.show('O app está demorando para abrir.', `Parado em: ${App.step}`, true); }, 15000); },
   done() {
-    clearTimeout(this.t); $('#boot-err')?.remove();
+    clearTimeout(this.t); $('#boot-err')?.remove(); setTimeout(() => Splash.afterBoot(), 600);
     if (App.bootErrors.length) UI.toast('Uma parte do app não carregou direito: ' + App.bootErrors[0].slice(0, 120), { label: 'Detalhes', fn: () => this.show('Uma parte do app não carregou.', App.bootErrors.join('\n'), true) });
   },
   fail(e) { clearTimeout(this.t); this.show('O app não conseguiu abrir.', `${e?.message || e}\nEtapa: ${App.step}\n${(e?.stack || '').split('\n').slice(1, 3).join('\n')}`); },
@@ -10121,6 +10136,39 @@ const Boot = {
         el('button', { class: 'btn', text: '📋 Copiar detalhes', onclick: () => navigator.clipboard?.writeText(info).then(() => UI.toast('Copiado — cole na conversa com o Claude')) }),
         soft ? el('button', { class: 'btn link', text: 'Fechar', onclick: () => box.remove() }) : null)));
     document.body.append(box);
+  },
+};
+
+/* ===== Tela de abertura: aparece na hora, mostra as etapas e, se a nuvem tiver muito a trazer, o progresso ===== */
+const Splash = {
+  on: true,
+  set(step, pct, sub) {
+    if (!this.on) return; const s = $('#sp-step'), f = $('#sp-fill'), u = $('#sp-sub');
+    if (step != null && s) s.textContent = step; if (pct != null && f) f.style.width = Math.max(4, Math.min(100, pct)) + '%'; if (sub != null && u) u.textContent = sub;
+  },
+  hide() {
+    if (!this.on) return; this.on = false; clearTimeout(this._t); clearInterval(this._iv); Cloud.listeners?.delete(this._l);
+    const e = $('#splash'); if (!e) return; this.set(null, 100); e.classList.add('out'); setTimeout(() => e.remove(), 400);
+  },
+  /* depois de abrir: se a 1ª sincronização terminar rápido, some; senão vira barra de progresso da nuvem */
+  afterBoot() {
+    if (!this.on) return;
+    if (!Cloud.configured?.() || !Cloud.session || !['syncing', 'pending'].includes(Cloud.status)) return this.hide();
+    this.syncMode();
+  },
+  syncMode() {
+    if (!this.on) return;
+    const done = () => ['ok', 'offline', 'error', 'out', 'setup'].includes(Cloud.status);
+    const tick = () => {
+      if (done()) return this.hide();
+      const p = Cloud.prog; const pct = p?.total ? 5 + 95 * Math.min(p.done, p.total) / p.total : null;
+      this.set('Trazendo seus cadernos da nuvem…', pct, Cloud.progText?.() || (p?.total ? `${Math.min(p.done, p.total)} de ${p.total}` : ''));
+    };
+    this._l = tick; Cloud.listeners?.add(tick); this._iv = setInterval(tick, 500);
+    // se for rápido, nem aparece o modo nuvem; se demorar, oferece usar enquanto termina
+    setTimeout(() => { if (this.on) { const b = $('#sp-skip'); if (b) { b.hidden = false; b.onclick = () => { this.hide(); UI.toast('A sincronização continua em segundo plano.'); }; } } }, 2500);
+    this._t = setTimeout(() => this.hide(), 45000);
+    tick();
   },
 };
 </script>

@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.41 — 11/26/2026
+- **Tela de abertura:** aparece na hora em que o app abre, com o logo, a etapa atual e uma barra de progresso (banco de dados, cadernos, Bíblias, nuvem, última página) e a contagem de cadernos e páginas. Assim o app não parece travado enquanto carrega.
+- Se a nuvem tiver muito a trazer (primeira vez no aparelho, depois do login, ou muita coisa nova), a tela mostra o **progresso da sincronização** (“Recebendo páginas 120 de 480”). Depois de alguns segundos aparece **Usar enquanto carrega**, e a sincronização continua em segundo plano.
+
 ## 3.12.40 — 11/26/2026
 - **Abertura blindada:** se uma parte do app falhar ao abrir, o resto abre normalmente (cadernos, páginas e nuvem), e aparece um aviso com o detalhe. Antes, um erro numa parte deixava a tela vazia.
 - Se o app não conseguir abrir ou demorar mais de 15 s, aparece uma janela com o erro, a etapa em que parou e os botões **⟳ Tentar de novo**, **Atualizar limpo** e **📋 Copiar detalhes**.
