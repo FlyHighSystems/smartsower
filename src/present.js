@@ -32,16 +32,16 @@ const Present = {
       else if (b.type === 'subhead' && t) S.push({ k: 'point', t, notes: [] });
       else if (b.type === 'verse' && (t || b.ref)) S.push({ k: 'verse', t, ref: [b.ref, ver(b)].filter(Boolean).join(' · '), notes: [] });
       else if (b.type === 'quote' && t) S.push({ k: 'quote', t, notes: [] });
-      else if (b.type === 'image' && b.src) S.push({ k: 'img', src: b.src, notes: t ? [t] : [] });
+      else if (b.type === 'image' && b.src) S.push({ k: 'img', src: b.src, notes: t ? [{ html: sanitizeHTML(b.html) }] : [] });
       else if (b.type === 'mind' && b.mind) S.push({ k: 'img', src: Mind.png(b.mind, 1800).src, notes: [] });
       else if (b.type === 'ink' && b.ink?.strokes?.length) S.push({ k: 'img', src: inkToDataURL({ hr: inkContentHR(b.ink), strokes: b.ink.strokes }, 1600, '#ffffff'), notes: [] });
       else if (t) {
         const lab = BLOCK_TYPES[b.type]?.label || '', pre = b.type === 'text' ? '' : lab.toUpperCase() + ': ';
         // pontos escritos dentro do texto (título ou linha toda em negrito, como vem do OneNote) também viram slide
         const parts = this.split(b.html || '');
-        if (!parts.some(x => x.head)) { if (withText) S.push({ k: 'text', lab: b.type === 'text' ? '' : lab, html: sanitizeHTML(b.html || ''), notes: [] }); else S[S.length - 1].notes.push(pre + t); continue; }
+        if (!parts.some(x => x.head)) { if (withText) S.push({ k: 'text', lab: b.type === 'text' ? '' : lab, html: sanitizeHTML(b.html || ''), notes: [] }); else S[S.length - 1].notes.push({ lab: pre.replace(/: $/, ''), html: sanitizeHTML(b.html || '') }); continue; }
         let buf = [], first = true;
-        const flush = () => { if (!buf.length) return; const html = buf.join(''), tt = htmlToText(html).trim(); if (tt) { if (withText) S.push({ k: 'text', lab: first && b.type !== 'text' ? lab : '', html: sanitizeHTML(html), notes: [] }); else S[S.length - 1].notes.push((first ? pre : '') + tt); } buf = []; first = false; };
+        const flush = () => { if (!buf.length) return; const html = buf.join(''), tt = htmlToText(html).trim(); if (tt) { if (withText) S.push({ k: 'text', lab: first && b.type !== 'text' ? lab : '', html: sanitizeHTML(html), notes: [] }); else S[S.length - 1].notes.push({ lab: first ? pre.replace(/: $/, '') : '', html: sanitizeHTML(html) }); } buf = []; first = false; };
         for (const x of parts) { if (x.head) { flush(); S.push({ k: 'point', t: x.text, notes: [] }); first = false; } else buf.push(x.html); }
         flush();
       }
@@ -159,7 +159,9 @@ const Present = {
     if (!this.S) return; const sl = this.S[this.i];
     this.cur.innerHTML = ''; this.cur.append(this.mini(sl)); if (this.black) this.cur.firstChild.firstChild.classList.add('black');
     this.next.innerHTML = ''; const nx = this.S[this.i + 1]; this.next.append(nx ? this.mini(nx) : el('div', { class: 'pzp-end muted', text: 'Fim da apresentação' }));
-    this.notes.innerHTML = ''; (sl.notes.length ? sl.notes : ['—']).forEach(n => this.notes.append(el('p', { text: n })));
+    this.notes.innerHTML = '';
+    if (!sl.notes.length) this.notes.append(el('p', { class: 'muted', text: '—' }));
+    for (const n of sl.notes) this.notes.append(typeof n === 'string' ? el('p', { text: n }) : el('div', { class: 'pzp-note' }, n.lab ? el('div', { class: 'pzp-nl', text: n.lab }) : null, el('div', { class: 'pzp-nh', html: n.html })));
     this.pos.textContent = `${this.i + 1} / ${this.S.length}`;
     this.strip.innerHTML = '';
     this.S.forEach((x, j) => { const t = el('button', { class: 'pzp-th' + (j === this.i ? ' on' : ''), title: x.t || x.ref || x.k, onclick: () => { this.i = j; this.show(); } }, el('span', { text: String(j + 1) }), el('span', { class: 'pzp-tt', text: { title: '🏷', point: '●', verse: '📖', quote: '❝', img: '🖼', text: '¶' }[x.k] + ' ' + (x.t || x.ref || '').slice(0, 26) })); this.strip.append(t); if (j === this.i) setTimeout(() => t.scrollIntoView({ inline: 'center', block: 'nearest' }), 0); });

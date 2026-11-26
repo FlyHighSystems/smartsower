@@ -936,3 +936,5 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 .nav-edge:hover{opacity:1;color:var(--accent);border-color:var(--accent)}
 .nav-edge[hidden]{display:none}
 @media print{.nav-edge{display:none}}
+.pzp-note{margin:0 0 14px}.pzp-nl{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--accent);margin-bottom:3px}
+.pzp-nh div,.pzp-nh p{margin:0 0 .55em}.pzp-nh ul,.pzp-nh ol{margin:.2em 0 .6em;padding-left:1.4em}.pzp-nh mark{border-radius:3px;padding:0 2px}

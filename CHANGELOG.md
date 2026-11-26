@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.44 — 11/26/2026
+- **Apresentar:** as anotações do pregador agora vêm **formatadas** (negrito, itálico, realce, cores, listas), com o tipo do bloco em destaque (ILUSTRAÇÃO, APLICAÇÃO…), e não mais como texto corrido.
+
 ## 3.12.43 — 11/26/2026
 - **Apresentar: pontos escritos dentro do texto viram slide.** Além do bloco Ponto, agora entram os títulos e as linhas inteiras em **negrito** dentro do texto (como “1. O cativeiro mata os sonhos”, muito comum no que veio do OneNote). O texto entre um ponto e outro vai para as suas anotações no painel.
 
