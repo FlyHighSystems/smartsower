@@ -1079,3 +1079,24 @@ const CaretKeep = {
     else if (rc.top < top + 40) ed.scrollBy({ top: rc.top - top - 40 });
   },
 };
+
+/* ===== Botão « » na divisa entre a lista de páginas e o texto: recolhe/mostra os painéis (igual ao ☰) ===== */
+const NavEdge = {
+  init() {
+    const main = $('.main'), ed = $('#editor'); if (!main || !ed || $('#nav-edge')) return;
+    this.b = el('button', { id: 'nav-edge', class: 'nav-edge', onclick: () => { document.body.classList.toggle('nav-collapsed'); } });
+    this.b.addEventListener('pointerdown', e => e.preventDefault());
+    main.append(this.b);
+    const q = () => requestAnimationFrame(() => this.place());
+    new ResizeObserver(q).observe(ed); new MutationObserver(q).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('resize', q); this.place();
+  },
+  place() {
+    const b = this.b, ed = $('#editor'), main = $('.main'); if (!b || !ed) return;
+    const closed = document.body.classList.contains('nav-collapsed');
+    b.textContent = closed ? '»' : '«';
+    b.title = closed ? 'Mostrar cadernos e páginas (☰)' : 'Recolher cadernos e páginas (☰)';
+    b.hidden = innerWidth < 980 || document.body.classList.contains('focus-mode') || !ed.offsetParent;
+    b.style.left = Math.max(2, ed.getBoundingClientRect().left - main.getBoundingClientRect().left - 11) + 'px';
+  },
+};

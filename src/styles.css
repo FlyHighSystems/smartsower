@@ -66,7 +66,7 @@ html[data-theme=dark] .b-body [style*="background-color"]{color:#111}
 .t-point{color:var(--c-point)}.t-verse{color:var(--c-verse)}.t-illus{color:var(--c-illus)}.t-app{color:var(--c-app)}.t-quote{color:var(--c-quote)}.t-ink{color:var(--c-ink)}
 
 /* Layout principal estilo OneNote */
-.main{flex:1;display:flex;min-height:0}
+.main{flex:1;display:flex;min-height:0;position:relative}
 #nb-pane{width:var(--nb-w,220px);position:relative;background:var(--panel2);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:auto;flex-shrink:0}
 #pages-pane{width:var(--pages-w,260px);position:relative;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;flex-shrink:0;border-top:4px solid var(--sec-color)}
 .nav-collapsed #nb-pane,.nav-collapsed #pages-pane{display:none}
@@ -931,3 +931,8 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 #boot-err{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);display:grid;place-items:center;padding:16px}
 #boot-err .be-card{background:var(--panel,#fff);color:var(--fg,#1b1b1b);border-radius:14px;padding:18px 20px;max-width:560px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.4)}
 #boot-err pre{white-space:pre-wrap;font-size:12.5px;background:var(--panel2,#f3f2f1);border-radius:8px;padding:10px;max-height:40vh;overflow:auto}
+/* « » na divisa dos painéis */
+.nav-edge{position:absolute;top:50%;transform:translateY(-50%);z-index:25;width:22px;height:44px;padding:0;border-radius:11px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:15px;line-height:1;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.12);opacity:.55;transition:opacity .2s,color .2s}
+.nav-edge:hover{opacity:1;color:var(--accent);border-color:var(--accent)}
+.nav-edge[hidden]{display:none}
+@media print{.nav-edge{display:none}}

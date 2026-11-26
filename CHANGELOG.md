@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.42 — 11/26/2026
+- **Botão « na divisa** entre a lista de páginas e o texto: recolhe os painéis de cadernos e páginas, como o ☰. Recolhido, vira **»** na borda esquerda para abrir de novo.
+
 ## 3.12.41 — 11/26/2026
 - **Tela de abertura:** aparece na hora em que o app abre, com o logo, a etapa atual e uma barra de progresso (banco de dados, cadernos, Bíblias, nuvem, última página) e a contagem de cadernos e páginas. Assim o app não parece travado enquanto carrega.
 - Se a nuvem tiver muito a trazer (primeira vez no aparelho, depois do login, ou muita coisa nova), a tela mostra o **progresso da sincronização** (“Recebendo páginas 120 de 480”). Depois de alguns segundos aparece **Usar enquanto carrega**, e a sincronização continua em segundo plano.
