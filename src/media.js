@@ -1055,3 +1055,27 @@ const ViewTab = {
     if (this.zv) this.zv.textContent = Math.round(v.ez * 100) + '%';
   },
 };
+
+/* ===== Linha que você está escrevendo sempre à vista: quando o cursor chega perto do fim da tela,
+   o texto sobe sozinho (deixa ~1/3 da tela livre abaixo). Funciona também com o teclado do celular. ===== */
+const CaretKeep = {
+  init() {
+    const q = () => { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.keep(); }); };
+    document.addEventListener('input', e => { if (e.target.closest?.('#blocks, #s-title')) q(); }, true);
+    document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === 'ArrowDown' || e.key === 'PageDown') && e.target.closest?.('#blocks')) setTimeout(q, 0); }, true);
+    window.visualViewport?.addEventListener('resize', () => { if (document.activeElement?.closest?.('#blocks')) q(); });
+  },
+  keep() {
+    const ed = $('#editor'), sel = getSelection(); if (!ed || !sel.rangeCount) return;
+    const node = sel.focusNode; if (!node || !$('#blocks')?.contains(node)) return;
+    const r = sel.getRangeAt(0).cloneRange(); r.collapse(false);
+    let rc = r.getClientRects()[0] || r.getBoundingClientRect();
+    if (!rc || (!rc.height && !rc.top)) { const e = node.nodeType === 1 ? node : node.parentElement; rc = e?.getBoundingClientRect(); } if (!rc) return;
+    const er = ed.getBoundingClientRect(), vv = window.visualViewport;
+    const bottom = Math.min(er.bottom, vv ? vv.offsetTop + vv.height : innerHeight), top = er.top, H = bottom - top;
+    const margin = Math.max(90, H * 0.3);                       // espaço livre que fica abaixo da linha atual
+    const over = rc.bottom - (bottom - margin);
+    if (over > 0) ed.scrollBy({ top: over, behavior: over > 60 ? 'smooth' : 'auto' });
+    else if (rc.top < top + 40) ed.scrollBy({ top: rc.top - top - 40 });
+  },
+};

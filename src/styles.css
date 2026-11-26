@@ -87,7 +87,7 @@ html[data-theme=dark] .b-body [style*="background-color"]{color:#111}
 
 /* Editor */
 #editor{flex:1;overflow:auto;background:var(--panel);min-width:0}
-#editor-inner{--ez:1;max-width:900px;margin:0 auto;padding:22px 34px 140px;min-height:100%;box-sizing:border-box}
+#editor-inner{--ez:1;max-width:900px;margin:0 auto;padding:22px 34px 40vh;min-height:100%;box-sizing:border-box}
 body.ed-wide #editor-inner{max-width:1320px}body.ed-full #editor-inner{max-width:none}
 .s-title{width:100%;border:0;font-size:calc(30px*var(--ez));font-weight:600;padding:4px 0;border-bottom:1px solid var(--line);outline:none;background:transparent;font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 .s-meta{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;color:var(--muted);padding:10px 0 18px}
@@ -241,7 +241,7 @@ a.ref{color:var(--rverse);text-decoration:underline dotted;text-underline-offset
   #nb-pane,#pages-pane{position:absolute;top:100px;bottom:0;z-index:20;box-shadow:var(--shadow)}
   #pages-pane{left:var(--nb-w,190px)}#nb-pane{left:0}
   #bible-pane{position:absolute;right:0;top:100px;bottom:0;z-index:21;box-shadow:-8px 0 30px rgba(0,0,0,.12)}
-  #editor-inner{padding:16px 18px 120px}
+  #editor-inner{padding:16px 18px 40vh}
   .rtab{padding:8px 10px}.brand{display:none}
 }
 

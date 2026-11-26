@@ -2,6 +2,9 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.39 — 11/26/2026
+- **A linha que você escreve fica sempre à vista:** quando o cursor chega perto do fim da tela, o texto sobe sozinho e deixa cerca de 1/3 da tela livre abaixo. Também vale com o teclado do celular aberto. A página ganhou espaço em branco depois do fim para isso funcionar até a última linha.
+
 ## 3.12.38 — 11/26/2026
 - A barrinha do canto (A−, 100%, A+, largura, modo foco) ficou **recolhida num ícone “Aa”**. Ela abre ao passar o mouse (ou ao tocar, no celular) e fecha sozinha ao sair.
 
