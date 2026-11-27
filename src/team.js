@@ -12,7 +12,12 @@ const Team = {
     const em = this.email(); if (!em) return null;
     try {
       const r = await Cloud.rest(`/rest/v1/team_members?select=role&email=eq.${encodeURIComponent(em)}`);
-      const rows = await r.json(); const role = rows[0]?.role || null; this.setRole(role); return role;
+      const rows = await r.json(); let role = rows[0]?.role || null;
+      if (!role && Cloud.session?.user?.id) {   // veio do Church2all: usa o app, mas não faz parte da equipe
+        const l = await (await Cloud.rest(`/rest/v1/c2a_links?select=church_name&user_id=eq.${encodeURIComponent(Cloud.session.user.id)}&limit=1`)).json().catch(() => []);
+        if (Array.isArray(l) && l.length) role = 'c2a';
+      }
+      this.setRole(role); return role;
     } catch (e) {
       if (/não existem|does not exist|Could not find the (table|function)|schema cache/i.test(e.message)) { this.lastErr = e.message; this.setRole('nosetup'); return 'nosetup'; }
       throw e;

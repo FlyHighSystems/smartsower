@@ -123,9 +123,39 @@ insert into public.team_members (email, name, role)
   where u.email is not null and not exists (select 1 from public.team_members)
 on conflict (email) do nothing;
 
-create or replace function public.is_member() returns boolean
+-- Quem entra pelo Church2all (contas criadas pelo Church2all, ligadas a uma igreja). Não faz parte da equipe:
+-- usa os próprios cadernos e, no compartilhamento, só enxerga gente da mesma igreja. Escrito só pelo Church2all.
+create table if not exists public.c2a_links (
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  church_id    uuid not null,
+  church_name  text not null default '',
+  church_slug  text not null default '',
+  role         text not null default '',
+  name         text not null default '',
+  linked_at    timestamptz not null default now(),
+  primary key (user_id, church_id)
+);
+alter table public.c2a_links enable row level security;
+drop policy if exists "c2a_own" on public.c2a_links;
+create policy "c2a_own" on public.c2a_links for select to authenticated using (user_id = auth.uid());
+grant select on public.c2a_links to authenticated;
+
+create or replace function public.is_team() returns boolean
 language sql stable security definer set search_path = public as $$
   select exists (select 1 from public.team_members where email = lower(auth.jwt()->>'email'))
+$$;
+-- Pode usar o app: a equipe de sempre, ou quem veio do Church2all
+create or replace function public.is_member() returns boolean
+language sql stable security definer set search_path = public as $$
+  select public.is_team() or exists (select 1 from public.c2a_links where user_id = auth.uid())
+$$;
+-- Duas pessoas estão no mesmo "mundo": as duas na equipe, ou as duas ligadas a uma mesma igreja do Church2all
+create or replace function public.same_world(a uuid, b_email text) returns boolean
+language sql stable security definer set search_path = public as $$
+  select (exists (select 1 from auth.users u join public.team_members t on t.email = lower(u.email) where u.id = a)
+          and exists (select 1 from public.team_members t where t.email = lower(b_email)))
+      or exists (select 1 from public.c2a_links x join public.c2a_links y on y.church_id = x.church_id
+                 join auth.users u on u.id = y.user_id where x.user_id = a and lower(u.email) = lower(b_email))
 $$;
 create or replace function public.is_admin() returns boolean
 language sql stable security definer set search_path = public as $$
@@ -170,6 +200,8 @@ grant execute on function public.team_list() to authenticated;
 create or replace function public.team_signup_guard() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
+  -- contas criadas pelo Church2all (com a chave de serviço, que só o servidor tem) passam
+  if coalesce(new.raw_app_meta_data->>'c2a', '') = 'true' then return new; end if;
   if new.email is null or not exists (select 1 from public.team_members where email = lower(new.email)) then
     raise exception 'SS_NOT_INVITED: e-mail não cadastrado na equipe';
   end if;
@@ -290,7 +322,15 @@ create or replace function public.team_people() returns table (email text, name 
 language plpgsql stable security definer set search_path = public as $$
 begin
   if not public.is_member() then raise exception 'Apenas membros da equipe.'; end if;
-  return query select t.email, t.name from public.team_members t order by t.name, t.email;
+  -- a equipe vê a equipe; quem veio do Church2all vê as pessoas da(s) própria(s) igreja(s)
+  return query
+    select x.email, x.name from (
+      select t.email, t.name from public.team_members t where public.is_team()
+      union
+      select lower(u.email), coalesce(nullif(y.name, ''), split_part(u.email, '@', 1))
+      from public.c2a_links me join public.c2a_links y on y.church_id = me.church_id join auth.users u on u.id = y.user_id
+      where me.user_id = auth.uid() and u.email is not null
+    ) x order by x.name, x.email;
 end $$;
 revoke all on function public.team_people() from public;
 grant execute on function public.team_people() to authenticated;
@@ -299,4 +339,26 @@ grant execute on function public.team_people() to authenticated;
 -- (os nomes dos arquivos são códigos impossíveis de adivinhar)
 drop policy if exists "images_own_select" on storage.objects;
 create policy "images_own_select" on storage.objects for select to authenticated
-  using (bucket_id = 'images' and public.is_member());
+  using (bucket_id = 'images' and (public.is_team()
+    or (storage.foldername(objects.name))[1] = auth.uid()::text
+    or exists (select 1 from public.c2a_links x join public.c2a_links y on y.church_id = x.church_id
+               where x.user_id = auth.uid() and y.user_id::text = (storage.foldername(objects.name))[1])));
+
+-- ============================================================
+-- Church2all: compartilhar só dentro do mesmo "mundo" (equipe com equipe,
+-- igreja com a mesma igreja). Nada muda para a equipe de sempre.
+-- ============================================================
+create or replace function public.shared_members_guard() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare v_owner uuid;
+begin
+  select owner into v_owner from public.shared_nbs where id = new.nb_id;
+  if v_owner is not null and new.email <> lower(coalesce((select email from auth.users where id = v_owner), ''))
+     and not public.same_world(v_owner, new.email) then
+    raise exception 'SS_OTHER_CHURCH: só dá para compartilhar com pessoas da sua equipe ou da sua igreja';
+  end if;
+  return new;
+end $$;
+drop trigger if exists shared_members_guard on public.shared_members;
+create trigger shared_members_guard before insert or update on public.shared_members
+  for each row execute function public.shared_members_guard();

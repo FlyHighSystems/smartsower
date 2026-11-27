@@ -34,6 +34,34 @@ const Cloud = {
     if (h.get('error_description') || h.get('error')) { const m = this.authMsg(h.get('error_description') || h.get('error')); history.replaceState(null, '', location.pathname + location.search); return m; }
     return null;
   },
+  /* Entrada vinda do Church2all: o painel da igreja manda dois códigos de uso único no #c2a=… (nunca vão a servidor):
+     o do SmartSower (a conta da pessoa aqui) e o do Church2all (para o caderno da igreja, numa próxima etapa).
+     Se este aparelho já está com OUTRA conta, não troca sozinho (os cadernos locais iriam para a conta errada). */
+  async captureChurch2all() {
+    const m = /(?:^#|&)c2a=([A-Za-z0-9_-]+)/.exec(location.hash);
+    if (!m) return null;
+    history.replaceState(null, '', location.pathname + location.search.replace(/[?&]from=church2all/, '').replace(/^&/, '?'));
+    let p; try { p = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return 'O link do Church2all veio incompleto. Abra o SmartSower de novo pelo painel.'; }
+    if (!p || !p.ss || !p.email) return 'O link do Church2all veio incompleto. Abra o SmartSower de novo pelo painel.';
+    const cur = (this.session?.user?.email || '').toLowerCase();
+    if (cur && cur !== String(p.email).toLowerCase())
+      return `Este aparelho está conectado como ${cur}. Para entrar como ${p.email} (${p.church?.name || 'Church2all'}), use ☁ › "Sair e apagar deste aparelho" e abra o SmartSower de novo pelo Church2all.`;
+    try {
+      const j = await this.auth('verify', { type: 'magiclink', token_hash: p.ss });
+      this.saveSession(this.sessionFrom(j));
+    } catch (e) { return 'Não foi possível entrar pelo Church2all (o link vale uma vez e por pouco tempo). Abra de novo pelo painel.'; }
+    const info = { church: p.church || {}, role: p.role || '', name: p.name || '', email: p.email, at: Date.now() };
+    if (p.c2a && p.api && /^https:\/\//.test(p.api.url || '')) {   // sessão no Church2all, para o caderno da igreja
+      try {
+        const r = await fetch(`${p.api.url}/auth/v1/verify`, { method: 'POST', headers: { apikey: p.api.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'magiclink', token_hash: p.c2a }) });
+        const j = await r.json();
+        if (r.ok && j.access_token) info.c2a = { url: p.api.url, key: p.api.key, session: this.sessionFrom(j) };
+      } catch (e) { /* o caderno da igreja tenta de novo depois */ }
+    }
+    try { localStorage.setItem('ss-c2a', JSON.stringify(info)); } catch (e) { }
+    return 'c2a';
+  },
+  c2a() { try { return JSON.parse(localStorage.getItem('ss-c2a') || 'null'); } catch (e) { return null; } },
   async auth(path, body, method = 'POST') {
     const c = this.cfg();
     const r = await fetch(`${c.url}/auth/v1/${path}`, { method, headers: { apikey: c.key, 'Content-Type': 'application/json', ...(this.session && path === 'user' ? { Authorization: 'Bearer ' + this.session.access_token } : {}) }, body: body ? JSON.stringify(body) : undefined });
@@ -61,7 +89,7 @@ const Cloud = {
   },
   google() { const c = this.cfg(); location.href = `${c.url}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(this.redirect())}`; },
   async signOut() {
-    try { localStorage.removeItem('ss-role'); } catch (e) { }
+    try { localStorage.removeItem('ss-role'); localStorage.removeItem('ss-c2a'); } catch (e) { }
     try { const c = this.cfg(); await fetch(`${c.url}/auth/v1/logout`, { method: 'POST', headers: { apikey: c.key, Authorization: 'Bearer ' + this.session?.access_token } }); } catch (e) { }
     this.saveSession(null); this.setStatus('out');
   },
@@ -85,14 +113,17 @@ const Cloud = {
   /* ---------- estado ---------- */
   async init() {
     this.loadSession();
-    const back = this.captureRedirect();
+    const viaC2a = await this.captureChurch2all();
+    const back = viaC2a === 'c2a' ? 'ok' : viaC2a || this.captureRedirect();
     this.st = Object.assign(this.st, (await DB.get('kv', 'sync')) || {});
     window.addEventListener('online', () => this.schedule(500));
     window.addEventListener('offline', () => this.setStatus('offline'));
     document.addEventListener('visibilitychange', () => { if (!document.hidden) this.schedule(800); });
     window.addEventListener('storage', e => { if (e.key === 'ss-session') { this.loadSession(); this.schedule(300); } }); // login feito em outra aba/janela
     $('#btn-cloud').onclick = () => CloudUI.open();
-    Gate.back = back; if (back === 'ok') UI.toast('Conectado à nuvem. Sincronizando…'); else if (back && this.session) UI.toast('Login: ' + back);
+    Gate.back = back;
+    if (viaC2a === 'c2a') UI.toast(`Conectado pelo Church2all — ${this.c2a()?.church?.name || ''}. Sincronizando…`);
+    else if (back === 'ok') UI.toast('Conectado à nuvem. Sincronizando…'); else if (back && this.session) UI.toast('Login: ' + back);
     this.timer = setInterval(() => this.schedule(0), 90000);
     if (!this.configured()) this.setStatus('setup'); else if (!this.session) this.setStatus('out'); else this.schedule(300);
   },
@@ -426,6 +457,7 @@ const CloudUI = {
     };
     this.set(
       el('p', {}, 'Conectado como ', el('b', { text: u.email || '—' })),
+      Cloud.c2a()?.church?.name ? el('p', { class: 'muted small' }, '⛪ Pelo Church2all · ', el('b', { text: Cloud.c2a().church.name })) : '',
       live,
       el('label', { class: 'follow-opt' }, el('input', { type: 'checkbox', checked: !!App.meta.follow, onchange: e => { App.meta.follow = e.target.checked; App.meta.followT = Date.now(); if (e.target.checked && App.cur) App.open(App.cur.id); App.saveMeta(); Cloud.followDirty = true; Cloud.schedule(500); UI.toast(e.target.checked ? 'Os aparelhos vão continuar de onde você parou' : 'Cada aparelho volta a lembrar só a própria página'); } }),
         el('span', {}, el('b', { text: 'Continuar de onde parei em outro aparelho' }), el('small', { class: 'muted', text: 'Ao abrir o app (ou um caderno) no Surface, celular ou notebook, ele vai para a última página que você usou em qualquer aparelho. Desmarcado, cada aparelho lembra só a própria.' }))),
@@ -444,7 +476,7 @@ const Gate = {
   active: false,
   on() { return Cloud.configured(); },
   early() { // esconde tudo antes de desenhar, se não houver sessão guardada
-    try { if (this.on() && !localStorage.getItem('ss-session') && !/access_token|error_description/.test(location.hash)) document.body.classList.add('gated'); } catch (e) { }
+    try { if (this.on() && !localStorage.getItem('ss-session') && !/access_token|error_description|c2a=/.test(location.hash)) document.body.classList.add('gated'); } catch (e) { }
   },
   need() { return this.on() && !Cloud.session; },
   wait() {
