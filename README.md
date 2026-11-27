@@ -1,6 +1,6 @@
 # SmartSower
 
-**App:** https://smartsower.sow.digital
+**App:** https://smartsower.app
 
 Web app para preparar e pregar ministrações. É feito para o Surface (Windows, com caneta), funciona offline e sincroniza entre aparelhos pelo Supabase.
 
@@ -30,7 +30,7 @@ O app é um único `index.html` sem dependências externas. O código-fonte est�
    };
    ```
    A chave *anon* foi feita para ficar no navegador. A proteção dos dados vem das regras (RLS) do `supabase.sql`.
-4. Em **Authentication › URL Configuration**, coloque o endereço publicado do app em **Site URL** e em **Redirect URLs**, no caso `https://smartsower.sow.digital/`.
+4. Em **Authentication › URL Configuration**, coloque o endereço publicado do app em **Site URL** e em **Redirect URLs**, no caso `https://smartsower.app/`.
 5. Crie a sua conta pelo próprio app (☁ **Entrar › Criar conta**) e confirme o e-mail.
 6. **Recomendado:** depois de criar a sua conta (e as da equipe), desative novos cadastros em **Authentication › Sign In / Providers › Allow new users to sign up**. Assim ninguém de fora consegue criar conta no seu projeto.
 7. *(Opcional)* Para entrar com Google, ative o provedor em **Authentication › Sign In / Providers › Google**. Isso exige um OAuth Client do Google Cloud.
