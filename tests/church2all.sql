@@ -7,6 +7,17 @@ do $$ begin
   raise exception 'FAIL guard';
 exception when raise_exception then if sqlerrm like 'FAIL%' then raise; end if; raise warning 'ok  strangers cannot sign up';
 end $$;
+-- Supabase writes app_metadata only after the insert: the Church2all server announces the e-mail first
+insert into public.c2a_pending (email) values ('pending@x.com');
+insert into auth.users (email) values ('Pending@x.com');
+do $$ begin raise warning 'ok  an announced Church2all e-mail can sign up'; end $$;
+update public.c2a_pending set at = now() - interval '1 hour';
+do $$ begin
+  delete from auth.users where email = 'Pending@x.com';
+  insert into auth.users (email) values ('pending@x.com');
+  raise exception 'FAIL old pending';
+exception when raise_exception then if sqlerrm like 'FAIL%' then raise; end if; raise warning 'ok  an old announcement no longer opens the door';
+end $$;
 insert into auth.users (id, email, raw_app_meta_data) values
   ('00000000-0000-0000-0000-0000000000c1', 'c1@x.com', '{"c2a": true}'), ('00000000-0000-0000-0000-0000000000c2', 'c2@x.com', '{"c2a": true}'),
   ('00000000-0000-0000-0000-0000000000c3', 'c3@y.com', '{"c2a": true}');
