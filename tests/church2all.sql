@@ -25,6 +25,11 @@ insert into public.c2a_links (user_id, church_id, name) values
   ('00000000-0000-0000-0000-0000000000c1', '11111111-1111-1111-1111-111111111111', 'C Um'),
   ('00000000-0000-0000-0000-0000000000c2', '11111111-1111-1111-1111-111111111111', 'C Dois'),
   ('00000000-0000-0000-0000-0000000000c3', '22222222-2222-2222-2222-222222222222', 'C Tres');
+-- the church's own account (owner of the church notebook): not a person to share with
+insert into auth.users (id, email, raw_app_meta_data) values ('00000000-0000-0000-0000-0000000000c9', 'igreja.1@contas.church2all.com', '{"c2a": true}');
+insert into public.c2a_links (user_id, church_id, name, role) values ('00000000-0000-0000-0000-0000000000c9', '11111111-1111-1111-1111-111111111111', 'Igreja', 'church');
+insert into public.shared_nbs (id, owner, data) values ('c2a-11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-0000000000c9', '{"c2a": true}');
+insert into public.shared_members (nb_id, email) values ('c2a-11111111-1111-1111-1111-111111111111', 'c1@x.com'), ('c2a-11111111-1111-1111-1111-111111111111', 'c2@x.com');
 create or replace function pg_temp.as_(uid text, email text) returns void language plpgsql as $$ begin
   perform set_config('request.jwt.claim.sub', uid, false); perform set_config('request.jwt.claims', json_build_object('sub', uid, 'email', email)::text, false);
   execute 'set role authenticated'; end $$;
@@ -32,6 +37,11 @@ select pg_temp.as_('00000000-0000-0000-0000-0000000000c1', 'c1@x.com');
 select 'c1 member', public.is_member(), 'team', public.is_team();
 select 'c1 people', string_agg(email, ',') from public.team_people();
 select 'c1 sees team rows', count(*) from public.team_members;
+do $$ begin
+  if exists (select 1 from public.team_people() where email like 'igreja.%') then raise exception 'FAIL church account listed'; end if;
+  if not public.nb_can_read('c2a-11111111-1111-1111-1111-111111111111') then raise exception 'FAIL church notebook'; end if;
+  raise warning 'ok  the church notebook is open to the church, its account is not a person';
+end $$;
 insert into public.shared_nbs (id, data) values ('nb-c1', '{}');
 insert into public.shared_members (nb_id, email) values ('nb-c1', 'c2@x.com');
 do $$ begin insert into public.shared_members (nb_id, email) values ('nb-c1', 'c3@y.com'); raise exception 'FAIL other church';

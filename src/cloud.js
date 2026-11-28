@@ -576,8 +576,134 @@ const C2aBar = {
         '<li><b>O caderno “Conteúdos Church2All”</b> é da igreja: quem entra pela igreja vê e edita junto. Seções: Sermões, Devocionais e Cursos/Escola.</li>' +
         '<li><b>Só vai para o Church2all o que você publicar</b> com o botão “Publicar no Church2all” numa página desse caderno. Publicar de novo atualiza o mesmo conteúdo.</li>' +
         '<li><b>Sermões:</b> você escolhe se fica aberto a todos, só para membros ou só no arquivo do painel.</li>' }),
-      el('p', { class: 'muted small', text: 'O caderno da igreja e o botão de publicar estão chegando nas próximas versões. A equipe e os cadernos de outras igrejas nunca aparecem aqui.' }));
+      el('p', { class: 'muted small', text: 'Cursos e Escola: as aulas vão para os cursos do Church2all numa próxima versão. A equipe do SmartSower e os cadernos de outras igrejas nunca aparecem aqui.' }));
     UI.modal({ title: '⛪ SmartSower pelo Church2all', body, actions: [{ label: 'Entendi', primary: true }],
       onClose: () => { if (first) try { Tour.maybeStart(); } catch (e) { } } });
+  }
+};
+
+// ── Publicar no Church2all: páginas do caderno "Conteúdos Church2All" viram conteúdo da igreja (app e site).
+//    Publicar de novo atualiza o mesmo conteúdo. Usa a sessão do Church2all que veio na entrada pelo painel. ──
+const C2aPublish = {
+  nbOf(s) { return Shared.nbOfPage(s); },
+  churchOf(s) { const nb = this.nbOf(s); return nb?.c2a ? nb.id.slice(4) : null; },
+  kindOf(s) { const sec = s?.sec || ''; return /-sermons$/.test(sec) ? 'sermon' : /-devotionals$/.test(sec) ? 'devotional' : /-school$/.test(sec) ? 'school' : null; },
+  paint(s) { const b = $('#s-c2a'); if (b) { b.hidden = !this.churchOf(s); b.onclick = () => { App.flush(); this.open(s); }; } },
+  async session() {
+    const info = Cloud.c2a(); const c = info?.c2a; if (!c?.session) return null;
+    if (c.session.expires_at > Date.now() + 30000) return c;
+    try {
+      const r = await fetch(`${c.url}/auth/v1/token?grant_type=refresh_token`, { method: 'POST', headers: { apikey: c.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: c.session.refresh_token }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.access_token) return null;
+      c.session = Cloud.sessionFrom(j); localStorage.setItem('ss-c2a', JSON.stringify(info)); return c;
+    } catch (e) { return null; }
+  },
+  async rpc(name, args) {
+    const c = await this.session();
+    if (!c) throw new Error('SESSION');
+    const r = await fetch(`${c.url}/rest/v1/rpc/${name}`, { method: 'POST', headers: { apikey: c.key, Authorization: 'Bearer ' + c.session.access_token, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+    const j = await r.json().catch(() => null);
+    if (!r.ok) throw new Error(r.status === 403 || j?.code === '42501' ? 'FORBIDDEN' : (j?.message || 'Erro ' + r.status));
+    return j;
+  },
+  /* página → texto simples do Church2all: "## " títulos, "- " listas, **negrito**, [links](https://…). Desenhos,
+     mapas e imagens ficam de fora (as imagens do SmartSower são privadas). */
+  inline(html) {
+    const box = new DOMParser().parseFromString('<div>' + (html || '') + '</div>', 'text/html').body.firstChild;   // não carrega nada nem roda scripts
+    const walk = (n, inList) => {
+      if (n.nodeType === 3) return n.textContent.replace(/\s+/g, ' ');
+      if (n.nodeType !== 1) return '';
+      const t = n.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE') return '';
+      const kids = () => [...n.childNodes].map(x => walk(x, t === 'UL' || t === 'OL' ? t : inList)).join('');
+      if (t === 'BR') return '\n';
+      if (t === 'B' || t === 'STRONG') { const v = kids().trim(); return v ? `**${v.replace(/\*\*/g, '')}**` : ''; }
+      if (t === 'A') { const v = kids().trim(), h = n.getAttribute('href') || ''; return /^https:\/\//.test(h) && v ? `[${v.replace(/[[\]]/g, '')}](${h})` : v; }
+      if (t === 'LI') return '\n' + (inList === 'OL' ? '1. ' : '- ') + kids().trim().replace(/\n+/g, ' ');
+      if (t === 'UL' || t === 'OL') return '\n' + kids() + '\n\n';
+      if (/^(P|DIV|H[1-6]|BLOCKQUOTE)$/.test(t)) return '\n' + kids() + '\n';
+      if (t === 'IMG') return '';
+      return kids();
+    };
+    return walk(box).replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  },
+  toText(s) {
+    const out = []; let skipped = 0;
+    for (const b of s.blocks || []) {
+      const label = BLOCK_TYPES[b.type]?.label || '';
+      if (['ink', 'mind', 'image'].includes(b.type)) { skipped++; continue; }
+      if (b.type === 'point' || b.type === 'subhead') { const v = htmlToText(b.html || '').split('\n')[0].trim(); if (v) out.push('## ' + v); continue; }
+      if (b.type === 'verse') { const v = htmlToText(b.html || '').trim(); if (b.ref || v) out.push([b.ref ? `**${b.ref}${b.version ? ' (' + b.version + ')' : ''}**` : '', v].filter(Boolean).join('\n')); continue; }
+      const v = this.inline(b.html); if (!v) continue;
+      out.push(b.type === 'text' || b.type === 'intro' || b.type === 'concl' ? v : `**${label}:** ${v}`);
+    }
+    return { body: out.join('\n\n').slice(0, 60000), skipped };
+  },
+  summaryOf(s) {
+    const b = (s.blocks || []).find(x => ['intro', 'text'].includes(x.type) && htmlToText(x.html || '').trim());
+    const t = b ? htmlToText(b.html).replace(/\s+/g, ' ').trim() : '';
+    return t.length > 220 ? t.slice(0, 217).replace(/\s+\S*$/, '') + '…' : t;
+  },
+  AUD: [['public', 'Aberto a todos', 'aparece no app e no site da igreja'], ['members', 'Só membros', 'quem entrou no app lê; visitantes veem só o título'], ['archive', 'Só arquivo', 'fica guardado no painel, não aparece no app']],
+  async open(s) {
+    const church = this.churchOf(s), kind = this.kindOf(s), info0 = Cloud.c2a();
+    if (!church) return;
+    if (kind === 'school') return UI.modal({ title: '⛪ Cursos e Escola', body: el('p', { text: 'Em breve: as aulas desta seção vão para os cursos do Church2all e poderão ser ministradas com Apresentar. Por enquanto, escreva e organize as aulas aqui.' }) });
+    if (!kind) return UI.toast('Publique a partir das seções Sermões ou Devocionais do caderno da igreja.');
+    const body = el('div', { class: 'c2a-pub' }, el('p', { class: 'muted', text: 'Conferindo no Church2all…' }));
+    const m = UI.modal({ title: '⛪ Publicar no Church2all', body, wide: true });
+    let info;
+    try { info = await this.rpc('ss_publish_info', { p_church: church, p_ref: s.id }); }
+    catch (e) { body.innerHTML = ''; body.append(this.errorEl(e)); return; }
+    if (!info) { body.innerHTML = ''; body.append(el('p', { text: 'Sua conta não pode publicar conteúdo nesta igreja. Peça a quem administra o Church2all para liberar Conteúdo › editar.' })); return; }
+    const { body: text, skipped } = this.toText(s);
+    const prev = info.item, mine = s.c2aPub || {};
+    let aud = prev?.audience || mine.audience || (kind === 'sermon' ? info.sermon_audience : 'public');
+    const sum = el('textarea', { class: 'inp', rows: 3, maxlength: 400 }); sum.value = mine.summary ?? this.summaryOf(s);
+    const author = el('input', { class: 'inp', maxlength: 80, value: mine.author ?? (Shared.myName?.() || info0?.name || '') });
+    const audBox = kind === 'sermon' ? el('div', { class: 'c2a-aud' }, el('b', { text: 'Quem vê' }),
+      ...this.AUD.map(([v, l, d]) => el('label', {}, el('input', { type: 'radio', name: 'c2a-aud', checked: aud === v, onchange: () => aud = v }), ' ', el('b', { text: l }), el('span', { class: 'muted', text: ' — ' + d }))),
+      el('p', { class: 'muted small', text: `Padrão da igreja: ${this.AUD.find(a => a[0] === info.sermon_audience)?.[1] || 'Aberto a todos'}.` })) : null;
+    // quando aparece no app: agora ou num dia e hora (ex.: os devocionais da semana, um por dia)
+    const pad = n => String(n).padStart(2, '0'), loc = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const prevAt = prev?.publish_at ? new Date(prev.publish_at) : null, future = prevAt && prevAt > new Date();
+    let when = future ? 'later' : 'now';
+    const tomorrow = new Date(Date.now() + 864e5); tomorrow.setHours(6, 0, 0, 0);
+    const at = el('input', { type: 'datetime-local', class: 'inp', value: loc(future ? prevAt : tomorrow), min: loc(new Date()), disabled: !future, onchange: () => { when = 'later'; } });
+    const whenBox = el('div', { class: 'c2a-aud' }, el('b', { text: 'Quando aparece no app' }),
+      el('label', {}, el('input', { type: 'radio', name: 'c2a-when', checked: !future, onchange: () => { when = 'now'; at.disabled = true; } }), ' ', el('b', { text: prev && !future ? 'Como está (já no ar)' : 'Agora' })),
+      el('label', { class: 'c2a-when' }, el('input', { type: 'radio', name: 'c2a-when', checked: !!future, onchange: () => { when = 'later'; at.disabled = false; at.focus(); } }), ' ', el('b', { text: 'Agendar para' }), ' ', at),
+      el('p', { class: 'muted small', text: 'Horário deste aparelho. Agendado, fica guardado no Church2all e só aparece no dia e hora escolhidos.' }));
+    const out = el('p', { class: 'small' });
+    body.innerHTML = '';
+    body.append(
+      el('p', {}, el('b', { text: kind === 'sermon' ? '🎤 Sermão' : '🌅 Devocional' }), ' · ', el('span', { text: s.title || 'Sem título' }), s.passage ? el('span', { class: 'muted', text: ' · ' + s.passage }) : ''),
+      prev ? el('p', { class: 'on-log', text: (future ? `Agendada para ${prevAt.toLocaleString(DL(), { dateStyle: 'short', timeStyle: 'short' })}` : `Já publicada${prev.updated_at ? ' em ' + new Date(prev.updated_at).toLocaleString(DL()) : ''}`) + '. Publicar de novo substitui o texto no Church2all (o endereço continua o mesmo).' })
+        : el('p', { class: 'muted small', text: 'Só vai para o Church2all quando você clicar em Publicar. Editar a página depois não muda o que foi publicado até você publicar de novo.' }),
+      audBox || '', whenBox, el('label', { class: 'lbl' }, 'Resumo (aparece na lista e no compartilhamento)', sum), el('label', { class: 'lbl' }, 'Autor', author),
+      skipped ? el('p', { class: 'muted small', text: `${skipped} desenho(s), mapa(s) ou imagem(ns) não vão para o Church2all — só o texto.` }) : '',
+      el('details', {}, el('summary', { text: 'Ver o texto que vai' }), el('pre', { class: 'c2a-prev', text: text || '(página vazia)' })),
+      out,
+      el('div', { class: 'row-btns' }, el('button', { class: 'btn primary c2a-go', text: prev ? 'Atualizar no Church2all' : 'Publicar', onclick: async e => {
+        if (!(s.title || '').trim()) return out.textContent = 'Dê um título à página antes de publicar.';
+        if (!text) return out.textContent = 'A página está vazia.';
+        let publishAt = null;
+        if (when === 'later') { const d = new Date(at.value); if (!at.value || isNaN(d)) return out.textContent = 'Escolha o dia e a hora.'; if (d < new Date(Date.now() - 60000)) return out.textContent = 'Escolha um dia e hora no futuro (ou “Agora”).'; publishAt = d.toISOString(); }
+        else if (!prev || future) publishAt = new Date().toISOString();   // "agora" (ou tirar do agendamento); já no ar: mantém a data
+        e.target.disabled = true; out.textContent = 'Publicando…';
+        try {
+          const r = await this.rpc('ss_publish', { p_church: church, p_ref: s.id, p_kind: kind, p_title: s.title.trim(), p_body: text, p_summary: sum.value.trim(), p_bible_ref: (s.passage || '').slice(0, 80), p_audience: kind === 'sermon' ? aud : null, p_author: author.value.trim(), p_publish_at: publishAt });
+          s.c2aPub = { id: r.id, slug: r.slug, audience: r.audience, summary: sum.value.trim(), author: author.value.trim(), at: Date.now() }; App.touch(s);
+          m.close();
+          const later = r.publish_at && new Date(r.publish_at) > new Date();
+          UI.toast(later ? `Agendado no Church2all: aparece em ${new Date(r.publish_at).toLocaleString(DL(), { dateStyle: 'short', timeStyle: 'short' })} ✓` : r.created ? 'Publicado no Church2all ✓' : 'Atualizado no Church2all ✓', { label: 'Ver no painel', fn: () => window.open(`https://app.church2all.com/c/${church}/conteudo/${r.id}`, '_blank', 'noopener') });
+        } catch (x) { out.innerHTML = ''; out.append(this.errorEl(x)); e.target.disabled = false; }
+      } })));
+  },
+  errorEl(e) {
+    if (e.message === 'SESSION') return el('p', { text: 'A conexão com o Church2all expirou. Abra o SmartSower de novo pelo painel da igreja (Apps › SmartSower) e publique outra vez — nada do que você escreveu se perde.' });
+    if (e.message === 'FORBIDDEN') return el('p', { text: 'Sua conta não pode publicar conteúdo nesta igreja. Peça a quem administra o Church2all para liberar Conteúdo › editar.' });
+    return el('p', { class: 'on-log', text: 'Não deu para publicar: ' + e.message });
   }
 };
