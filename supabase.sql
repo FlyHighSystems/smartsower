@@ -196,12 +196,23 @@ end $$;
 revoke all on function public.team_list() from public;
 grant execute on function public.team_list() to authenticated;
 
+-- Entrada pelo Church2all: o servidor do Church2all (chave de serviço) avisa o e-mail aqui logo antes de criar a conta,
+-- porque o Supabase só grava o app_metadata depois do insert (o guarda abaixo não o vê). Ninguém mais lê nem escreve.
+create table if not exists public.c2a_pending (
+  email text primary key,
+  at    timestamptz not null default now()
+);
+alter table public.c2a_pending enable row level security;
+revoke all on public.c2a_pending from anon, authenticated;
+
 -- Bloqueia a criação de conta (senha, link por e-mail ou Google) de quem não está na equipe
 create or replace function public.team_signup_guard() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
   -- contas criadas pelo Church2all (com a chave de serviço, que só o servidor tem) passam
   if coalesce(new.raw_app_meta_data->>'c2a', '') = 'true' then return new; end if;
+  if new.email is not null and exists (select 1 from public.c2a_pending
+       where email = lower(new.email) and at > now() - interval '10 minutes') then return new; end if;
   if new.email is null or not exists (select 1 from public.team_members where email = lower(new.email)) then
     raise exception 'SS_NOT_INVITED: e-mail não cadastrado na equipe';
   end if;
