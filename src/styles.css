@@ -938,3 +938,12 @@ body.pg-simple .s-meta label:has(#s-passage), body.pg-simple #s-dur-label, body.
 @media print{.nav-edge{display:none}}
 .pzp-note{margin:0 0 14px}.pzp-nl{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--accent);margin-bottom:3px}
 .pzp-nh div,.pzp-nh p{margin:0 0 .55em}.pzp-nh ul,.pzp-nh ol{margin:.2em 0 .6em;padding-left:1.4em}.pzp-nh mark{border-radius:3px;padding:0 2px}
+/* Entrada pelo Church2all: azul #1F4E9C e dourado #E3B341 da marca, só nessas contas */
+html.c2a .topbar,html.c2a[data-theme=dark] .topbar{background:#1F4E9C;box-shadow:inset 0 -3px 0 #E3B341}
+#c2a-bar{display:flex;align-items:center;gap:10px;padding:4px 12px;background:#173E7D;color:#fff;font-size:13px;flex-shrink:0;min-height:30px}
+#c2a-bar .c2a-mark{background:#E3B341;color:#1b2430;font-weight:700;border-radius:999px;padding:1px 9px;font-size:12px;letter-spacing:.2px}
+#c2a-bar .c2a-church{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+#c2a-bar .c2a-why{background:none;border:0;color:#fff;text-decoration:underline;cursor:pointer;font:inherit;white-space:nowrap;padding:4px 0}
+#c2a-bar .c2a-why:focus-visible{outline:2px solid #E3B341;outline-offset:2px}
+.c2a-notice ul{padding-left:18px;margin:10px 0}.c2a-notice li{margin:6px 0;line-height:1.45}
+@media print{#c2a-bar{display:none}}

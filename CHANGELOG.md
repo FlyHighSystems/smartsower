@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.46 — 11/28/2026
+- **Pelo Church2all:** quem entra pela igreja vê o SmartSower com as cores do Church2all e uma faixa com o nome da igreja. Em “O que vai para o Church2all?”, um aviso explica que os cadernos pessoais continuam só seus e que só vai para a igreja o que for publicado.
+- Para quem já usa o SmartSower, nada muda.
+
 ## 3.12.45 — 11/27/2026
 - **Entrar pelo Church2all:** pastores e editores de igrejas que usam o Church2all abrem o SmartSower direto do painel da igreja, já conectados, sem criar senha. Cada igreja fica separada: essas contas não veem a equipe do SmartSower nem os cadernos dela, e só compartilham cadernos com pessoas da mesma igreja.
 - Para quem já usa o SmartSower, nada muda.
