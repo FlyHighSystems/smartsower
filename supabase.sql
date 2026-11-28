@@ -340,7 +340,7 @@ begin
       union
       select lower(u.email), coalesce(nullif(y.name, ''), split_part(u.email, '@', 1))
       from public.c2a_links me join public.c2a_links y on y.church_id = me.church_id join auth.users u on u.id = y.user_id
-      where me.user_id = auth.uid() and u.email is not null
+      where me.user_id = auth.uid() and u.email is not null and y.role <> 'church'   -- a conta da igreja (dona do caderno da igreja) não é gente
     ) x order by x.name, x.email;
 end $$;
 revoke all on function public.team_people() from public;

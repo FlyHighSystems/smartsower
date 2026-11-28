@@ -947,3 +947,8 @@ html.c2a .topbar,html.c2a[data-theme=dark] .topbar{background:#1F4E9C;box-shadow
 #c2a-bar .c2a-why:focus-visible{outline:2px solid #E3B341;outline-offset:2px}
 .c2a-notice ul{padding-left:18px;margin:10px 0}.c2a-notice li{margin:6px 0;line-height:1.45}
 @media print{#c2a-bar{display:none}}
+.btn.c2a-pub{border-color:#1F4E9C;color:#1F4E9C;font-weight:600}html[data-theme=dark] .btn.c2a-pub{color:#9DB8E8;border-color:#5C7FC0}
+.c2a-pub .lbl{display:block;margin:10px 0}.c2a-pub .lbl .inp{margin-top:4px;width:100%}
+.c2a-aud{display:grid;gap:6px;margin:10px 0;padding:10px 12px;border:1px solid var(--line,#ddd);border-radius:10px}
+.c2a-prev{white-space:pre-wrap;max-height:240px;overflow:auto;font-size:13px;background:var(--panel,#f6f6f6);padding:10px;border-radius:8px}
+.btn.primary.c2a-go{background:#1F4E9C;border-color:#1F4E9C}

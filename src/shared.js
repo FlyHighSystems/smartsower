@@ -100,7 +100,7 @@ const Shared = {
       if (r.owner === me) continue; if (r.deleted) continue; seen.add(r.id);
       const d = r.data || {}; let nb = App.meta.notebooks.find(n => n.id === r.id);
       if (!nb) { nb = { id: r.id }; App.meta.notebooks.push(nb); }
-      Object.assign(nb, { name: d.name || 'Caderno', color: d.color, kind: d.kind || '', foreign: { owner: r.owner, ownerEmail: d.ownerEmail, ownerName: d.ownerName, mode: d.mode || 'edit' } });
+      Object.assign(nb, { name: d.name || 'Caderno', color: d.color, kind: d.kind || '', c2a: !!d.c2a, foreign: { owner: r.owner, ownerEmail: d.ownerEmail, ownerName: d.ownerName, mode: d.mode || 'edit' } });
       const secIds = new Set((d.sections || []).map(x => x.id));
       App.meta.sections = App.meta.sections.filter(x => x.nb !== r.id || secIds.has(x.id));
       for (const sx of d.sections || []) { const ex = App.meta.sections.find(x => x.id === sx.id); if (ex) Object.assign(ex, sx, { nb: r.id, foreign: true }); else App.meta.sections.push({ ...sx, nb: r.id, foreign: true }); }
