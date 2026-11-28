@@ -188,7 +188,7 @@ const App = {
   },
   async notebookMenu() {
     const nb = this.meta.notebooks.find(n => n.id === this.meta.currentNb); if (!nb) return;
-    if (nb.c2a) { UI.modal({ title: '⛪ ' + nb.name, body: el('p', { class: 'muted', text: 'Caderno da igreja: todos que entram pelo Church2all desta igreja veem e escrevem aqui. As seções são fixas: Sermões, Devocionais, Cursos e Escola. Use “⛪ Publicar no Church2all” numa página para mandá-la para o app e o site.' }) }); return; }
+    if (nb.c2a) { UI.modal({ title: '⛪ ' + nb.name, body: el('p', { class: 'muted', text: 'Caderno da igreja: todos que entram pelo Church2all desta igreja veem e escrevem aqui. As seções são fixas: Sermões, Devocionais, Artigos, Cursos e Escola. Use “⛪ Publicar no Church2all” numa página para mandá-la para o app e o site.' }) }); return; }
     if (nb.foreign) { const m2 = UI.modal({ title: '👥 ' + nb.name, body: el('p', { class: 'muted', text: `Caderno de ${nb.foreign.ownerName || Shared.nameOf(nb.foreign.ownerEmail)}, compartilhado com você. Seções e pessoas são definidas pelo dono.` }), actions: [{ label: 'Sair deste caderno', danger: true, onClick: () => Shared.leave(nb) }] }); return; }
     const m = UI.modal({ title: 'Caderno: ' + nb.name, body: '', actions: [
       { label: nb.shared ? '👥 Pessoas e permissões' : '👥 Compartilhar…', onClick: () => Shared.open(nb) },

@@ -230,6 +230,7 @@ Regras: 1 ou 2 frases, no máximo 45 palavras. Diga do que o capítulo trata e a
     const b = !!this.cur();
     const pa = $('#page-add'); if (pa) { pa.textContent = b ? '＋ Nova ▾' : '＋ Página ▾'; pa.title = b ? 'Novo capítulo, roteiro, prefácio…' : 'Nova página: sermão, devocional, estudo…'; pa.onclick = b ? e => this.addMenu(e.currentTarget) : e => PageKinds.addMenu(e.currentTarget); }
     const sa = $('#sec-add'); if (sa) { sa.textContent = b ? '＋ Nova parte ▾' : '＋ Adicionar seção'; sa.className = b ? 'btn sm primary sec-add-bk' : 'btn link'; sa.onclick = b ? e => this.partMenu(e.currentTarget) : sa._orig || sa.onclick; }
+    if (sa) sa.hidden = !!App.meta.notebooks.find(n => n.id === App.meta.currentNb)?.c2a;   // caderno da igreja: seções fixas
     let bb = $('#book-open');
     if (b && !bb) { bb = el('button', { class: 'btn sm', id: 'book-open', title: 'Visão geral, quadro, dados, referências e exportação do livro', text: '📖 Livro', onclick: () => this.open() }); $('.page-tools')?.prepend(bb); }
     if (bb) bb.hidden = !b;

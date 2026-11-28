@@ -2,6 +2,10 @@
 
 Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é pulado: depois de 3.12.12 vem 3.12.14. O app mostra a versão em ☁ › Versão e no rodapé da lista de cadernos.
 
+## 3.12.48 — 11/28/2026
+- **Pelo Church2all:** o caderno da igreja ganhou a seção **Artigos** (publica como Artigo no app e no site). O botão “Adicionar seção” some nesse caderno, porque as seções dele são fixas.
+- **Novo conteúdo no painel do Church2all:** Sermão, Devocional e Artigo abrem o SmartSower já com uma página nova na seção certa.
+
 ## 3.12.47 — 11/28/2026
 - **Publicar no Church2all:** quem entra pelo Church2all ganha o caderno ⛪ **Conteúdos Church2All**, da igreja, com as seções Sermões, Devocionais e Cursos e Escola. Todos da igreja escrevem juntos ali.
 - Nas páginas de Sermões e Devocionais, o botão **⛪ Publicar no Church2all** manda o texto para o app e o site da igreja. No sermão você escolhe quem vê: aberto a todos, só membros ou só arquivo. Publicar de novo atualiza o mesmo conteúdo.

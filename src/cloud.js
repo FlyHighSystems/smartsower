@@ -40,7 +40,10 @@ const Cloud = {
   async captureChurch2all() {
     const m = /(?:^#|&)c2a=([A-Za-z0-9_-]+)/.exec(location.hash);
     if (!m) return null;
-    history.replaceState(null, '', location.pathname + location.search.replace(/[?&]from=church2all/, '').replace(/^&/, '?'));
+    // "Novo conteúdo" no painel: abrir uma página nova na seção certa do caderno da igreja (depois de sincronizar)
+    const novo = /[?&]novo=(sermon|devotional|article)\b/.exec(location.search)?.[1];
+    if (novo) try { sessionStorage.setItem('ss-c2a-novo', novo); } catch (e) { }
+    history.replaceState(null, '', location.pathname + location.search.replace(/[?&](from=church2all|novo=[a-z]+)/g, '').replace(/^&/, '?'));
     let p; try { p = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return 'O link do Church2all veio incompleto. Abra o SmartSower de novo pelo painel.'; }
     if (!p || !p.ss || !p.email) return 'O link do Church2all veio incompleto. Abra o SmartSower de novo pelo painel.';
     const cur = (this.session?.user?.email || '').toLowerCase();
@@ -195,6 +198,7 @@ const Cloud = {
       Shared.conflicts = 0; this.setProg({ label: 'Cadernos compartilhados…' }); try { await Shared.sync(); } catch (e) { console.warn('compartilhados', e); }
       this.setProg({ label: 'Procurando novidades…' }); await this.pull();
       this.applyJump();
+      try { C2aPublish.pendingNew(); } catch (e) { console.warn('novo', e); }
       this.setProg({ label: 'Enviando…' }); await this.push(); try { await Shared.pushOthers(); } catch (e) { console.warn('compartilhados', e); }
       if (Shared.conflicts) UI.toast(`${Shared.conflicts} trecho(s) editado(s) ao mesmo tempo por outra pessoa — guardei as duas versões, marcadas com ⚠.`);
       this.st.at = Date.now(); this.saveState(); this.lastError = ''; this.last = { ...this.res, at: this.st.at };
@@ -573,7 +577,7 @@ const C2aBar = {
       el('p', {}, 'Você entrou pela ', el('b', { text: c.church.name }), ' no Church2all. Este é o SmartSower da igreja: o editor do material que vai para o app e o site.'),
       el('ul', { html:
         '<li><b>Seus cadernos pessoais são só seus.</b> Nada deles vai para o Church2all, e ninguém da igreja os vê.</li>' +
-        '<li><b>O caderno “Conteúdos Church2All”</b> é da igreja: quem entra pela igreja vê e edita junto. Seções: Sermões, Devocionais e Cursos/Escola.</li>' +
+        '<li><b>O caderno “Conteúdos Church2All”</b> é da igreja: quem entra pela igreja vê e edita junto. Seções: Sermões, Devocionais, Artigos e Cursos e Escola.</li>' +
         '<li><b>Só vai para o Church2all o que você publicar</b> com o botão “Publicar no Church2all” numa página desse caderno. Publicar de novo atualiza o mesmo conteúdo.</li>' +
         '<li><b>Sermões:</b> você escolhe se fica aberto a todos, só para membros ou só no arquivo do painel.</li>' }),
       el('p', { class: 'muted small', text: 'Cursos e Escola: as aulas vão para os cursos do Church2all numa próxima versão. A equipe do SmartSower e os cadernos de outras igrejas nunca aparecem aqui.' }));
@@ -587,7 +591,20 @@ const C2aBar = {
 const C2aPublish = {
   nbOf(s) { return Shared.nbOfPage(s); },
   churchOf(s) { const nb = this.nbOf(s); return nb?.c2a ? nb.id.slice(4) : null; },
-  kindOf(s) { const sec = s?.sec || ''; return /-sermons$/.test(sec) ? 'sermon' : /-devotionals$/.test(sec) ? 'devotional' : /-school$/.test(sec) ? 'school' : null; },
+  kindOf(s) { const sec = s?.sec || ''; return /-sermons$/.test(sec) ? 'sermon' : /-devotionals$/.test(sec) ? 'devotional' : /-articles$/.test(sec) ? 'article' : /-school$/.test(sec) ? 'school' : null; },
+  SEC: { sermon: ['sermons', 'sermao'], devotional: ['devotionals', 'devocional'], article: ['articles', null] },
+  /* veio de "Novo conteúdo" no painel: abre uma página nova na seção do tipo pedido */
+  pendingNew() {
+    let k; try { k = sessionStorage.getItem('ss-c2a-novo'); } catch (e) { }
+    const m = k && this.SEC[k]; if (!m) return;
+    const nb = App.meta.notebooks.find(n => n.c2a && (!Cloud.c2a()?.church?.id || n.id === 'c2a-' + Cloud.c2a().church.id));
+    const sec = nb && App.meta.sections.find(x => x.id === `${nb.id}-${m[0]}`);
+    if (!sec) return;   // o caderno ainda não chegou: tenta na próxima sincronização
+    try { sessionStorage.removeItem('ss-c2a-novo'); } catch (e) { }
+    App.meta.currentNb = nb.id; App.meta.currentSec = sec.id; App.saveMeta(); App.renderNav();
+    App.newSermon(m[1] ? { kind: m[1] } : {});
+    UI.toast(`Nova página em ${nb.name} › ${sec.name}. Quando terminar, use “⛪ Publicar no Church2all”.`);
+  },
   paint(s) { const b = $('#s-c2a'); if (b) { b.hidden = !this.churchOf(s); b.onclick = () => { App.flush(); this.open(s); }; } },
   async session() {
     const info = Cloud.c2a(); const c = info?.c2a; if (!c?.session) return null;
@@ -650,7 +667,7 @@ const C2aPublish = {
     const church = this.churchOf(s), kind = this.kindOf(s), info0 = Cloud.c2a();
     if (!church) return;
     if (kind === 'school') return UI.modal({ title: '⛪ Cursos e Escola', body: el('p', { text: 'Em breve: as aulas desta seção vão para os cursos do Church2all e poderão ser ministradas com Apresentar. Por enquanto, escreva e organize as aulas aqui.' }) });
-    if (!kind) return UI.toast('Publique a partir das seções Sermões ou Devocionais do caderno da igreja.');
+    if (!kind) return UI.toast('Publique a partir das seções Sermões, Devocionais ou Artigos do caderno da igreja.');
     const body = el('div', { class: 'c2a-pub' }, el('p', { class: 'muted', text: 'Conferindo no Church2all…' }));
     const m = UI.modal({ title: '⛪ Publicar no Church2all', body, wide: true });
     let info;
@@ -678,7 +695,7 @@ const C2aPublish = {
     const out = el('p', { class: 'small' });
     body.innerHTML = '';
     body.append(
-      el('p', {}, el('b', { text: kind === 'sermon' ? '🎤 Sermão' : '🌅 Devocional' }), ' · ', el('span', { text: s.title || 'Sem título' }), s.passage ? el('span', { class: 'muted', text: ' · ' + s.passage }) : ''),
+      el('p', {}, el('b', { text: kind === 'sermon' ? '🎤 Sermão' : kind === 'article' ? '📝 Artigo' : '🌅 Devocional' }), ' · ', el('span', { text: s.title || 'Sem título' }), s.passage ? el('span', { class: 'muted', text: ' · ' + s.passage }) : ''),
       prev ? el('p', { class: 'on-log', text: (future ? `Agendada para ${prevAt.toLocaleString(DL(), { dateStyle: 'short', timeStyle: 'short' })}` : `Já publicada${prev.updated_at ? ' em ' + new Date(prev.updated_at).toLocaleString(DL()) : ''}`) + '. Publicar de novo substitui o texto no Church2all (o endereço continua o mesmo).' })
         : el('p', { class: 'muted small', text: 'Só vai para o Church2all quando você clicar em Publicar. Editar a página depois não muda o que foi publicado até você publicar de novo.' }),
       audBox || '', whenBox, el('label', { class: 'lbl' }, 'Resumo (aparece na lista e no compartilhamento)', sum), el('label', { class: 'lbl' }, 'Autor', author),
