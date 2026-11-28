@@ -624,18 +624,23 @@ const C2aPublish = {
     if (!r.ok) throw new Error(r.status === 403 || j?.code === '42501' ? 'FORBIDDEN' : (j?.message || 'Erro ' + r.status));
     return j;
   },
-  /* página → texto simples do Church2all: "## " títulos, "- " listas, **negrito**, [links](https://…). Desenhos,
-     mapas e imagens ficam de fora (as imagens do SmartSower são privadas). */
+  /* página → texto do Church2all: "## " títulos, "- " listas, **negrito**, *itálico*, ==realce==, ~~riscado~~, [links](https://…),
+     "> " versículo e "::: tipo Rótulo … :::" para os blocos de destaque (Introdução, Ilustração, Aplicação…). Desenhos,
+     mapas e imagens ficam de fora (as imagens do SmartSower são privadas); cores de letra viram texto normal. */
   inline(html) {
     const box = new DOMParser().parseFromString('<div>' + (html || '') + '</div>', 'text/html').body.firstChild;   // não carrega nada nem roda scripts
+    const wrap = (mark, v) => { const t = v.trim(); if (!t) return v; const lead = v.match(/^\s*/)[0], tail = v.match(/\s*$/)[0]; return lead + mark + t.split(mark).join('') + mark + tail; };
     const walk = (n, inList) => {
       if (n.nodeType === 3) return n.textContent.replace(/\s+/g, ' ');
       if (n.nodeType !== 1) return '';
       const t = n.tagName;
-      if (t === 'SCRIPT' || t === 'STYLE') return '';
+      if (t === 'SCRIPT' || t === 'STYLE' || (t === 'SUP' && n.classList.contains('fn'))) return '';
       const kids = () => [...n.childNodes].map(x => walk(x, t === 'UL' || t === 'OL' ? t : inList)).join('');
       if (t === 'BR') return '\n';
-      if (t === 'B' || t === 'STRONG') { const v = kids().trim(); return v ? `**${v.replace(/\*\*/g, '')}**` : ''; }
+      if (t === 'B' || t === 'STRONG') return wrap('**', kids());
+      if (t === 'I' || t === 'EM') return wrap('*', kids());
+      if (t === 'S' || t === 'STRIKE' || t === 'DEL') return wrap('~~', kids());
+      if (t === 'MARK' || ((t === 'SPAN' || t === 'FONT') && /background(-color)?:/i.test(n.getAttribute('style') || ''))) return wrap('==', kids());
       if (t === 'A') { const v = kids().trim(), h = n.getAttribute('href') || ''; return /^https:\/\//.test(h) && v ? `[${v.replace(/[[\]]/g, '')}](${h})` : v; }
       if (t === 'LI') return '\n' + (inList === 'OL' ? '1. ' : '- ') + kids().trim().replace(/\n+/g, ' ');
       if (t === 'UL' || t === 'OL') return '\n' + kids() + '\n\n';
@@ -643,17 +648,23 @@ const C2aPublish = {
       if (t === 'IMG') return '';
       return kids();
     };
-    return walk(box).replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+    return walk(box).replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/^(:::)/gm, ' $1').trim();
   },
   toText(s) {
     const out = []; let skipped = 0;
+    const KIND = { intro: 'intro', illus: 'illus', app: 'app', quote: 'quote', concl: 'concl' };
     for (const b of s.blocks || []) {
       const label = BLOCK_TYPES[b.type]?.label || '';
       if (['ink', 'mind', 'image'].includes(b.type)) { skipped++; continue; }
-      if (b.type === 'point' || b.type === 'subhead') { const v = htmlToText(b.html || '').split('\n')[0].trim(); if (v) out.push('## ' + v); continue; }
-      if (b.type === 'verse') { const v = htmlToText(b.html || '').trim(); if (b.ref || v) out.push([b.ref ? `**${b.ref}${b.version ? ' (' + b.version + ')' : ''}**` : '', v].filter(Boolean).join('\n')); continue; }
+      if (b.type === 'point' || b.type === 'subhead') { const v = this.inline(b.html).split('\n')[0].trim(); if (v) out.push('## ' + v); continue; }
+      if (b.type === 'verse') {
+        const v = htmlToText(b.html || '').trim().split('\n').filter(Boolean);
+        if (b.ref || v.length) out.push([b.ref ? `**${b.ref}${b.version ? ' (' + b.version + ')' : ''}**` : '', ...v].filter(Boolean).map(l => '> ' + l).join('\n'));
+        continue;
+      }
       const v = this.inline(b.html); if (!v) continue;
-      out.push(b.type === 'text' || b.type === 'intro' || b.type === 'concl' ? v : `**${label}:** ${v}`);
+      if (b.type === 'text') { out.push(v); continue; }
+      out.push(`::: ${KIND[b.type] || 'note'} ${label.replace(/\n/g, ' ').slice(0, 60)}\n${v}\n:::`);
     }
     return { body: out.join('\n\n').slice(0, 60000), skipped };
   },
