@@ -122,6 +122,7 @@ const Cloud = {
     window.addEventListener('storage', e => { if (e.key === 'ss-session') { this.loadSession(); this.schedule(300); } }); // login feito em outra aba/janela
     $('#btn-cloud').onclick = () => CloudUI.open();
     Gate.back = back;
+    if (viaC2a === 'c2a') { try { C2aBar.init(); } catch (e) { } }
     if (viaC2a === 'c2a') UI.toast(`Conectado pelo Church2all — ${this.c2a()?.church?.name || ''}. Sincronizando…`);
     else if (back === 'ok') UI.toast('Conectado à nuvem. Sincronizando…'); else if (back && this.session) UI.toast('Login: ' + back);
     this.timer = setInterval(() => this.schedule(0), 90000);
@@ -548,5 +549,35 @@ const Updater = {
     try { const regs = await navigator.serviceWorker?.getRegistrations?.() || []; for (const r of regs) await r.unregister(); } catch (e) { }
     try { for (const k of await caches.keys()) await caches.delete(k); } catch (e) { }
     location.replace(location.pathname + '?v=' + Date.now());
+  }
+};
+
+// ── Entrada pelo Church2all: faixa com as cores do Church2all (azul e dourado) e o aviso do que vai para lá ──
+const C2aBar = {
+  init() {
+    const c = Cloud.c2a(); const root = document.documentElement;
+    if (!c?.church?.name) { root.classList.remove('c2a'); $('#c2a-bar')?.remove(); return; }
+    root.classList.add('c2a');
+    if (!$('#c2a-bar')) {
+      const bar = el('div', { id: 'c2a-bar', role: 'note' },
+        el('span', { class: 'c2a-mark', text: 'Church2all' }),
+        el('span', { class: 'c2a-church', text: c.church.name }),
+        el('button', { class: 'c2a-why', text: 'O que vai para o Church2all?', onclick: () => this.notice() }));
+      document.querySelector('header.topbar')?.after(bar);
+    }
+    try { const k = 'ss-c2a-seen-' + c.church.id; if (!localStorage.getItem(k)) { localStorage.setItem(k, '1'); setTimeout(() => { if (!$('.tour-card')) this.notice(true); }, 400); } } catch (e) { }
+  },
+  notice(first) {
+    const c = Cloud.c2a(); if (!c) return;
+    const body = el('div', { class: 'c2a-notice' },
+      el('p', {}, 'Você entrou pela ', el('b', { text: c.church.name }), ' no Church2all. Este é o SmartSower da igreja: o editor do material que vai para o app e o site.'),
+      el('ul', { html:
+        '<li><b>Seus cadernos pessoais são só seus.</b> Nada deles vai para o Church2all, e ninguém da igreja os vê.</li>' +
+        '<li><b>O caderno “Conteúdos Church2All”</b> é da igreja: quem entra pela igreja vê e edita junto. Seções: Sermões, Devocionais e Cursos/Escola.</li>' +
+        '<li><b>Só vai para o Church2all o que você publicar</b> com o botão “Publicar no Church2all” numa página desse caderno. Publicar de novo atualiza o mesmo conteúdo.</li>' +
+        '<li><b>Sermões:</b> você escolhe se fica aberto a todos, só para membros ou só no arquivo do painel.</li>' }),
+      el('p', { class: 'muted small', text: 'O caderno da igreja e o botão de publicar estão chegando nas próximas versões. A equipe e os cadernos de outras igrejas nunca aparecem aqui.' }));
+    UI.modal({ title: '⛪ SmartSower pelo Church2all', body, actions: [{ label: 'Entendi', primary: true }],
+      onClose: () => { if (first) try { Tour.maybeStart(); } catch (e) { } } });
   }
 };
