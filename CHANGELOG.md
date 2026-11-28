@@ -5,6 +5,7 @@ Cada publicação sobe o último número (3.12.1, 3.12.2, …). O número 13 é 
 ## 3.12.47 — 11/28/2026
 - **Publicar no Church2all:** quem entra pelo Church2all ganha o caderno ⛪ **Conteúdos Church2All**, da igreja, com as seções Sermões, Devocionais e Cursos e Escola. Todos da igreja escrevem juntos ali.
 - Nas páginas de Sermões e Devocionais, o botão **⛪ Publicar no Church2all** manda o texto para o app e o site da igreja. No sermão você escolhe quem vê: aberto a todos, só membros ou só arquivo. Publicar de novo atualiza o mesmo conteúdo.
+- **Agendar:** na janela de publicar, escolha “Agendar para” um dia e hora (por exemplo, os devocionais da semana, um por dia). Nada vai sem você clicar em Publicar; editar a página depois não muda o publicado até publicar de novo.
 - Os cadernos pessoais continuam só seus. Para quem já usa o SmartSower, nada muda.
 
 ## 3.12.46 — 11/28/2026

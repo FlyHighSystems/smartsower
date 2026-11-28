@@ -952,3 +952,4 @@ html.c2a .topbar,html.c2a[data-theme=dark] .topbar{background:#1F4E9C;box-shadow
 .c2a-aud{display:grid;gap:6px;margin:10px 0;padding:10px 12px;border:1px solid var(--line,#ddd);border-radius:10px}
 .c2a-prev{white-space:pre-wrap;max-height:240px;overflow:auto;font-size:13px;background:var(--panel,#f6f6f6);padding:10px;border-radius:8px}
 .btn.primary.c2a-go{background:#1F4E9C;border-color:#1F4E9C}
+.c2a-when{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.c2a-when .inp{width:auto}

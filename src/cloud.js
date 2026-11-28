@@ -660,29 +660,44 @@ const C2aPublish = {
     const { body: text, skipped } = this.toText(s);
     const prev = info.item, mine = s.c2aPub || {};
     let aud = prev?.audience || mine.audience || (kind === 'sermon' ? info.sermon_audience : 'public');
-    const sum = el('textarea', { class: 'inp', rows: 3, maxlength: 400, value: mine.summary ?? this.summaryOf(s) });
+    const sum = el('textarea', { class: 'inp', rows: 3, maxlength: 400 }); sum.value = mine.summary ?? this.summaryOf(s);
     const author = el('input', { class: 'inp', maxlength: 80, value: mine.author ?? (Shared.myName?.() || info0?.name || '') });
     const audBox = kind === 'sermon' ? el('div', { class: 'c2a-aud' }, el('b', { text: 'Quem vê' }),
       ...this.AUD.map(([v, l, d]) => el('label', {}, el('input', { type: 'radio', name: 'c2a-aud', checked: aud === v, onchange: () => aud = v }), ' ', el('b', { text: l }), el('span', { class: 'muted', text: ' — ' + d }))),
       el('p', { class: 'muted small', text: `Padrão da igreja: ${this.AUD.find(a => a[0] === info.sermon_audience)?.[1] || 'Aberto a todos'}.` })) : null;
+    // quando aparece no app: agora ou num dia e hora (ex.: os devocionais da semana, um por dia)
+    const pad = n => String(n).padStart(2, '0'), loc = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const prevAt = prev?.publish_at ? new Date(prev.publish_at) : null, future = prevAt && prevAt > new Date();
+    let when = future ? 'later' : 'now';
+    const tomorrow = new Date(Date.now() + 864e5); tomorrow.setHours(6, 0, 0, 0);
+    const at = el('input', { type: 'datetime-local', class: 'inp', value: loc(future ? prevAt : tomorrow), min: loc(new Date()), disabled: !future, onchange: () => { when = 'later'; } });
+    const whenBox = el('div', { class: 'c2a-aud' }, el('b', { text: 'Quando aparece no app' }),
+      el('label', {}, el('input', { type: 'radio', name: 'c2a-when', checked: !future, onchange: () => { when = 'now'; at.disabled = true; } }), ' ', el('b', { text: prev && !future ? 'Como está (já no ar)' : 'Agora' })),
+      el('label', { class: 'c2a-when' }, el('input', { type: 'radio', name: 'c2a-when', checked: !!future, onchange: () => { when = 'later'; at.disabled = false; at.focus(); } }), ' ', el('b', { text: 'Agendar para' }), ' ', at),
+      el('p', { class: 'muted small', text: 'Horário deste aparelho. Agendado, fica guardado no Church2all e só aparece no dia e hora escolhidos.' }));
     const out = el('p', { class: 'small' });
     body.innerHTML = '';
     body.append(
       el('p', {}, el('b', { text: kind === 'sermon' ? '🎤 Sermão' : '🌅 Devocional' }), ' · ', el('span', { text: s.title || 'Sem título' }), s.passage ? el('span', { class: 'muted', text: ' · ' + s.passage }) : ''),
-      prev ? el('p', { class: 'on-log', text: `Já publicada${prev.updated_at ? ' em ' + new Date(prev.updated_at).toLocaleString(DL()) : ''}. Publicar de novo substitui o texto no Church2all (o endereço continua o mesmo).` }) : el('p', { class: 'muted small', text: 'Primeira publicação desta página.' }),
-      audBox, el('label', { class: 'lbl' }, 'Resumo (aparece na lista e no compartilhamento)', sum), el('label', { class: 'lbl' }, 'Autor', author),
+      prev ? el('p', { class: 'on-log', text: (future ? `Agendada para ${prevAt.toLocaleString(DL(), { dateStyle: 'short', timeStyle: 'short' })}` : `Já publicada${prev.updated_at ? ' em ' + new Date(prev.updated_at).toLocaleString(DL()) : ''}`) + '. Publicar de novo substitui o texto no Church2all (o endereço continua o mesmo).' })
+        : el('p', { class: 'muted small', text: 'Só vai para o Church2all quando você clicar em Publicar. Editar a página depois não muda o que foi publicado até você publicar de novo.' }),
+      audBox || '', whenBox, el('label', { class: 'lbl' }, 'Resumo (aparece na lista e no compartilhamento)', sum), el('label', { class: 'lbl' }, 'Autor', author),
       skipped ? el('p', { class: 'muted small', text: `${skipped} desenho(s), mapa(s) ou imagem(ns) não vão para o Church2all — só o texto.` }) : '',
       el('details', {}, el('summary', { text: 'Ver o texto que vai' }), el('pre', { class: 'c2a-prev', text: text || '(página vazia)' })),
       out,
       el('div', { class: 'row-btns' }, el('button', { class: 'btn primary c2a-go', text: prev ? 'Atualizar no Church2all' : 'Publicar', onclick: async e => {
         if (!(s.title || '').trim()) return out.textContent = 'Dê um título à página antes de publicar.';
         if (!text) return out.textContent = 'A página está vazia.';
+        let publishAt = null;
+        if (when === 'later') { const d = new Date(at.value); if (!at.value || isNaN(d)) return out.textContent = 'Escolha o dia e a hora.'; if (d < new Date(Date.now() - 60000)) return out.textContent = 'Escolha um dia e hora no futuro (ou “Agora”).'; publishAt = d.toISOString(); }
+        else if (!prev || future) publishAt = new Date().toISOString();   // "agora" (ou tirar do agendamento); já no ar: mantém a data
         e.target.disabled = true; out.textContent = 'Publicando…';
         try {
-          const r = await this.rpc('ss_publish', { p_church: church, p_ref: s.id, p_kind: kind, p_title: s.title.trim(), p_body: text, p_summary: sum.value.trim(), p_bible_ref: (s.passage || '').slice(0, 80), p_audience: kind === 'sermon' ? aud : null, p_author: author.value.trim() });
+          const r = await this.rpc('ss_publish', { p_church: church, p_ref: s.id, p_kind: kind, p_title: s.title.trim(), p_body: text, p_summary: sum.value.trim(), p_bible_ref: (s.passage || '').slice(0, 80), p_audience: kind === 'sermon' ? aud : null, p_author: author.value.trim(), p_publish_at: publishAt });
           s.c2aPub = { id: r.id, slug: r.slug, audience: r.audience, summary: sum.value.trim(), author: author.value.trim(), at: Date.now() }; App.touch(s);
           m.close();
-          UI.toast(r.created ? 'Publicado no Church2all ✓' : 'Atualizado no Church2all ✓', { label: 'Ver no painel', fn: () => window.open(`https://app.church2all.com/c/${church}/conteudo/${r.id}`, '_blank', 'noopener') });
+          const later = r.publish_at && new Date(r.publish_at) > new Date();
+          UI.toast(later ? `Agendado no Church2all: aparece em ${new Date(r.publish_at).toLocaleString(DL(), { dateStyle: 'short', timeStyle: 'short' })} ✓` : r.created ? 'Publicado no Church2all ✓' : 'Atualizado no Church2all ✓', { label: 'Ver no painel', fn: () => window.open(`https://app.church2all.com/c/${church}/conteudo/${r.id}`, '_blank', 'noopener') });
         } catch (x) { out.innerHTML = ''; out.append(this.errorEl(x)); e.target.disabled = false; }
       } })));
   },
